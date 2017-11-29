@@ -9,6 +9,10 @@ govendor fetch github.com/gin-gonic/gin
 govendor fetch github.com/jinzhu/gorm
 govendor fetch github.com/jinzhu/gorm/dialects/postgres
 govendor fetch github.com/jinzhu/gorm/dialects/mysql
+govendor fetch github.com/mattes/migrate
+govendor fetch github.com/mattes/migrate/database/postgres
+govendor fetch github.com/mattes/migrate/database/mysql
+govendor fetch github.com/mattes/migrate/source/file
 govendor fetch golang.org/x/crypto/bcrypt
 govendor fetch golang.org/x/text/language
 govendor fetch github.com/SermoDigital/jose/jwt

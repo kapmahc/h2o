@@ -421,6 +421,42 @@
 			"revisionTime": "2017-10-31T21:05:36Z"
 		},
 		{
+			"checksumSHA1": "nIjbNvV01ItNwBdptsLON0aSzGw=",
+			"path": "github.com/mattes/migrate",
+			"revision": "69472d5f5cdca0fb2766d8d86f63cb2e78e1d869",
+			"revisionTime": "2017-10-24T18:00:00Z"
+		},
+		{
+			"checksumSHA1": "6QePtWUFN9x9U/Y6OzcENUUudmM=",
+			"path": "github.com/mattes/migrate/database",
+			"revision": "69472d5f5cdca0fb2766d8d86f63cb2e78e1d869",
+			"revisionTime": "2017-10-24T18:00:00Z"
+		},
+		{
+			"checksumSHA1": "5a4JDqeWPUO2jOdytGThkh2QE/k=",
+			"path": "github.com/mattes/migrate/database/mysql",
+			"revision": "69472d5f5cdca0fb2766d8d86f63cb2e78e1d869",
+			"revisionTime": "2017-10-24T18:00:00Z"
+		},
+		{
+			"checksumSHA1": "Q9IScpP6lp1CaPqYoFGVrJjmZcE=",
+			"path": "github.com/mattes/migrate/database/postgres",
+			"revision": "69472d5f5cdca0fb2766d8d86f63cb2e78e1d869",
+			"revisionTime": "2017-10-24T18:00:00Z"
+		},
+		{
+			"checksumSHA1": "kIHQkF+Nm0LBPppYbchll3njidY=",
+			"path": "github.com/mattes/migrate/source",
+			"revision": "69472d5f5cdca0fb2766d8d86f63cb2e78e1d869",
+			"revisionTime": "2017-10-24T18:00:00Z"
+		},
+		{
+			"checksumSHA1": "8uIdYxIjjUB1z65ejfpumt7oAFY=",
+			"path": "github.com/mattes/migrate/source/file",
+			"revision": "69472d5f5cdca0fb2766d8d86f63cb2e78e1d869",
+			"revisionTime": "2017-10-24T18:00:00Z"
+		},
+		{
 			"checksumSHA1": "w5RcOnfv5YDr3j2bd1YydkPiZx4=",
 			"path": "github.com/mattn/go-isatty",
 			"revision": "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c",
