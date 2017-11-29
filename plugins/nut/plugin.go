@@ -3,7 +3,6 @@ package nut
 import (
 	"encoding/base64"
 
-	"github.com/facebookgo/inject"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/web"
@@ -22,11 +21,6 @@ type Plugin struct {
 	Router   *gin.Engine    `inject:""`
 	DB       *gorm.DB       `inject:""`
 	Render   *render.Render `inject:""`
-}
-
-// Init init beans
-func (p *Plugin) Init(*inject.Graph) error {
-	return nil
 }
 
 func init() {

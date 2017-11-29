@@ -37,8 +37,7 @@ func NewI18n(path string) (*I18n, error) {
 
 // Locale locale
 type Locale struct {
-	tableName struct{}  `sql:"locales"`
-	ID        uint      `json:"id"`
+	ID        uint      `json:"id" gorm:"primary_key"`
 	Lang      string    `json:"lang"`
 	Code      string    `json:"code"`
 	Message   string    `json:"message"`
@@ -46,9 +45,15 @@ type Locale struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+// TableName table name
+func (p Locale) TableName() string {
+	return "locales"
+}
+
 // I18n i18n
 type I18n struct {
-	db    *gorm.DB
+	DB    *gorm.DB `inject:""`
+	Cache *Cache   `inject:""`
 	items map[string]string
 }
 
@@ -73,6 +78,8 @@ func (p *I18n) Middleware(langs ...string) (gin.HandlerFunc, error) {
 		if written {
 			c.SetCookie(LOCALE, lang, math.MaxInt32, "/", "", c.Request.TLS != nil, false)
 		}
+		c.Set(LOCALE, lang)
+		c.Set("languages", langs)
 	}, nil
 }
 
@@ -131,6 +138,10 @@ func (p *I18n) loadFromFileSystem(dir string) error {
 	})
 }
 
+func (p *I18n) cacheKey(lang, code string) string {
+	return "locales/" + lang + "/" + code
+}
+
 // Set set
 func (p *I18n) Set(db *gorm.DB, lang, code, message string) error {
 	var it Locale
@@ -149,6 +160,7 @@ func (p *I18n) Set(db *gorm.DB, lang, code, message string) error {
 	}
 
 	if err == nil {
+		p.Cache.Set(p.cacheKey(lang, code), message, p.ttl())
 		p.items[lang+"."+code] = message
 	}
 	return err
@@ -187,11 +199,21 @@ func (p *I18n) T(lang, code string, args ...interface{}) string {
 	return fmt.Sprintf(msg, args...)
 }
 
+func (p *I18n) ttl() time.Duration {
+	return time.Hour * 24 * 7
+}
+
 func (p *I18n) get(lang, code string) (string, error) {
+	var msg string
+	cky := p.cacheKey(lang, code)
+	if err := p.Cache.Get(cky, &msg); err == nil {
+		return msg, nil
+	}
 	var it Locale
-	if err := p.db.Select([]string{"message"}).
+	if err := p.DB.Select([]string{"message"}).
 		Where("lang = ? AND code = ?", lang, code).
 		First(&it).Error; err == nil {
+		p.Cache.Set(cky, it.Message, p.ttl())
 		return it.Message, nil
 	}
 	key := lang + "." + code

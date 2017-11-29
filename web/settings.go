@@ -10,13 +10,17 @@ import (
 
 // Setting setting model
 type Setting struct {
-	tableName struct{} `sql:"settings"`
-	ID        uint
+	ID        uint `gorm:"primary_key"`
 	Key       string
 	Value     []byte
-	Encode    bool `sql:",notnull"`
+	Encode    bool
 	UpdatedAt time.Time
 	CreatedAt time.Time
+}
+
+// TableName table name
+func (p Setting) TableName() string {
+	return "settings"
 }
 
 // Settings settings

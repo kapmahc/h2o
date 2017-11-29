@@ -1,4 +1,4 @@
-package ops
+package mail
 
 import (
 	"github.com/facebookgo/inject"
