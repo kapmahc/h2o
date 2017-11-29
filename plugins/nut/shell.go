@@ -326,38 +326,30 @@ func (p *Plugin) generateLocale(c *cli.Context) error {
 	defer fd.Close()
 	return err
 }
+func (p *Plugin) migrationsDir() string {
+	return filepath.Join("db", viper.GetString("database.driver"), "migrations")
+}
 func (p *Plugin) generateMigration(c *cli.Context) error {
 	name := c.String("name")
 	if len(name) == 0 {
 		cli.ShowCommandHelp(c, "migration")
 		return nil
 	}
-	root := filepath.Join("db", "migrations")
+	root := p.migrationsDir()
+	version := time.Now().Format("20060102150405")
 	if err := os.MkdirAll(root, 0700); err != nil {
 		return err
 	}
-	version := time.Now().Format("20060102150405")
-	fn := filepath.Join(root, version+"_"+name+".go")
-	fmt.Printf("generate file %s\n", fn)
-
-	fd, err := os.OpenFile(fn, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
-	if err != nil {
-		return err
+	for _, v := range []string{"up", "down"} {
+		fn := filepath.Join(root, fmt.Sprintf("%s_%s.%s.sql", version, name, v))
+		fmt.Printf("generate file %s\n", fn)
+		fd, err := os.OpenFile(fn, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+		if err != nil {
+			return err
+		}
+		defer fd.Close()
 	}
-	defer fd.Close()
-
-	tpl, err := template.ParseFiles(path.Join("templates", "migration.go"))
-	if err != nil {
-		return err
-	}
-
-	return tpl.Execute(fd, struct {
-		Name    string
-		Version string
-	}{
-		Name:    name,
-		Version: version,
-	})
+	return nil
 }
 func (p *Plugin) generateConfig(c *cli.Context) error {
 	const fn = "config.toml"
