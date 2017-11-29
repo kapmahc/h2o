@@ -3,6 +3,7 @@ package nut
 import (
 	"context"
 	"crypto/x509/pkix"
+	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -15,6 +16,9 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/gorilla/csrf"
 	"github.com/kapmahc/h2o/web"
+	"github.com/mattes/migrate"
+	"github.com/mattes/migrate/database"
+	"github.com/mattes/migrate/database/postgres"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
@@ -150,19 +154,34 @@ func (p *Plugin) Shell() []cli.Command {
 					Name:    "migrate",
 					Usage:   "migrate the DB to the most recent version available",
 					Aliases: []string{"m"},
-					Action:  web.ConfigAction(p.migrateDatabase),
+					Action: p.databaseRun(func(m *migrate.Migrate) error {
+						return m.Up()
+					}),
 				},
 				{
 					Name:    "rollback",
 					Usage:   "roll back the version by 1",
 					Aliases: []string{"r"},
-					Action:  web.ConfigAction(p.rollbackDatabase),
+					Action: p.databaseRun(func(m *migrate.Migrate) error {
+						return m.Steps(-1)
+					}),
 				},
 				{
 					Name:    "version",
 					Usage:   "dump the migration status for the current DB",
 					Aliases: []string{"v"},
-					Action:  web.ConfigAction(p.showDatabase),
+					Action: p.databaseRun(func(m *migrate.Migrate) error {
+						version, dirty, err := m.Version()
+						if err != nil {
+							return err
+						}
+						fmt.Print(version)
+						if dirty {
+							fmt.Print("dirty")
+						}
+						fmt.Println()
+						return nil
+					}),
 				},
 				{
 					Name:    "connect",
@@ -385,16 +404,47 @@ func (p *Plugin) databaseExample(_ *cli.Context) error {
 	}
 }
 
-func (p *Plugin) migrateDatabase(_ *cli.Context) error {
-	return nil
+func (p *Plugin) database() (string, string) {
+	drv := viper.GetString("database.driver")
+	args := viper.GetStringMap("database.args")
+	url := ""
+	for k, v := range args {
+		url += fmt.Sprintf("%s=%v ", k, v)
+	}
+	return drv, url
 }
 
-func (p *Plugin) rollbackDatabase(_ *cli.Context) error {
-	return nil
-}
+func (p *Plugin) databaseRun(f func(*migrate.Migrate) error) cli.ActionFunc {
+	return web.ConfigAction(func(_ *cli.Context) error {
+		drv, url := p.database()
+		db, err := sql.Open(drv, url)
+		if err != nil {
+			return err
+		}
+		defer db.Close()
 
-func (p *Plugin) showDatabase(_ *cli.Context) error {
-	return nil
+		var ins database.Driver
+		switch drv {
+		case postgresqlDriverName:
+			ins, err = postgres.WithInstance(db, &postgres.Config{})
+			if err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("bad driver %s", drv)
+		}
+
+		pwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		mig, err := migrate.NewWithDatabaseInstance(fmt.Sprintf("file://%s/%s", pwd, p.migrationsDir()), drv, ins)
+		if err != nil {
+			return err
+		}
+		mig.Log = &migrateLogger{}
+		return f(mig)
+	})
 }
 
 func (p *Plugin) createDatabase(_ *cli.Context) error {

@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/kapmahc/h2o/plugins/erp"
 	_ "github.com/kapmahc/h2o/plugins/forum"
 	_ "github.com/kapmahc/h2o/plugins/mall"
@@ -13,6 +15,7 @@ import (
 	_ "github.com/kapmahc/h2o/plugins/reading"
 	_ "github.com/kapmahc/h2o/plugins/survey"
 	"github.com/kapmahc/h2o/web"
+	_ "github.com/mattes/migrate/source/file"
 	log "github.com/sirupsen/logrus"
 )
 
