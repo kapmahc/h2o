@@ -258,7 +258,7 @@ func (p *Plugin) generateNginxConf(c *cli.Context) error {
 		Port:  viper.GetInt("server.port"),
 		Root:  pwd,
 		Theme: viper.GetString("server.theme"),
-		Ssl:   viper.GetBool("server.ssl"),
+		Ssl:   viper.GetBool("server.secure"),
 	})
 }
 func (p *Plugin) generateSsl(c *cli.Context) error {
