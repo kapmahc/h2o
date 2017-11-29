@@ -187,6 +187,78 @@
 			"revisionTime": "2017-11-27T10:02:14Z"
 		},
 		{
+			"checksumSHA1": "oe3DlTvqsrLrzsYCfw519Yeodf4=",
+			"path": "github.com/elastic/go-elasticsearch/api",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "AN6F+7lFDTcr1IbBAuLq+5h5FYI=",
+			"path": "github.com/elastic/go-elasticsearch/api/cat",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "ipXAM0hy+FrT7W6tsGNAgAdhWb4=",
+			"path": "github.com/elastic/go-elasticsearch/api/cluster",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "QbJL/tQkypBmKuUNlaX1/zPKfPQ=",
+			"path": "github.com/elastic/go-elasticsearch/api/indices",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "p9/0mk/64Hc7qEY1yBnzqjkk/WI=",
+			"path": "github.com/elastic/go-elasticsearch/api/ingest",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "293++wHDRNv6XPzoMpBYHaKwgxo=",
+			"path": "github.com/elastic/go-elasticsearch/api/nodes",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "ySsZe6hCHocRDIH0UmsqS22gAM4=",
+			"path": "github.com/elastic/go-elasticsearch/api/remote",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "83v5z4E8aKCC2WMuyZROzGFohjo=",
+			"path": "github.com/elastic/go-elasticsearch/api/snapshot",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "L2keOKTpFeKWE4YcZyiNXxufP4I=",
+			"path": "github.com/elastic/go-elasticsearch/api/tasks",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "sdDJKSTsGX2yqT+m4m7h1iZ+/AA=",
+			"path": "github.com/elastic/go-elasticsearch/client",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "MrUrpTErSSltXfxM+1JCiPxJdNg=",
+			"path": "github.com/elastic/go-elasticsearch/transport",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
+			"checksumSHA1": "PCYgK0+ypYi9nM9o03WsTyUdDvs=",
+			"path": "github.com/elastic/go-elasticsearch/util",
+			"revision": "8d1b946718be9164d29d2d9c60091d02e0546cf9",
+			"revisionTime": "2017-09-26T13:56:07Z"
+		},
+		{
 			"checksumSHA1": "GqkBIw2lUA6lv/jgh9WIyR0YdWY=",
 			"path": "github.com/facebookgo/inject",
 			"revision": "cc1aa653e50f6a9893bcaef89e673e5b24e1e97b",
@@ -479,6 +551,12 @@
 			"path": "github.com/pkg/errors",
 			"revision": "f15c970de5b76fac0b59abb32d62c17cc7bed265",
 			"revisionTime": "2017-10-18T19:55:50Z"
+		},
+		{
+			"checksumSHA1": "I778b2sbNN/yjwKSdb3y7hz2yUQ=",
+			"path": "github.com/rs/cors",
+			"revision": "eabcc6af4bbe5ad3a949d36450326a2b0b9894b8",
+			"revisionTime": "2017-08-01T07:32:01Z"
 		},
 		{
 			"checksumSHA1": "pOsyzLxA9jL375TDmbDdsgiMPl8=",

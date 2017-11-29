@@ -3,8 +3,7 @@ go get -u github.com/kardianos/govendor
 rm -r vendor
 govendor init
 govendor fetch github.com/unrolled/render
-govendor fetch github.com/gorilla/sessions
-govendor fetch github.com/gorilla/csrf
+govendor fetch github.com/rs/cors
 govendor fetch github.com/gin-gonic/gin
 govendor fetch github.com/jinzhu/gorm
 govendor fetch github.com/jinzhu/gorm/dialects/postgres
@@ -13,6 +12,7 @@ govendor fetch github.com/mattes/migrate
 govendor fetch github.com/mattes/migrate/database/postgres
 govendor fetch github.com/mattes/migrate/database/mysql
 govendor fetch github.com/mattes/migrate/source/file
+govendor fetch github.com/elastic/go-elasticsearch/client
 govendor fetch golang.org/x/crypto/bcrypt
 govendor fetch golang.org/x/text/language
 govendor fetch github.com/SermoDigital/jose/jwt
