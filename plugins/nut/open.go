@@ -47,7 +47,7 @@ func (p *Plugin) openJobber() (*web.Jobber, error) {
 	), args["queue"].(string))
 }
 
-func (p *Plugin) openRender(theme string, langs ...string) *render.Render {
+func (p *Plugin) openRender(theme string) *render.Render {
 	helpers := template.FuncMap{
 		"fmt": fmt.Sprintf,
 		"dtf": func(t time.Time) string {
@@ -82,6 +82,7 @@ func (p *Plugin) openRender(theme string, langs ...string) *render.Render {
 				}
 				return favicon
 			case "languages":
+				langs, _ := p.I18n.Languages(p.DB)
 				return langs
 			default:
 				return k
@@ -146,12 +147,12 @@ func (p *Plugin) openRender(theme string, langs ...string) *render.Render {
 	})
 }
 
-func (p *Plugin) openRouter(theme string, langs ...string) (*gin.Engine, error) {
+func (p *Plugin) openRouter(db *gorm.DB, theme string) (*gin.Engine, error) {
 	if web.MODE() == web.PRODUCTION {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	rt := gin.Default()
-	i18m, err := p.I18n.Middleware()
+	i18m, err := p.I18n.Middleware(db)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +200,6 @@ func (p *Plugin) openRedis() *redis.Pool {
 
 // Init init beans
 func (p *Plugin) Init(g *inject.Graph) error {
-	langs := viper.GetStringSlice("languages")
 	theme := viper.GetString("server.theme")
 
 	db, err := p.openDB()
@@ -216,17 +216,13 @@ func (p *Plugin) Init(g *inject.Graph) error {
 		return err
 	}
 
-	i18n, err := web.NewI18n("locales")
-	if err != nil {
-		return err
-	}
 	jobber, err := p.openJobber()
 	if err != nil {
 		return err
 	}
 	redis := p.openRedis()
 
-	rt, err := p.openRouter(theme, langs...)
+	rt, err := p.openRouter(db, theme)
 	if err != nil {
 		return err
 	}
@@ -240,13 +236,12 @@ func (p *Plugin) Init(g *inject.Graph) error {
 		&inject.Object{Value: db},
 		&inject.Object{Value: redis},
 		&inject.Object{Value: security},
-		&inject.Object{Value: i18n},
 		&inject.Object{Value: jobber},
 		&inject.Object{Value: s3},
 		&inject.Object{Value: web.NewCache("cache://")},
 		&inject.Object{Value: web.NewJwt(secret, crypto.SigningMethodHS512)},
 		&inject.Object{Value: rt},
-		&inject.Object{Value: p.openRender(theme, langs...)},
+		&inject.Object{Value: p.openRender(theme)},
 		&inject.Object{Value: sessions.NewCookieStore(secret)},
 	)
 }

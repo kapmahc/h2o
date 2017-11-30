@@ -14,11 +14,11 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"github.com/gorilla/csrf"
 	"github.com/kapmahc/h2o/web"
 	"github.com/mattes/migrate"
 	"github.com/mattes/migrate/database"
 	"github.com/mattes/migrate/database/postgres"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
@@ -237,6 +237,20 @@ func (p *Plugin) Shell() []cli.Command {
 				}
 				return nil
 			}),
+		},
+		{
+			Name:  "i18n",
+			Usage: "internationalization operations",
+			Subcommands: []cli.Command{
+				{
+					Name:    "sync",
+					Usage:   "sync locales from locales to database",
+					Aliases: []string{"s"},
+					Action: web.InjectAction(func(_ *cli.Context) error {
+						return p.I18n.Sync("locales")
+					}),
+				},
+			},
 		},
 	}
 }
@@ -498,11 +512,12 @@ func (p *Plugin) connectDatabase(_ *cli.Context) error {
 }
 
 func (p *Plugin) startServer(port int, grace bool) error {
-	secure := viper.GetBool("server.ssl")
-	secret, err := web.SECRET()
-	if err != nil {
-		return err
-	}
+	frontend := viper.GetString("server.frontend")
+	// secure := viper.GetBool("server.ssl")
+	// secret, err := web.SECRET()
+	// if err != nil {
+	// 	return err
+	// }
 	log.Infof(
 		"application starting on http://localhost:%d",
 		port,
@@ -510,15 +525,28 @@ func (p *Plugin) startServer(port int, grace bool) error {
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%d", port),
-		Handler: csrf.Protect(
-			secret,
-			csrf.Path("/"),
-			csrf.Secure(secure),
-			csrf.CookieName("csrf"),
-			csrf.RequestHeader("Authenticity-Token"),
-			csrf.FieldName("authenticity_token"),
-		)(p.Router),
+		Handler: cors.New(cors.Options{
+			AllowedOrigins: []string{frontend},
+			AllowedMethods: []string{
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPatch,
+				http.MethodPut,
+				http.MethodDelete,
+			},
+			AllowCredentials: true,
+			Debug:            web.MODE() != web.PRODUCTION,
+		}).Handler(p.Router),
+		// Handler: csrf.Protect(
+		// 	secret,
+		// 	csrf.Path("/"),
+		// 	csrf.Secure(secure),
+		// 	csrf.CookieName("csrf"),
+		// 	csrf.RequestHeader("Authenticity-Token"),
+		// 	csrf.FieldName("authenticity_token"),
+		// )(p.Router),
 	}
+
 	if !grace {
 		return srv.ListenAndServe()
 	}

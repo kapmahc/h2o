@@ -21,19 +21,8 @@ import (
 
 const (
 	// LOCALE locale key
-	LOCALE = "lcoale"
+	LOCALE = "locale"
 )
-
-// NewI18n create i18n
-func NewI18n(path string) (*I18n, error) {
-	it := I18n{
-		items: make(map[string]string),
-	}
-	if err := it.loadFromFileSystem(path); err != nil {
-		return nil, err
-	}
-	return &it, nil
-}
 
 // Locale locale
 type Locale struct {
@@ -54,11 +43,14 @@ func (p Locale) TableName() string {
 type I18n struct {
 	DB    *gorm.DB `inject:""`
 	Cache *Cache   `inject:""`
-	items map[string]string
 }
 
 // Middleware locale middleware
-func (p *I18n) Middleware(langs ...string) (gin.HandlerFunc, error) {
+func (p *I18n) Middleware(db *gorm.DB) (gin.HandlerFunc, error) {
+	langs, err := p.Languages(db)
+	if err != nil {
+		return nil, err
+	}
 	var tags []language.Tag
 	for _, l := range langs {
 		t, e := language.Parse(l)
@@ -101,11 +93,14 @@ func (p *I18n) detectLocale(r *http.Request, k string) (string, bool) {
 // Languages language tags
 func (p *I18n) Languages(db *gorm.DB) ([]string, error) {
 	var langs []string
-	err := db.Model(&Locale{}).Select("DISTINCT lang").Scan(&langs).Error
-	return langs, err
+	if err := db.Model(&Locale{}).Pluck("DISTINCT(lang)", &langs).Error; err != nil {
+		return nil, err
+	}
+	return langs, nil
 }
 
-func (p *I18n) loadFromFileSystem(dir string) error {
+// Sync sync from filesystem to database
+func (p *I18n) Sync(dir string) error {
 	const ext = ".ini"
 	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -119,20 +114,31 @@ func (p *I18n) loadFromFileSystem(dir string) error {
 		if err != nil {
 			return err
 		}
-		log.Info("find locale ", tag)
 		lang := tag.String()
+		log.Info("find locale ", lang)
 
 		cfg, err := ini.Load(path)
 		if err != nil {
 			return err
 		}
 
-		for _, sec := range cfg.Sections() {
-			z := sec.Name()
-			for k, v := range sec.KeysHash() {
-				p.items[lang+"."+z+"."+k] = v
+		tx := p.DB.Begin()
+		for k, v := range cfg.Section("").KeysHash() {
+			var c int
+			tx.Model(&Locale{}).Where("lang = ? AND code = ?", lang, k).Count(&c)
+			if c == 0 {
+				if err := tx.Create(&Locale{
+					Lang:      lang,
+					Code:      k,
+					Message:   v,
+					UpdatedAt: time.Now(),
+				}).Error; err != nil {
+					tx.Rollback()
+					return err
+				}
 			}
 		}
+		tx.Commit()
 
 		return nil
 	})
@@ -161,7 +167,6 @@ func (p *I18n) Set(db *gorm.DB, lang, code, message string) error {
 
 	if err == nil {
 		p.Cache.Set(p.cacheKey(lang, code), message, p.ttl())
-		p.items[lang+"."+code] = message
 	}
 	return err
 }
@@ -190,6 +195,20 @@ func (p *I18n) E(lang, code string, args ...interface{}) error {
 	return fmt.Errorf(msg, args...)
 }
 
+// All list items by lang
+func (p *I18n) All(lang string) (map[string]string, error) {
+	var items []Locale
+	if err := p.DB.Select([]string{"code", "message"}).
+		Order("code ASC").Find(&items).Error; err != nil {
+		return nil, err
+	}
+	rst := make(map[string]string)
+	for _, it := range items {
+		rst[it.Code] = it.Message
+	}
+	return rst, nil
+}
+
 //T text
 func (p *I18n) T(lang, code string, args ...interface{}) string {
 	msg, err := p.get(lang, code)
@@ -205,20 +224,16 @@ func (p *I18n) ttl() time.Duration {
 
 func (p *I18n) get(lang, code string) (string, error) {
 	var msg string
-	cky := p.cacheKey(lang, code)
-	if err := p.Cache.Get(cky, &msg); err == nil {
+	key := p.cacheKey(lang, code)
+	if err := p.Cache.Get(key, &msg); err == nil {
 		return msg, nil
 	}
 	var it Locale
 	if err := p.DB.Select([]string{"message"}).
 		Where("lang = ? AND code = ?", lang, code).
 		First(&it).Error; err == nil {
-		p.Cache.Set(cky, it.Message, p.ttl())
+		p.Cache.Set(key, it.Message, p.ttl())
 		return it.Message, nil
 	}
-	key := lang + "." + code
-	if msg, ok := p.items[key]; ok {
-		return msg, nil
-	}
-	return "", errors.New(key)
+	return "", errors.New(lang + "." + code)
 }

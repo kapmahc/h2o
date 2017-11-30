@@ -8,7 +8,6 @@ import (
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
 	"github.com/unrolled/render"
-	"golang.org/x/text/language"
 )
 
 // Plugin plugin
@@ -27,12 +26,6 @@ type Plugin struct {
 
 func init() {
 	web.Register(&Plugin{})
-
-	viper.SetDefault("languages", []string{
-		language.AmericanEnglish.String(),
-		language.SimplifiedChinese.String(),
-		language.TraditionalChinese.String(),
-	})
 
 	viper.SetDefault("aws", map[string]interface{}{
 		"access_key_id":     "change-me",
