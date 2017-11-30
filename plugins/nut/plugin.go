@@ -21,6 +21,7 @@ type Plugin struct {
 	Router   *gin.Engine    `inject:""`
 	DB       *gorm.DB       `inject:""`
 	Render   *render.Render `inject:""`
+	Dao      *Dao           `inject:""`
 }
 
 func init() {

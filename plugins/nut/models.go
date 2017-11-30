@@ -125,10 +125,11 @@ func (p Log) TableName() string {
 type Policy struct {
 	ID        uint `gorm:"primary_key"`
 	Begin     time.Time
-	End       time.Time
-	User      *User
+	StartUp   time.Time
+	ShutDown  time.Time
+	User      User
 	UserID    uint
-	Role      *Role
+	Role      Role
 	RoleID    uint
 	UpdatedAt time.Time
 	CreatedAt time.Time
@@ -137,7 +138,7 @@ type Policy struct {
 //Enable is enable?
 func (p *Policy) Enable() bool {
 	now := time.Now()
-	return now.After(p.Begin) && now.Before(p.End)
+	return now.After(p.StartUp) && now.Before(p.ShutDown)
 }
 
 // TableName table name
