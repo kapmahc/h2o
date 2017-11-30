@@ -11,6 +11,7 @@ import (
 	"github.com/facebookgo/inject"
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
@@ -140,6 +141,7 @@ func (p *Plugin) openRender(theme string, langs ...string) *render.Render {
 	return render.New(render.Options{
 		Directory:  path.Join("themes", theme, "views"),
 		Extensions: []string{".html"},
+		Layout:     "layouts/application/index",
 		Funcs:      []template.FuncMap{helpers},
 	})
 }
@@ -245,5 +247,6 @@ func (p *Plugin) Init(g *inject.Graph) error {
 		&inject.Object{Value: web.NewJwt(secret, crypto.SigningMethodHS512)},
 		&inject.Object{Value: rt},
 		&inject.Object{Value: p.openRender(theme, langs...)},
+		&inject.Object{Value: sessions.NewCookieStore(secret)},
 	)
 }

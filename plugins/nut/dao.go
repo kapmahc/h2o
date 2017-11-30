@@ -9,8 +9,8 @@ import (
 
 // Dao dao
 type Dao struct {
-	Security web.Security `inject:""`
-	I18n     web.I18n     `inject:""`
+	Security *web.Security `inject:""`
+	I18n     *web.I18n     `inject:""`
 }
 
 // SignIn set sign-in info

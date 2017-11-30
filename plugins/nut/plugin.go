@@ -22,6 +22,7 @@ type Plugin struct {
 	DB       *gorm.DB       `inject:""`
 	Render   *render.Render `inject:""`
 	Dao      *Dao           `inject:""`
+	Layout   *Layout        `inject:""`
 }
 
 func init() {
