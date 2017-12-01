@@ -534,6 +534,7 @@ func (p *Plugin) startServer(port int, grace bool) error {
 				http.MethodPut,
 				http.MethodDelete,
 			},
+			AllowedHeaders:   []string{"Authorization"},
 			AllowCredentials: true,
 			Debug:            web.MODE() != web.PRODUCTION,
 		}).Handler(p.Router),
