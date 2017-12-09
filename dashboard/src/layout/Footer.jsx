@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {Layout} from 'antd'
 import {connect} from 'react-redux'
 import {FormattedMessage} from 'react-intl'
+
 import {set as setLocale} from '../intl'
 
 const {Footer} = Layout

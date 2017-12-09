@@ -13,7 +13,7 @@ func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
 func (p *Plugin) getSiteInfo(l string, c *gin.Context) (interface{}, error) {
 
 	site := gin.H{}
-	for _, k := range []string{"title", "subhead", "keywords", "description"} {
+	for _, k := range []string{"title", "subhead", "keywords", "description", "copyright"} {
 		site[k] = p.I18n.T(l, "site.title")
 	}
 
