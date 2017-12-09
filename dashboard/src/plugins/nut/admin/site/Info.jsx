@@ -1,0 +1,121 @@
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
+import {Form, Row, Col, Input, message} from 'antd'
+import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
+import {connect} from 'react-redux'
+import {push} from 'react-router-redux'
+
+import Layout from '../../../../layout'
+import {post, get} from '../../../../ajax'
+import {Submit, formItemLayout} from '../../../../components/form'
+
+const FormItem = Form.Item
+
+class Widget extends Component {
+  componentDidMount() {
+    const {setFieldsValue} = this.props.form
+    get('/api/site/info').then((rst) => setFieldsValue({title: rst.title, subhead: rst.subhead, keywords: rst.keywords, description: rst.description, copyright: rst.copyright})).catch(message.error)
+  }
+  handleSubmit = (e) => {
+    const {formatMessage} = this.props.intl
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        post('/api/admin/site/info', values).then(() => {
+          message.success(formatMessage({id: "messages.success"}))
+        }).catch(message.error);
+      }
+    });
+  }
+  render() {
+    const {formatMessage} = this.props.intl
+    const {getFieldDecorator} = this.props.form
+    return (<Layout breads={[{
+          href: "/admin/site/info",
+          label: <FormattedMessage id={"nut.admin.site.info.title"}/>
+        }
+      ]}>
+      <Row>
+        <Col md={{
+            span: 12,
+            offset: 2
+          }}>
+          <Form onSubmit={this.handleSubmit}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.title" />} hasFeedback={true}>
+              {
+                getFieldDecorator('title', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({id: "errors.empty"})
+                    }
+                  ]
+                })(<Input/>)
+              }
+            </FormItem>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.subhead" />} hasFeedback={true}>
+              {
+                getFieldDecorator('subhead', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({id: "errors.empty"})
+                    }
+                  ]
+                })(<Input/>)
+              }
+            </FormItem>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.keywords" />} hasFeedback={true}>
+              {
+                getFieldDecorator('keywords', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({id: "errors.empty"})
+                    }
+                  ]
+                })(<Input/>)
+              }
+            </FormItem>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.description" />} hasFeedback={true}>
+              {
+                getFieldDecorator('description', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({id: "errors.empty"})
+                    }
+                  ]
+                })(<Input.TextArea rows={4}/>)
+              }
+            </FormItem>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.copyright" />} hasFeedback={true}>
+              {
+                getFieldDecorator('copyright', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({id: "errors.empty"})
+                    }
+                  ]
+                })(<Input/>)
+              }
+            </FormItem>
+            <Submit/>
+          </Form>
+        </Col>
+      </Row>
+    </Layout>);
+  }
+}
+
+Widget.propTypes = {
+  intl: intlShape.isRequired,
+  push: PropTypes.func.isRequired
+}
+
+const WidgetF = Form.create()(injectIntl(Widget))
+
+export default connect(state => ({}), {
+  push
+},)(WidgetF)
