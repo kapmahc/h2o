@@ -136,3 +136,17 @@ func (p *Layout) HTML(name string, handler HTMLHandlerFunc) gin.HandlerFunc {
 		p.Render.HTML(c.Writer, status, "layouts/application/error", payload)
 	}
 }
+
+// Backend backend home url
+func (p *Layout) Backend(c *gin.Context) string {
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme += "s"
+	}
+	return scheme + "://" + c.Request.Host
+}
+
+// Frontend frontend home url
+func (p *Layout) Frontend(c *gin.Context) string {
+	return c.GetHeader("Origin")
+}

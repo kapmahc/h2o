@@ -5,6 +5,17 @@ import (
 	"github.com/kapmahc/h2o/web"
 )
 
+func (p *Plugin) getHome(c *gin.Context) {
+	// carousel off-canvas
+	theme := c.Query("theme")
+	if theme == "" {
+		theme = "off-canvas"
+	}
+	p.Layout.HTML("nut/home/"+theme, func(string, *gin.Context) (gin.H, error) {
+		return gin.H{}, nil
+	})(c)
+}
+
 func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
 	items, err := p.I18n.All(c.Param("lang"))
 	return items, err

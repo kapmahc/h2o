@@ -512,12 +512,7 @@ func (p *Plugin) connectDatabase(_ *cli.Context) error {
 }
 
 func (p *Plugin) startServer(port int, grace bool) error {
-	frontend := viper.GetString("server.frontend")
-	// secure := viper.GetBool("server.ssl")
-	// secret, err := web.SECRET()
-	// if err != nil {
-	// 	return err
-	// }
+
 	log.Infof(
 		"application starting on http://localhost:%d",
 		port,
@@ -526,7 +521,7 @@ func (p *Plugin) startServer(port int, grace bool) error {
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%d", port),
 		Handler: cors.New(cors.Options{
-			AllowedOrigins: []string{frontend},
+			AllowedOrigins: viper.GetStringSlice("server.frontend"),
 			AllowedMethods: []string{
 				http.MethodGet,
 				http.MethodPost,

@@ -18,8 +18,8 @@ class Widget extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post(`/api/users/${action}`, values).then(() => {
-          message.info(formatMessage({id: `nut.users.${action}.notice`}))
+        post(`/users/${action}`, values).then(() => {
+          message.info(formatMessage({id: `nut.users.${action}.success`}))
           push('/users/sign-in')
         }).catch(message.error);
       }

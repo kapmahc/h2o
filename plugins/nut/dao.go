@@ -21,7 +21,7 @@ func (p *Dao) SignIn(db *gorm.DB, lang, ip, email, password string) (*User, erro
 	}
 
 	if !p.Security.Check([]byte(password), []byte(user.Password)) {
-		p.AddLog(db, user.ID, ip, p.I18n.T(lang, "nut.logs.user.sign-in.failed"))
+		p.AddLog(db, user.ID, ip, lang, "nut.logs.user.sign-in.failed")
 		return nil, p.I18n.E(lang, "nut.errors.user.email-password-not-match")
 	}
 
@@ -33,7 +33,7 @@ func (p *Dao) SignIn(db *gorm.DB, lang, ip, email, password string) (*User, erro
 		return nil, p.I18n.E(lang, "nut.errors.user.is-lock")
 	}
 
-	p.AddLog(db, user.ID, ip, p.I18n.T(lang, "nut.logs.user.sign-in.success"))
+	p.AddLog(db, user.ID, ip, lang, "nut.logs.user.sign-in.success")
 	user.SignInCount++
 	user.LastSignInAt = user.CurrentSignInAt
 	user.LastSignInIP = user.CurrentSignInIP
@@ -74,11 +74,11 @@ func (p *Dao) GetUserByEmail(db *gorm.DB, email string) (*User, error) {
 }
 
 // AddLog add log
-func (p *Dao) AddLog(db *gorm.DB, user uint, ip, message string) error {
+func (p *Dao) AddLog(db *gorm.DB, user uint, ip, lang, format string, args ...interface{}) error {
 	err := db.Create(&Log{
 		UserID:  user,
 		IP:      ip,
-		Message: message,
+		Message: p.I18n.T(lang, format, args...),
 	}).Error
 	return err
 }
@@ -104,7 +104,7 @@ func (p *Dao) AddEmailUser(db *gorm.DB, lang, ip, name, email, password string) 
 	if err := db.Create(&user).Error; err != nil {
 		return nil, err
 	}
-	p.AddLog(db, user.ID, ip, p.I18n.T(lang, "nut.logs.user.sign-up"))
+	p.AddLog(db, user.ID, ip, lang, "nut.logs.user.sign-up")
 	return &user, nil
 }
 
@@ -260,7 +260,7 @@ func (p *Dao) confirmUser(db *gorm.DB, lang, ip string, user uint) error {
 	).Error; err != nil {
 		return err
 	}
-	return p.AddLog(db, user, ip, p.I18n.T(lang, "nut.logs.user.confirm"))
+	return p.AddLog(db, user, ip, lang, "nut.logs.user.confirm")
 }
 
 func (p *Dao) setUserPassword(db *gorm.DB, lang, ip string, user uint, password string) error {
@@ -273,5 +273,5 @@ func (p *Dao) setUserPassword(db *gorm.DB, lang, ip string, user uint, password 
 	).Error; err != nil {
 		return err
 	}
-	return p.AddLog(db, user, ip, p.I18n.T(lang, "nut.logs.user.change-password"))
+	return p.AddLog(db, user, ip, lang, "nut.logs.user.change-password")
 }

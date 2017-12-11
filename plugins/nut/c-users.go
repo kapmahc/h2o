@@ -1,7 +1,262 @@
 package nut
 
-import "github.com/gin-gonic/gin"
+import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
+	"time"
 
-func (p *Plugin) postUsersSignIn(c *gin.Context) {
+	"github.com/SermoDigital/jose/jws"
+	"github.com/gin-gonic/gin"
+	"github.com/kapmahc/h2o/web"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	gomail "gopkg.in/gomail.v2"
+)
+
+func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) {
+	return nil, nil
+
+}
+
+type fmUsersSignUp struct {
+	Name                 string `json:"name" binding:"required"`
+	Email                string `json:"email" binding:"email"`
+	Password             string `json:"password" binding:"required,min=6"`
+	PasswordConfirmation string `json:"passwordConfirmation" binding:"eqfield=Password"`
+}
+
+func (p *Plugin) postUsersSignUp(l string, c *gin.Context) (interface{}, error) {
+	log.Printf("%+v", c.Request.Header)
+	var fm fmUsersSignUp
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	if _, err := p.Dao.GetUserByEmail(p.DB, fm.Email); err == nil {
+		return nil, p.I18n.E(l, "nut.errors.user.email-already-exist")
+	}
+	ip := c.ClientIP()
+	tx := p.DB.Begin()
+	user, err := p.Dao.AddEmailUser(tx, l, ip, fm.Name, fm.Email, fm.Password)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	tx.Commit()
+	if err = p.sendEmail(c, l, user, actConfirm); err != nil {
+		log.Error(err)
+	}
+
+	return nil, nil
+}
+
+type fmUsersEmail struct {
+	Email string `json:"email" binding:"email"`
+}
+
+func (p *Plugin) postUsersConfirm(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUsersEmail
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+
+	user, err := p.Dao.GetUserByEmail(p.DB, fm.Email)
+	if err != nil {
+		return nil, err
+	}
+	if user.IsConfirm() {
+		return nil, p.I18n.E(l, "nut.errors.user.already-confirm")
+	}
+	if err := p.sendEmail(c, l, user, actConfirm); err != nil {
+		log.Error(err)
+	}
+
+	return gin.H{}, nil
+}
+
+func (p *Plugin) postUsersUnlock(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUsersEmail
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+
+	user, err := p.Dao.GetUserByEmail(p.DB, fm.Email)
+	if err != nil {
+		return nil, err
+	}
+	if !user.IsLock() {
+		return nil, p.I18n.E(l, "nut.errors.user.not-lock")
+	}
+	if err := p.sendEmail(c, l, user, actUnlock); err != nil {
+		log.Error(err)
+	}
+
+	return gin.H{}, nil
+}
+
+func (p *Plugin) postUsersForgotPassword(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUsersEmail
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+
+	user, err := p.Dao.GetUserByEmail(p.DB, fm.Email)
+	if err != nil {
+		return nil, err
+	}
+	if err := p.sendEmail(c, l, user, actResetPassword); err != nil {
+		log.Error(err)
+	}
+
+	return gin.H{}, nil
+}
+
+func (p *Plugin) getUsersConfirmToken(l string, c *gin.Context) error {
+	cm, err := p.Jwt.Validate([]byte(c.Param("token")))
+	if err != nil {
+		return err
+	}
+	if cm.Get("act").(string) != actConfirm {
+		return p.I18n.E(l, "errors.bad-action")
+	}
+	user, err := p.Dao.GetUserByUID(p.DB, cm.Get("uid").(string))
+	if err != nil {
+		return err
+	}
+	if user.IsConfirm() {
+		return p.I18n.E(l, "nut.errors.user.already-confirm")
+	}
+
+	tx := p.DB.Begin()
+	if err = tx.Model(user).Update("confirm_at", time.Now()).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.confirm"); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	s := p.Layout.Session(c)
+	s.AddFlash(p.I18n.T(l, "nut.users.confirm.success"), NOTICE)
+	p.Layout.Save(c, s)
+
+	return nil
+}
+
+func (p *Plugin) getUsersUnlockToken(l string, c *gin.Context) error {
+	cm, err := p.Jwt.Validate([]byte(c.Param("token")))
+	if err != nil {
+		return err
+	}
+	if cm.Get("act").(string) != actUnlock {
+		return p.I18n.E(l, "errors.bad-action")
+	}
+	user, err := p.Dao.GetUserByUID(p.DB, cm.Get("uid").(string))
+	if err != nil {
+		return err
+	}
+	if !user.IsLock() {
+		return p.I18n.E(l, "nut.errors.user-not-lock")
+	}
+
+	tx := p.DB.Begin()
+	if err = tx.Model(user).Update("locked_at", nil).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.unlock"); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+
+	s := p.Layout.Session(c)
+	s.AddFlash(p.I18n.T(l, "nut.users.unlock.success"), NOTICE)
+	p.Layout.Save(c, s)
+
+	return nil
+}
+
+const (
+	actConfirm       = "confirm"
+	actUnlock        = "unlock"
+	actResetPassword = "reset-password"
+
+	// SendEmailJob send email
+	SendEmailJob = "send.email"
+)
+
+func (p *Plugin) sendEmail(c *gin.Context, lang string, user *User, act string) error {
+	cm := jws.Claims{}
+	cm.Set("act", act)
+	cm.Set("uid", user.UID)
+	tkn, err := p.Jwt.Sum(cm, time.Hour*6)
+	if err != nil {
+		return err
+	}
+
+	obj := gin.H{
+		"backend":  p.Layout.Backend(c),
+		"frontend": p.Layout.Frontend(c),
+		"token":    string(tkn),
+	}
+
+	subject, err := p.I18n.H(lang, fmt.Sprintf("nut.emails.user.%s.subject", act), obj)
+	if err != nil {
+		return err
+	}
+	body, err := p.I18n.H(lang, fmt.Sprintf("nut.emails.user.%s.body", act), obj)
+	if err != nil {
+		return err
+	}
+
+	return p.Jobber.Send(SendEmailJob, 0, map[string]string{
+		"to":      user.Email,
+		"subject": subject,
+		"body":    body,
+	})
+
+}
+
+func (p *Plugin) doSendEmail(id string, payload []byte) error {
+	var buf bytes.Buffer
+	dec := gob.NewDecoder(&buf)
+	buf.Write(payload)
+	arg := make(map[string]string)
+	if err := dec.Decode(&arg); err != nil {
+		return err
+	}
+
+	to := arg["to"]
+	subject := arg["subject"]
+	body := arg["body"]
+	if viper.GetString("env") != web.PRODUCTION {
+		log.Debugf("send to %s: %s\n%s", to, subject, body)
+		return nil
+	}
+
+	smtp := make(map[string]interface{})
+	if err := p.Settings.Get(p.DB, "site.smtp", &smtp); err != nil {
+		return err
+	}
+
+	sender := smtp["username"].(string)
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", sender)
+	msg.SetHeader("To", to)
+	msg.SetHeader("Subject", subject)
+	msg.SetBody("text/html", body)
+
+	dia := gomail.NewDialer(
+		smtp["host"].(string),
+		smtp["port"].(int),
+		sender,
+		smtp["password"].(string),
+	)
+
+	return dia.DialAndSend(msg)
 
 }
