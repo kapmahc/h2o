@@ -4,7 +4,7 @@ package nut
 func (p *Plugin) Mount() error {
 	p.Router.GET("/", p.getHome)
 	p.Router.GET("/locales/:lang", p.Layout.JSON(p.getLocales))
-	p.Router.GET("/site/info", p.Layout.JSON(p.getSiteInfo))
+	p.Router.GET("/layout", p.Layout.JSON(p.getLayout))
 
 	p.Router.POST("/users/sign-in", p.Layout.JSON(p.postUsersSignIn))
 	p.Router.POST("/users/sign-up", p.Layout.JSON(p.postUsersSignUp))

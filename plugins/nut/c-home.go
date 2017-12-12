@@ -21,7 +21,7 @@ func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
 	return items, err
 }
 
-func (p *Plugin) getSiteInfo(l string, c *gin.Context) (interface{}, error) {
+func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 
 	site := gin.H{}
 	for _, k := range []string{"title", "subhead", "keywords", "description", "copyright"} {

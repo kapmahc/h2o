@@ -21,7 +21,7 @@ class Widget extends Component {
       signIn(token)
     }
     if (info.languages.length === 0) {
-      get('/site/info').then((rst) => refresh(rst)).catch(message.error)
+      get('/layout').then((rst) => refresh(rst)).catch(message.error)
     }
   }
   render() {
