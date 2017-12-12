@@ -12,7 +12,7 @@ export const getNavData = app => [
   {
     component: dynamicWrapper(app, [
       'user', 'login'
-    ], () => import ('../layouts/BasicLayout')),
+    ], () => import ('../layouts/Dashboard')),
     layout: 'BasicLayout',
     name: '首页',
     path: '/',

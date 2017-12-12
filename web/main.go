@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"runtime"
 	"sort"
 	"time"
 
@@ -13,7 +14,7 @@ func Main(args ...string) error {
 
 	app := cli.NewApp()
 	app.Name = args[0]
-	app.Version = fmt.Sprintf("%s (%s)", Version, BuildTime)
+	app.Version = fmt.Sprintf("%s (%s) %s", Version, BuildTime, runtime.Version())
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  AuthorName,

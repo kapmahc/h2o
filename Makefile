@@ -22,4 +22,4 @@ backend:
 	-cp -r db locales templates themes package.json package-lock.json README.md $(dist)/
 
 clean:
-	-rm -r $(dist) $(dist).tar.xz ant-design-pro-master/build
+	-rm -r $(dist) $(dist).tar.xz ant-design-pro-master/dist

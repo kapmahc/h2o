@@ -90,12 +90,6 @@ GRANT ALL PRIVILEGES ON DATABASE db-name TO user-name;
   openssl req -new -x509 -key www.change-me.com.key -out www.change-me.com.crt -days 3650 # Common Name:*.change-me.com
   ```
 
-- Ant design pro(remove line `"precommit": "npm run lint-staged",` from package.json)
-
-  ```
-  BROWSER=none PORT=3000 npm start # start
-  ```
-
 ## Documents
 
 - [For gmail smtp](http://stackoverflow.com/questions/20337040/gmail-smtp-debug-error-please-log-in-via-your-web-browser)
