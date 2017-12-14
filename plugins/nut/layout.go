@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
+	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/web"
 	log "github.com/sirupsen/logrus"
 	"github.com/unrolled/render"
@@ -26,6 +27,13 @@ const (
 	TITLE = "title"
 	// MESSAGE message
 	MESSAGE = "message"
+
+	// UID uid
+	UID = "uid"
+	// CurrentUser current user
+	CurrentUser = "current-user"
+	// IsAdmin is admin?
+	IsAdmin = "is-admin"
 )
 
 // HTMLHandlerFunc html handler func
@@ -42,6 +50,47 @@ type Layout struct {
 	Render *render.Render `inject:""`
 	Dao    *Dao           `inject:""`
 	Store  sessions.Store `inject:""`
+	Jwt    *web.Jwt       `inject:""`
+	DB     *gorm.DB       `inject:""`
+	I18n   *web.I18n      `inject:""`
+}
+
+// MustSignInMiddleware must sign in middleware
+func (p *Layout) MustSignInMiddleware(c *gin.Context) {
+
+}
+
+// MustAdminMiddleware must admin middleware
+func (p *Layout) MustAdminMiddleware(c *gin.Context) {
+	l := c.MustGet(web.LOCALE).(string)
+	if _, ok := c.Get(CurrentUser); !ok {
+		c.String(http.StatusUnauthorized, p.I18n.T(l, "errors.not-allow"))
+		c.Abort()
+		return
+	}
+}
+
+// CurrentUserMiddleware current user middleware
+func (p *Layout) CurrentUserMiddleware(c *gin.Context) {
+	cm, err := p.Jwt.Parse(c.Request)
+	if err != nil {
+		log.Debug(err)
+		return
+	}
+	uid, ok := cm.Get(UID).(string)
+	if !ok {
+		return
+	}
+	user, err := p.Dao.GetUserByUID(p.DB, uid)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	if !user.IsConfirm() || user.IsLock() {
+		return
+	}
+	c.Set(CurrentUser, user)
+	c.Set(IsAdmin, p.Dao.Is(p.DB, user.ID, RoleAdmin))
 }
 
 // Session get session

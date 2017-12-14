@@ -16,8 +16,9 @@ make
 
 ## Atom plugins
 
+enable autosave
+
 - go-plus
-- git-plus
 - file-icons
 - atom-beautify
 - language-babel

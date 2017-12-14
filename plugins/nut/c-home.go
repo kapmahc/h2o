@@ -22,12 +22,11 @@ func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
 }
 
 func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
-
+	// site info
 	site := gin.H{}
 	for _, k := range []string{"title", "subhead", "keywords", "description", "copyright"} {
 		site[k] = p.I18n.T(l, "site.title")
 	}
-
 	author := gin.H{}
 	for _, k := range []string{"name", "email"} {
 		var v string
@@ -36,13 +35,24 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	}
 	site["author"] = author
 
+	// i18n
 	langs, err := p.I18n.Languages(p.DB)
 	if err != nil {
 		return nil, err
 	}
-
 	site[web.LOCALE] = l
 	site["languages"] = langs
+
+	// current-user
+	user, ok := c.Get(CurrentUser)
+	// nav
+	if ok {
+		user := user.(*User)
+		site["user"] = gin.H{
+			"name": user.Name,
+			"type": user.ProviderType,
+		}
+	}
 
 	return site, nil
 }
