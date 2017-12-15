@@ -157,6 +157,7 @@ func (p *Plugin) openRouter(db *gorm.DB, theme string) (*gin.Engine, error) {
 		return nil, err
 	}
 	rt.Use(i18m)
+	rt.Use(p.Layout.CurrentUserMiddleware)
 
 	if web.MODE() != web.PRODUCTION {
 		for k, v := range map[string]string{

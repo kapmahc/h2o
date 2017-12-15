@@ -49,8 +49,9 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	if ok {
 		user := user.(*User)
 		site["user"] = gin.H{
-			"name": user.Name,
-			"type": user.ProviderType,
+			"name":  user.Name,
+			"type":  user.ProviderType,
+			"admin": c.MustGet(IsAdmin).(bool),
 		}
 	}
 

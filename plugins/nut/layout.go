@@ -57,17 +57,22 @@ type Layout struct {
 
 // MustSignInMiddleware must sign in middleware
 func (p *Layout) MustSignInMiddleware(c *gin.Context) {
-
+	l := c.MustGet(web.LOCALE).(string)
+	if _, ok := c.Get(CurrentUser); ok {
+		return
+	}
+	c.String(http.StatusUnauthorized, p.I18n.T(l, "errors.not-allow"))
+	c.Abort()
 }
 
 // MustAdminMiddleware must admin middleware
 func (p *Layout) MustAdminMiddleware(c *gin.Context) {
 	l := c.MustGet(web.LOCALE).(string)
-	if _, ok := c.Get(CurrentUser); !ok {
-		c.String(http.StatusUnauthorized, p.I18n.T(l, "errors.not-allow"))
-		c.Abort()
+	if is, ok := c.Get(IsAdmin); ok && is.(bool) {
 		return
 	}
+	c.String(http.StatusUnauthorized, p.I18n.T(l, "errors.not-allow"))
+	c.Abort()
 }
 
 // CurrentUserMiddleware current user middleware
