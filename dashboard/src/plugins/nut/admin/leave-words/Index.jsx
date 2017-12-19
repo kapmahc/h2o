@@ -49,8 +49,10 @@ class Widget extends Component {
                 render: (text, record) => (<Moment fromNow={true}>{record.createdAt}</Moment>)
               }, {
                 title: <FormattedMessage id="attributes.content"/>,
-                dataIndex: 'body',
-                key: 'body'
+                key: 'body',
+                render: (text, record) => (<div>
+                  <pre>{record.body}</pre>
+                </div>)
               }, {
                 title: 'Action',
                 key: 'action',

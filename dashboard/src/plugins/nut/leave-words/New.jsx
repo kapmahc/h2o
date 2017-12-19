@@ -38,7 +38,7 @@ class Widget extends Component {
             offset: 2
           }}>
           <Form onSubmit={this.handleSubmit}>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.content" />} extra={<FormattedMessage id = "nut.leave-words.new.help" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.content" />} extra={<FormattedMessage id = "nut.leave-words.new.body-helper" />} hasFeedback={true}>
               {
                 getFieldDecorator('body', {
                   rules: [

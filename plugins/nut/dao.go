@@ -20,7 +20,7 @@ func (p *Dao) SignIn(db *gorm.DB, lang, ip, email, password string) (*User, erro
 		return nil, err
 	}
 
-	if !p.Security.Check([]byte(password), []byte(user.Password)) {
+	if !p.Security.Check(user.Password, []byte(password)) {
 		p.AddLog(db, user.ID, ip, lang, "nut.logs.user.sign-in.failed")
 		return nil, p.I18n.E(lang, "nut.errors.user.email-password-not-match")
 	}

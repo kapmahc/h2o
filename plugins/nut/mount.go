@@ -28,6 +28,7 @@ func (p *Plugin) Mount() error {
 	p.Router.GET("/", p.getHome)
 	p.Router.GET("/locales/:lang", p.Layout.JSON(p.getLocales))
 	p.Router.GET("/layout", p.Layout.JSON(p.getLayout))
+	p.Router.POST("/leave-words", p.Layout.JSON(p.createLeaveWord))
 
 	ung := p.Router.Group("/users")
 	ung.POST("/sign-in", p.Layout.JSON(p.postUsersSignIn))
@@ -78,6 +79,9 @@ func (p *Plugin) Mount() error {
 	ag.GET("/friend-links/:id", p.Layout.JSON(p.showAdminFriendLink))
 	ag.POST("/friend-links/:id", p.Layout.JSON(p.updateAdminFriendLink))
 	ag.DELETE("/friend-links/:id", p.Layout.JSON(p.destroyAdminFriendLink))
+	ag.GET("/leave-words", p.Layout.JSON(p.indexAdminLeaveWords))
+	ag.DELETE("/leave-words/:id", p.Layout.JSON(p.destroyAdminLeaveWord))
+	ag.GET("/users", p.Layout.JSON(p.indexAdminUsers))
 
 	p.Jobber.Register(SendEmailJob, p.doSendEmail)
 	return nil

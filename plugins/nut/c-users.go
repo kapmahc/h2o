@@ -103,24 +103,13 @@ func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) 
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
-	ip := c.ClientIP()
-	user, err := p.Dao.GetUserByEmail(p.DB, fm.Email)
+	db := p.DB.Begin()
+	user, err := p.Dao.SignIn(db, l, c.ClientIP(), fm.Email, fm.Password)
 	if err != nil {
 		return nil, err
 	}
-	if !p.Security.Check(user.Password, []byte(fm.Password)) {
-		p.Dao.AddLog(p.DB, user.ID, ip, l, "nut.logs.user.sign-in.failed")
-		return nil, p.I18n.E(l, "nut.errors.user.email-password-not-match")
-	}
-	if !user.IsConfirm() {
-		p.I18n.E(l, "nut.errors.user.not-confirm")
-	}
-	if user.IsLock() {
-		return nil, p.I18n.E(l, "nut.errors.user.is-lock")
-	}
-	if err = p.Dao.AddLog(p.DB, user.ID, ip, l, "nut.logs.user.sign-in.success"); err != nil {
-		return nil, err
-	}
+	db.Commit()
+
 	cm := make(jws.Claims)
 	cm.Set(UID, user.UID)
 	cm.Set(RoleAdmin, p.Dao.Is(p.DB, user.ID, RoleAdmin))
