@@ -127,7 +127,7 @@ func (p *Dao) Can(db *gorm.DB, user uint, name string, rty string, rid uint) boo
 		return false
 	}
 	var pm Policy
-	if err := db.Where("user_id = ? AND role_id = ?").First(&pm).Error; err != nil {
+	if err := db.Where("user_id = ? AND role_id = ?", user, r.ID).First(&pm).Error; err != nil {
 		return false
 	}
 

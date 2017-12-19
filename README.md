@@ -104,3 +104,5 @@ GRANT ALL PRIVILEGES ON DATABASE db-name TO user-name;
 - [Ant Design](https://ant.design/docs/react/introduce)
 
 - [Ant Design Pro](https://pro.ant.design/docs/getting-started)
+
+- [AWS](http://docs.aws.amazon.com/general/latest/gr/rande.html)

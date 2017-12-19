@@ -63,6 +63,10 @@ func (p *Plugin) postUsersChangePassword(l string, c *gin.Context) (interface{},
 		return nil, err
 	}
 	user := c.MustGet(CurrentUser).(*User)
+	ip := c.ClientIP()
+	if !p.Security.Check(user.Password, []byte(fm.CurrentPassword)) {
+		return nil, p.I18n.E(l, "nut.errors.user.email-password-not-match")
+	}
 	pwd, err := p.Security.Hash([]byte(fm.NewPassword))
 	if err != nil {
 		return nil, err
@@ -72,7 +76,7 @@ func (p *Plugin) postUsersChangePassword(l string, c *gin.Context) (interface{},
 		db.Rollback()
 		return nil, err
 	}
-	if err := p.Dao.AddLog(db, user.ID, c.ClientIP(), l, "nut.logs.user.change-password"); err != nil {
+	if err := p.Dao.AddLog(db, user.ID, ip, l, "nut.logs.user.change-password"); err != nil {
 		db.Rollback()
 		return nil, err
 	}
@@ -99,11 +103,13 @@ func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) 
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
+	ip := c.ClientIP()
 	user, err := p.Dao.GetUserByEmail(p.DB, fm.Email)
 	if err != nil {
 		return nil, err
 	}
 	if !p.Security.Check(user.Password, []byte(fm.Password)) {
+		p.Dao.AddLog(p.DB, user.ID, ip, l, "nut.logs.user.sign-in.failed")
 		return nil, p.I18n.E(l, "nut.errors.user.email-password-not-match")
 	}
 	if !user.IsConfirm() {
@@ -112,8 +118,12 @@ func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) 
 	if user.IsLock() {
 		return nil, p.I18n.E(l, "nut.errors.user.is-lock")
 	}
+	if err = p.Dao.AddLog(p.DB, user.ID, ip, l, "nut.logs.user.sign-in.success"); err != nil {
+		return nil, err
+	}
 	cm := make(jws.Claims)
 	cm.Set(UID, user.UID)
+	cm.Set(RoleAdmin, p.Dao.Is(p.DB, user.ID, RoleAdmin))
 	tkn, err := p.Jwt.Sum(cm, time.Hour*24)
 	if err != nil {
 		return nil, err

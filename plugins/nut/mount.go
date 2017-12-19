@@ -38,12 +38,17 @@ func (p *Plugin) Mount() error {
 	ung.POST("/reset-password", p.Layout.JSON(p.postUsersResetPassword))
 	ung.GET("/confirm/:token", p.Layout.Redirect("/", p.getUsersConfirmToken))
 	ung.GET("/unlock/:token", p.Layout.Redirect("/", p.getUsersUnlockToken))
+
 	umg := p.Router.Group("/users", p.Layout.MustSignInMiddleware)
 	umg.GET("/logs", p.Layout.JSON(p.getUsersLogs))
 	umg.GET("/profile", p.Layout.JSON(p.getUsersProfile))
 	umg.POST("/profile", p.Layout.JSON(p.postUsersProfile))
 	umg.POST("/change-password", p.Layout.JSON(p.postUsersChangePassword))
 	umg.DELETE("/sign-out", p.Layout.JSON(p.deleteUsersSignOut))
+
+	p.Router.GET("/attachments", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.indexAttachments))
+	p.Router.POST("/attachments", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.createAttachments))
+	p.Router.DELETE("/attachments/:id", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.destroyAttachments))
 
 	p.Jobber.Register(SendEmailJob, p.doSendEmail)
 	return nil

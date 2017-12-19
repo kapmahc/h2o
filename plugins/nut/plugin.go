@@ -18,6 +18,7 @@ type Plugin struct {
 	Jobber   *web.Jobber    `inject:""`
 	Settings *web.Settings  `inject:""`
 	Security *web.Security  `inject:""`
+	S3       *web.S3        `inject:""`
 	Router   *gin.Engine    `inject:""`
 	DB       *gorm.DB       `inject:""`
 	Render   *render.Render `inject:""`

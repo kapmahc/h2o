@@ -1,6 +1,6 @@
 import {TOKEN} from './actions'
 
-const backend = (path) => {
+export const backend = (path) => {
   return `${process.env.REACT_APP_BACKEND}${path}`
 }
 

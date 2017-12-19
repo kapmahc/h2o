@@ -15,7 +15,7 @@ import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
 import Layout from '../../../layout'
-import {get, _delete} from '../../../ajax'
+import {get, _delete, backend} from '../../../ajax'
 import {TOKEN} from '../../../actions'
 
 class Widget extends Component {
@@ -23,13 +23,13 @@ class Widget extends Component {
     items: []
   }
   componentDidMount() {
-    get('/api/attachments').then((rst) => {
+    get('/attachments').then((rst) => {
       this.setState({items: rst})
     }).catch(message.error);
   }
   handleRemove = (id) => {
     const {formatMessage} = this.props.intl
-    _delete(`/api/attachments/${id}`).then((rst) => {
+    _delete(`/attachments/${id}`).then((rst) => {
       message.success(formatMessage({id: 'helpers.success'}))
       var items = this.state.items.filter((it) => it.id !== id)
       this.setState({items})
@@ -43,12 +43,12 @@ class Widget extends Component {
       ]}>
       <Row>
         <Col>
-          <Upload multiple={true} name="file" action="/api/attachments" headers={{
+          <Upload multiple={true} withCredentials={true} name="file" action={backend("/attachments")} headers={{
               'Authorization' : `BEARER ${window.sessionStorage.getItem(TOKEN)}`
             }}>
             <Button>
               <Icon type="upload"/>
-              <FormattedMessage id="nut.attachments.index.upload"/>
+              <FormattedMessage id="buttons.upload"/>
             </Button>
           </Upload>
           <Table bordered={true} rowKey="id" dataSource={this.state.items} columns={[
