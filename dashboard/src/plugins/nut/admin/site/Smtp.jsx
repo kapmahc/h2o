@@ -22,14 +22,14 @@ const Option = Select.Option
 class Widget extends Component {
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    get('/api/admin/site/smtp').then((rst) => setFieldsValue(Object.assign({}, rst, {port: rst.port.toString()}))).catch(message.error)
+    get('/admin/site/smtp').then((rst) => setFieldsValue(Object.assign({}, rst, {port: rst.port.toString()}))).catch(message.error)
   }
   handleSubmit = (e) => {
     const {formatMessage} = this.props.intl
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post('/api/admin/site/smtp', Object.assign({}, values, {
+        post('/admin/site/smtp', Object.assign({}, values, {
           port: parseInt(values.port, 10)
         })).then(() => {
           message.success(formatMessage({id: "helpers.success"}))

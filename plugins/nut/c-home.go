@@ -9,7 +9,9 @@ func (p *Plugin) getHome(c *gin.Context) {
 	// carousel off-canvas
 	theme := c.Query("theme")
 	if theme == "" {
-		theme = "off-canvas"
+		if err := p.Settings.Get(p.DB, "site.home.theme", &theme); err != nil {
+			theme = "off-canvas"
+		}
 	}
 	p.Layout.HTML("nut/home/"+theme, func(string, *gin.Context) (gin.H, error) {
 		return gin.H{}, nil
@@ -25,7 +27,7 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	// site info
 	site := gin.H{}
 	for _, k := range []string{"title", "subhead", "keywords", "description", "copyright"} {
-		site[k] = p.I18n.T(l, "site.title")
+		site[k] = p.I18n.T(l, "site."+k)
 	}
 	author := gin.H{}
 	for _, k := range []string{"name", "email"} {
@@ -34,6 +36,14 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 		author[k] = v
 	}
 	site["author"] = author
+
+	// home
+	var home string
+	p.Settings.Get(p.DB, "site.home.theme", &home)
+	site["home"] = home
+	var favicon string
+	p.Settings.Get(p.DB, "site.favicon", &favicon)
+	site["favicon"] = favicon
 
 	// i18n
 	langs, err := p.I18n.Languages(p.DB)

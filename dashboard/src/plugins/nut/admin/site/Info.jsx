@@ -14,14 +14,14 @@ const FormItem = Form.Item
 class Widget extends Component {
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    get('/api/site/info').then((rst) => setFieldsValue({title: rst.title, subhead: rst.subhead, keywords: rst.keywords, description: rst.description, copyright: rst.copyright})).catch(message.error)
+    get('/layout').then((rst) => setFieldsValue({title: rst.title, subhead: rst.subhead, keywords: rst.keywords, description: rst.description, copyright: rst.copyright})).catch(message.error)
   }
   handleSubmit = (e) => {
     const {formatMessage} = this.props.intl
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post('/api/admin/site/info', values).then(() => {
+        post('/admin/site/info', values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }
@@ -41,7 +41,7 @@ class Widget extends Component {
             offset: 2
           }}>
           <Form onSubmit={this.handleSubmit}>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.title" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.title" />} hasFeedback={true}>
               {
                 getFieldDecorator('title', {
                   rules: [
@@ -53,7 +53,7 @@ class Widget extends Component {
                 })(<Input/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.subhead" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.subhead" />} hasFeedback={true}>
               {
                 getFieldDecorator('subhead', {
                   rules: [
@@ -77,7 +77,7 @@ class Widget extends Component {
                 })(<Input/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.site.description" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.description" />} hasFeedback={true}>
               {
                 getFieldDecorator('description', {
                   rules: [

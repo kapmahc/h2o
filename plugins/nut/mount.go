@@ -52,6 +52,13 @@ func (p *Plugin) Mount() error {
 
 	ag := p.Router.Group("/admin", p.Layout.MustAdminMiddleware)
 	ag.GET("/site/status", p.Layout.JSON(p.getAdminSiteStatus))
+	ag.POST("/site/info", p.Layout.JSON(p.postAdminSiteInfo))
+	ag.POST("/site/author", p.Layout.JSON(p.postAdminSiteAuthor))
+	ag.GET("/site/seo", p.Layout.JSON(p.getAdminSiteSeo))
+	ag.POST("/site/seo", p.Layout.JSON(p.postAdminSiteSeo))
+	ag.GET("/site/smtp", p.Layout.JSON(p.getAdminSiteSMTP))
+	ag.POST("/site/smtp", p.Layout.JSON(p.postAdminSiteSMTP))
+	ag.POST("/site/home", p.Layout.JSON(p.postAdminSiteHome))
 
 	p.Jobber.Register(SendEmailJob, p.doSendEmail)
 	return nil

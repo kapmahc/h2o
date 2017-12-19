@@ -24,7 +24,7 @@ class Widget extends Component {
   }
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    get('/api/admin/site/seo').then((rst) => {
+    get('/admin/site/seo').then((rst) => {
       setFieldsValue(rst)
       this.setState({item: rst})
     }).catch(message.error)
@@ -34,7 +34,7 @@ class Widget extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post('/api/admin/site/seo', values).then(() => {
+        post('/admin/site/seo', values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }

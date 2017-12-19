@@ -17,6 +17,157 @@ import (
 	"github.com/spf13/viper"
 )
 
+type fmSiteHome struct {
+	Favicon string `json:"favicon" binding:"required"`
+	Theme   string `json:"theme" binding:"required"`
+}
+
+func (p *Plugin) postAdminSiteHome(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteHome
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	db := p.DB.Begin()
+	for k, v := range map[string]string{
+		"site.favicon":    fm.Favicon,
+		"site.home.theme": fm.Theme,
+	} {
+		if err := p.Settings.Set(db, k, v, false); err != nil {
+			db.Rollback()
+			return nil, err
+		}
+	}
+	db.Commit()
+	return gin.H{}, nil
+}
+
+func (p *Plugin) getAdminSiteSMTP(l string, c *gin.Context) (interface{}, error) {
+	var smtp map[string]interface{}
+	if err := p.Settings.Get(p.DB, "site.smtp", &smtp); err == nil {
+		delete(smtp, "password")
+	} else {
+		smtp = map[string]interface{}{
+			"host": "localhost",
+			"port": 25,
+			"user": "whoami@change-me.com",
+		}
+	}
+	return smtp, nil
+}
+
+type fmSiteSMTP struct {
+	Host                 string `json:"host" binding:"required"`
+	Port                 int    `json:"port"`
+	User                 string `json:"user" binding:"email"`
+	Password             string `json:"password" binding:"required,min=6"`
+	PasswordConfirmation string `json:"passwordConfirmation" binding:"eqfield=Password"`
+}
+
+func (p *Plugin) postAdminSiteSMTP(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteSMTP
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	if err := p.Settings.Set(p.DB, "site.smtp", map[string]interface{}{
+		"host":     fm.Host,
+		"port":     fm.Port,
+		"user":     fm.User,
+		"password": fm.Password,
+	}, true); err != nil {
+		return nil, err
+	}
+	return gin.H{}, nil
+}
+
+func (p *Plugin) getAdminSiteSeo(l string, c *gin.Context) (interface{}, error) {
+	var googleVerifyCode string
+	p.Settings.Get(p.DB, "site.google.verify.code", &googleVerifyCode)
+	var baiduVerifyCode string
+	p.Settings.Get(p.DB, "site.baidu.verify.code", &baiduVerifyCode)
+	return gin.H{
+		"googleVerifyCode": googleVerifyCode,
+		"baiduVerifyCode":  baiduVerifyCode,
+	}, nil
+}
+
+type fmSiteSeo struct {
+	GoogleVerifyCode string `json:"googleVerifyCode" binding:"required"`
+	BaiduVerifyCode  string `json:"baiduVerifyCode" binding:"required"`
+}
+
+func (p *Plugin) postAdminSiteSeo(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteSeo
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	db := p.DB.Begin()
+	for k, v := range map[string]string{
+		"site.google.verify.code": fm.GoogleVerifyCode,
+		"site.baidu.verify.code":  fm.BaiduVerifyCode,
+	} {
+		if err := p.Settings.Set(db, k, v, false); err != nil {
+			db.Rollback()
+			return nil, err
+		}
+	}
+	db.Commit()
+	return gin.H{}, nil
+}
+
+type fmSiteAuthor struct {
+	Email string `json:"email" binding:"email"`
+	Name  string `json:"name" binding:"required"`
+}
+
+func (p *Plugin) postAdminSiteAuthor(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteAuthor
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	db := p.DB.Begin()
+	for k, v := range map[string]string{
+		"email": fm.Email,
+		"name":  fm.Name,
+	} {
+		if err := p.Settings.Set(db, "site.author."+k, v, false); err != nil {
+			db.Rollback()
+			return nil, err
+		}
+	}
+	db.Commit()
+	return gin.H{}, nil
+}
+
+type fmSiteInfo struct {
+	Title       string `json:"title" binding:"required"`
+	Subhead     string `json:"subhead" binding:"required"`
+	Keywords    string `json:"keywords" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	Copyright   string `json:"copyright" binding:"required"`
+}
+
+func (p *Plugin) postAdminSiteInfo(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteInfo
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	db := p.DB.Begin()
+	for k, v := range map[string]string{
+		"title":       fm.Title,
+		"subhead":     fm.Subhead,
+		"keywords":    fm.Keywords,
+		"description": fm.Description,
+		"copyright":   fm.Copyright,
+	} {
+		if err := p.I18n.Set(db, l, "site."+k, v); err != nil {
+			db.Rollback()
+			return nil, err
+		}
+	}
+	db.Commit()
+	return gin.H{}, nil
+}
+
 func (p *Plugin) getAdminSiteStatus(l string, c *gin.Context) (interface{}, error) {
 	ret := gin.H{
 		"jobber": p.Jobber.Status(),

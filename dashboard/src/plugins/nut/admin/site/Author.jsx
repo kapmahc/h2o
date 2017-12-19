@@ -14,14 +14,14 @@ const FormItem = Form.Item
 class Widget extends Component {
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    get('/api/site/info').then((rst) => setFieldsValue(rst.author)).catch(message.error)
+    get('/layout').then((rst) => setFieldsValue(rst.author)).catch(message.error)
   }
   handleSubmit = (e) => {
     const {formatMessage} = this.props.intl
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post('/api/admin/site/author', values).then(() => {
+        post('/admin/site/author', values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }
