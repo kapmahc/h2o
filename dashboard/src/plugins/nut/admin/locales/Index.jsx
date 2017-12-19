@@ -54,7 +54,7 @@ class Widget extends Component {
                 title: 'Action',
                 key: 'action',
                 render: (text, record) => (<span>
-                  <Button onClick={(e) => push(`/admin/locales/edit/${record.code}`)} shape="circle" icon="edit"/>
+                  <Button onClick={(e) => push(`/admin/locales/edit/${record.id}`)} shape="circle" icon="edit"/>
                   <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
                     <Button type="danger" shape="circle" icon="delete"/>
                   </Popconfirm>

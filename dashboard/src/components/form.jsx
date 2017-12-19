@@ -70,7 +70,7 @@ export class Quill extends Component {
           }
         ],
         [
-          'link', 'video'
+          'link', 'image', 'video'
         ],
         ['clean']
       ],

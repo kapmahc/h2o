@@ -88,7 +88,7 @@ class Widget extends Component {
                 })(<Input/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.friend-link.home" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.href" />} hasFeedback={true}>
               {
                 getFieldDecorator('home', {
                   rules: [
@@ -100,7 +100,7 @@ class Widget extends Component {
                 })(<Input/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.attributes.friend-link.logo" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.logo" />} hasFeedback={true}>
               {
                 getFieldDecorator('logo', {
                   rules: [

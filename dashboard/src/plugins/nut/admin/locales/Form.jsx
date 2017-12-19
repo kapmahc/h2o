@@ -14,9 +14,9 @@ const FormItem = Form.Item
 class Widget extends Component {
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    const {code} = this.props.match.params
-    if (code) {
-      get(`/admin/locales/${code}`).then(setFieldsValue).catch(message.error)
+    const {id} = this.props.match.params
+    if (id) {
+      get(`/admin/locales/${id}`).then((rst) => setFieldsValue({code: rst.code, message: rst.message})).catch(message.error)
     }
   }
   handleSubmit = (e) => {

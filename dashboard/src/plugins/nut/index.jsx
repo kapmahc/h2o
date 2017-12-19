@@ -101,7 +101,7 @@ const routes = [
     AdminIndexLeaveWords
   } />),
 
-  (< Route key = "nut.admin.locales.edit" path = "/admin/locales/edit/:code" component = {
+  (< Route key = "nut.admin.locales.edit" path = "/admin/locales/edit/:id" component = {
     AdminFormLocale
   } />),
   (< Route key = "nut.admin.locales.new" path = "/admin/locales/new" component = {
