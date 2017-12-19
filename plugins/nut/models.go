@@ -124,7 +124,6 @@ func (p Log) TableName() string {
 // Policy policy
 type Policy struct {
 	ID        uint `gorm:"primary_key"`
-	Begin     time.Time
 	StartUp   time.Time
 	ShutDown  time.Time
 	User      User

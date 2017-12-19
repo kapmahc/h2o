@@ -157,7 +157,7 @@ func (p *Dao) GetRole(db *gorm.DB, name string, rty string, rid uint) (*Role, er
 }
 
 //Deny deny permission
-func (p *Dao) Deny(db *gorm.DB, role uint, user uint) error {
+func (p *Dao) Deny(db *gorm.DB, user uint, role uint) error {
 	err := db.Where("role_id = ? AND user_id = ?", role, user).Delete(Policy{}).Error
 	return err
 }
@@ -183,28 +183,29 @@ func (p *Dao) Deny(db *gorm.DB, role uint, user uint) error {
 // 	return roles, nil
 // }
 
-// //Allow allow permission
-// func (p *Dao) Allow(db *gorm.DB, user uint, role uint, years, months, days int) error {
-// 	begin := time.Now()
-// 	end := begin.AddDate(years, months, days)
-//
-// 	var pm Policy
-// 	err := db.Where("role_id = ? AND user_id = ?", role, user).First(&pm).Error
-// 	if err == nil {
-// 		err = db.Model(&pm).
-// 			Where("id = ?", pm.ID).Updates(map[string]interface{}{
-// 			"start_up":  begin,
-// 			"shut_down": end,
-// 		}).Error
-// 	} else if err == gorm.ErrRecordNotFound {
-// 		pm.UserID = user
-// 		pm.RoleID = role
-// 		pm.StartUp = begin
-// 		pm.ShutDown = end
-// 		err = db.Create(&pm).Error
-// 	}
-// 	return err
-// }
+//Allow allow permission
+func (p *Dao) Allow(db *gorm.DB, user uint, role uint, years, months, days int) error {
+	begin := time.Now()
+	end := begin.AddDate(years, months, days)
+
+	var pm Policy
+	err := db.Where("role_id = ? AND user_id = ?", role, user).First(&pm).Error
+	if err == nil {
+		err = db.Model(&pm).
+			Where("id = ?", pm.ID).Updates(map[string]interface{}{
+			"start_up":  begin,
+			"shut_down": end,
+		}).Error
+	} else if err == gorm.ErrRecordNotFound {
+		pm.UserID = user
+		pm.RoleID = role
+		pm.StartUp = begin
+		pm.ShutDown = end
+		err = db.Create(&pm).Error
+	}
+	return err
+}
+
 //
 // // ListUserByResource list users by resource
 // func (p *Dao) ListUserByResource(role, rty string, rid uint) ([]uint, error) {

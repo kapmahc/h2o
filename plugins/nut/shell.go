@@ -33,6 +33,106 @@ const (
 func (p *Plugin) Shell() []cli.Command {
 	return []cli.Command{
 		{
+			Name:    "users",
+			Aliases: []string{"us"},
+			Usage:   "users operation",
+			Subcommands: []cli.Command{
+				{
+					Name:    "list",
+					Aliases: []string{"l"},
+					Usage:   "list all users",
+					Action: web.InjectAction(func(c *cli.Context) error {
+						var items []User
+						if err := p.DB.Select([]string{"uid", "email", "name"}).
+							Order("last_sign_in_at DESC").
+							Find(&items).Error; err != nil {
+							return err
+						}
+						f := "%-36s %s<%s>\n"
+						fmt.Printf(f, "UID", "NAME", "EMAIL")
+						for _, it := range items {
+							fmt.Printf(f, it.UID, it.Name, it.Email)
+						}
+						return nil
+					}),
+				},
+				{
+					Name:    "role",
+					Aliases: []string{"r"},
+					Usage:   "apply/deny role to user",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "name, n",
+							Usage: "role's name",
+						},
+						cli.StringFlag{
+							Name:  "user, u",
+							Usage: "user's uid",
+						},
+						cli.IntFlag{
+							Name:  "years, y",
+							Value: 10,
+							Usage: "years",
+						},
+						cli.BoolFlag{
+							Name:  "deny, d",
+							Usage: "deny",
+						},
+					},
+					Action: web.InjectAction(func(c *cli.Context) error {
+						deny := c.Bool("deny")
+						years := c.Int("years")
+						name := c.String("name")
+						uid := c.String("user")
+						if name == "" {
+							cli.ShowSubcommandHelp(c)
+							return nil
+						}
+						if uid == "" {
+							cli.ShowSubcommandHelp(c)
+							return nil
+						}
+
+						user, err := p.Dao.GetUserByUID(p.DB, uid)
+						if err != nil {
+							return err
+						}
+						db := p.DB.Begin()
+						role, err := p.Dao.GetRole(db, name, DefaultResourceType, DefaultResourceID)
+						if err != nil {
+							db.Rollback()
+							return err
+						}
+						if deny {
+							err = p.Dao.Deny(db, user.ID, role.ID)
+							if err == nil {
+								err = db.Create(&Log{
+									UserID:  user.ID,
+									IP:      "0.0.0.0",
+									Message: fmt.Sprintf("deny role %s", name),
+								}).Error
+							}
+						} else {
+							err = p.Dao.Allow(db, user.ID, role.ID, years, 0, 0)
+							if err == nil {
+								err = db.Create(&Log{
+									UserID:  user.ID,
+									IP:      "0.0.0.0",
+									Message: fmt.Sprintf("allow role %s", name),
+								}).Error
+							}
+						}
+						if err != nil {
+							db.Rollback()
+							return err
+						}
+						db.Commit()
+						return nil
+					}),
+				},
+			},
+		},
+		{
 			Name:    "generate",
 			Aliases: []string{"g"},
 			Usage:   "generate file template",

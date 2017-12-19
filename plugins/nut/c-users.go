@@ -83,7 +83,7 @@ func (p *Plugin) postUsersChangePassword(l string, c *gin.Context) (interface{},
 func (p *Plugin) getUsersLogs(l string, c *gin.Context) (interface{}, error) {
 	user := c.MustGet(CurrentUser).(*User)
 	var items []Log
-	if err := p.DB.Where("user_id = ?", user.ID).Find(&items).Error; err != nil {
+	if err := p.DB.Where("user_id = ?", user.ID).Order("created_at DESC").Find(&items).Error; err != nil {
 		return nil, err
 	}
 	return items, nil

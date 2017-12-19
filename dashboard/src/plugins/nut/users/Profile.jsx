@@ -14,17 +14,14 @@ const FormItem = Form.Item
 class Widget extends Component {
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    const {user} = this.props
-    if (user.uid) {
-      get('/api/users/profile').then((rst) => setFieldsValue({name: rst.name, email: rst.email})).catch(message.error)
-    }
+    get('/users/profile').then((rst) => setFieldsValue({name: rst.name, email: rst.email, logo: rst.logo})).catch(message.error)
   }
   handleSubmit = (e) => {
     const {formatMessage} = this.props.intl
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post('/api/users/profile', values).then(() => {
+        post('/users/profile', values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }
@@ -50,6 +47,18 @@ class Widget extends Component {
             <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.username" />} hasFeedback={true}>
               {
                 getFieldDecorator('name', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({id: "errors.empty"})
+                    }
+                  ]
+                })(<Input/>)
+              }
+            </FormItem>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.logo" />} hasFeedback={true}>
+              {
+                getFieldDecorator('logo', {
                   rules: [
                     {
                       required: true,
