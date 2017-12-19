@@ -17,6 +17,7 @@ type Plugin struct {
 	Jwt      *web.Jwt       `inject:""`
 	Jobber   *web.Jobber    `inject:""`
 	Settings *web.Settings  `inject:""`
+	Security *web.Security  `inject:""`
 	Router   *gin.Engine    `inject:""`
 	DB       *gorm.DB       `inject:""`
 	Render   *render.Render `inject:""`

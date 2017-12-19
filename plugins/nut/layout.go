@@ -61,7 +61,7 @@ func (p *Layout) MustSignInMiddleware(c *gin.Context) {
 	if _, ok := c.Get(CurrentUser); ok {
 		return
 	}
-	c.String(http.StatusUnauthorized, p.I18n.T(l, "errors.not-allow"))
+	c.String(http.StatusForbidden, p.I18n.T(l, "errors.not-allow"))
 	c.Abort()
 }
 
@@ -71,7 +71,7 @@ func (p *Layout) MustAdminMiddleware(c *gin.Context) {
 	if is, ok := c.Get(IsAdmin); ok && is.(bool) {
 		return
 	}
-	c.String(http.StatusUnauthorized, p.I18n.T(l, "errors.not-allow"))
+	c.String(http.StatusForbidden, p.I18n.T(l, "errors.not-allow"))
 	c.Abort()
 }
 
@@ -79,7 +79,7 @@ func (p *Layout) MustAdminMiddleware(c *gin.Context) {
 func (p *Layout) CurrentUserMiddleware(c *gin.Context) {
 	cm, err := p.Jwt.Parse(c.Request)
 	if err != nil {
-		log.Debug(err)
+		log.Error(err)
 		return
 	}
 	uid, ok := cm.Get(UID).(string)

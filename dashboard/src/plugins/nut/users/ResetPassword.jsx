@@ -19,8 +19,8 @@ class Widget extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.token = match.params.token
-        post('/api/users/reset-password', values).then(() => {
-          message.info(formatMessage({id: "nut.users.reset-password.success"}))
+        post('/users/reset-password', values).then(() => {
+          message.info(formatMessage({id: "nut.emails.user.reset-password.success"}))
           push('/users/sign-in')
         }).catch(message.error);
       }
@@ -63,7 +63,7 @@ class Widget extends Component {
                 })(<Input type="password"/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.password-confirmation" />} hasFeedback={true}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.passwordConfirmation" />} hasFeedback={true}>
               {
                 getFieldDecorator('passwordConfirmation', {
                   rules: [

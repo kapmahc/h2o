@@ -147,29 +147,6 @@ func (p *Plugin) openRender(theme string) *render.Render {
 	})
 }
 
-func (p *Plugin) openRouter(db *gorm.DB, theme string) (*gin.Engine, error) {
-	if web.MODE() == web.PRODUCTION {
-		gin.SetMode(gin.ReleaseMode)
-	}
-	rt := gin.Default()
-	i18m, err := p.I18n.Middleware(db)
-	if err != nil {
-		return nil, err
-	}
-	rt.Use(i18m)
-	rt.Use(p.Layout.CurrentUserMiddleware)
-
-	if web.MODE() != web.PRODUCTION {
-		for k, v := range map[string]string{
-			"3rd":    "node_modules",
-			"assets": path.Join("themes", theme, "assets"),
-		} {
-			rt.Static("/"+k+"/", v)
-		}
-	}
-	return rt, nil
-}
-
 func (p *Plugin) openRedis() *redis.Pool {
 	return &redis.Pool{
 		MaxIdle:     3,
@@ -223,14 +200,13 @@ func (p *Plugin) Init(g *inject.Graph) error {
 	}
 	redis := p.openRedis()
 
-	rt, err := p.openRouter(db, theme)
+	s3, err := p.openS3()
 	if err != nil {
 		return err
 	}
 
-	s3, err := p.openS3()
-	if err != nil {
-		return err
+	if web.MODE() == web.PRODUCTION {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	return g.Provide(
@@ -241,7 +217,7 @@ func (p *Plugin) Init(g *inject.Graph) error {
 		&inject.Object{Value: s3},
 		&inject.Object{Value: web.NewCache("cache://")},
 		&inject.Object{Value: web.NewJwt(secret, crypto.SigningMethodHS512)},
-		&inject.Object{Value: rt},
+		&inject.Object{Value: gin.Default()},
 		&inject.Object{Value: p.openRender(theme)},
 		&inject.Object{Value: sessions.NewCookieStore(secret)},
 	)

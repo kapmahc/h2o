@@ -14,12 +14,106 @@ import (
 	gomail "gopkg.in/gomail.v2"
 )
 
-func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) {
-	return nil, nil
-
+func (p *Plugin) getUserProfile(l string, c *gin.Context) (interface{}, error) {
+	user := c.MustGet(CurrentUser).(*User)
+	return gin.H{
+		"name":  user.Name,
+		"email": user.Email,
+		"logo":  user.Logo,
+	}, nil
 }
 
-type fmUsersSignUp struct {
+type fmUserProfile struct {
+	Name string `json:"name" binding:"required"`
+	Logo string `json:"logo" binding:"required"`
+}
+
+func (p *Plugin) postUserProfile(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUserProfile
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	user := c.MustGet(CurrentUser).(*User)
+	if err := p.DB.Model(user).Updates(map[string]interface{}{
+		"name": fm.Name,
+		"logo": fm.Logo,
+	}).Error; err != nil {
+		return nil, err
+	}
+	return gin.H{}, nil
+}
+
+type fmUserChangePassword struct {
+	CurrentPassword      string `json:"currentPassword" binding:"required"`
+	NewPassword          string `json:"newPassword" binding:"required,min=6"`
+	PasswordConfirmation string `json:"passwordConfirmation" binding:"eqfield=NewPassword"`
+}
+
+func (p *Plugin) postUserChangePassword(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUserChangePassword
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	user := c.MustGet(CurrentUser).(*User)
+	pwd, err := p.Security.Hash([]byte(fm.NewPassword))
+	if err != nil {
+		return nil, err
+	}
+	db := p.DB.Begin()
+	if err := db.Model(user).Update("password", pwd).Error; err != nil {
+		db.Rollback()
+		return nil, err
+	}
+	if err := p.Dao.AddLog(db, user.ID, c.ClientIP(), l, "nut.logs.user.change-password"); err != nil {
+		db.Rollback()
+		return nil, err
+	}
+	db.Commit()
+	return gin.H{}, nil
+}
+
+func (p *Plugin) getUserLogs(l string, c *gin.Context) (interface{}, error) {
+	user := c.MustGet(CurrentUser).(*User)
+	var items []Log
+	if err := p.DB.Where("user_id = ?", user.ID).Find(&items).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+type fmUserSignIn struct {
+	Email    string `json:"email" binding:"email"`
+	Password string `json:"password" binding:"required"`
+}
+
+func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUserSignIn
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	user, err := p.Dao.GetUserByEmail(p.DB, fm.Email)
+	if err != nil {
+		return nil, err
+	}
+	if !p.Security.Check(user.Password, []byte(fm.Password)) {
+		return nil, p.I18n.E(l, "nut.errors.user.email-password-not-match")
+	}
+	if !user.IsConfirm() {
+		p.I18n.E(l, "nut.errors.user.not-confirm")
+	}
+	if user.IsLock() {
+		return nil, p.I18n.E(l, "nut.errors.user.is-lock")
+	}
+	cm := make(jws.Claims)
+	cm.Set(UID, user.UID)
+	tkn, err := p.Jwt.Sum(cm, time.Hour*24)
+	if err != nil {
+		return nil, err
+	}
+	return gin.H{"token": string(tkn)}, nil
+}
+
+type fmUserSignUp struct {
 	Name                 string `json:"name" binding:"required"`
 	Email                string `json:"email" binding:"email"`
 	Password             string `json:"password" binding:"required,min=6"`
@@ -28,7 +122,7 @@ type fmUsersSignUp struct {
 
 func (p *Plugin) postUsersSignUp(l string, c *gin.Context) (interface{}, error) {
 	log.Printf("%+v", c.Request.Header)
-	var fm fmUsersSignUp
+	var fm fmUserSignUp
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
@@ -50,12 +144,12 @@ func (p *Plugin) postUsersSignUp(l string, c *gin.Context) (interface{}, error) 
 	return nil, nil
 }
 
-type fmUsersEmail struct {
+type fmUserEmail struct {
 	Email string `json:"email" binding:"email"`
 }
 
 func (p *Plugin) postUsersConfirm(l string, c *gin.Context) (interface{}, error) {
-	var fm fmUsersEmail
+	var fm fmUserEmail
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
@@ -75,7 +169,7 @@ func (p *Plugin) postUsersConfirm(l string, c *gin.Context) (interface{}, error)
 }
 
 func (p *Plugin) postUsersUnlock(l string, c *gin.Context) (interface{}, error) {
-	var fm fmUsersEmail
+	var fm fmUserEmail
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
@@ -95,7 +189,7 @@ func (p *Plugin) postUsersUnlock(l string, c *gin.Context) (interface{}, error) 
 }
 
 func (p *Plugin) postUsersForgotPassword(l string, c *gin.Context) (interface{}, error) {
-	var fm fmUsersEmail
+	var fm fmUserEmail
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
@@ -107,6 +201,47 @@ func (p *Plugin) postUsersForgotPassword(l string, c *gin.Context) (interface{},
 	if err := p.sendEmail(c, l, user, actResetPassword); err != nil {
 		log.Error(err)
 	}
+
+	return gin.H{}, nil
+}
+
+type fmUserResetPassword struct {
+	Token                string `json:"token" binding:"required"`
+	Password             string `json:"password" binding:"required,min=6"`
+	PasswordConfirmation string `json:"passwordConfirmation" binding:"eqfield=Password"`
+}
+
+func (p *Plugin) postUsersResetPassword(l string, c *gin.Context) (interface{}, error) {
+	var fm fmUserResetPassword
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	cm, err := p.Jwt.Validate([]byte(fm.Token))
+	if err != nil {
+		return nil, err
+	}
+	if cm.Get("act").(string) != actResetPassword {
+		return nil, p.I18n.E(l, "errors.bad-action")
+	}
+	user, err := p.Dao.GetUserByUID(p.DB, cm.Get("uid").(string))
+	if err != nil {
+		return nil, err
+	}
+	pwd, err := p.Security.Hash([]byte(fm.Password))
+	if err != nil {
+		return nil, err
+	}
+
+	tx := p.DB.Begin()
+	if err = tx.Model(user).Update("password", pwd).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.user.reset-password"); err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	tx.Commit()
 
 	return gin.H{}, nil
 }
@@ -128,18 +263,17 @@ func (p *Plugin) getUsersConfirmToken(l string, c *gin.Context) error {
 	}
 
 	tx := p.DB.Begin()
-	if err = tx.Model(user).Update("confirm_at", time.Now()).Error; err != nil {
+	if err = tx.Model(user).Update("confirmed_at", time.Now()).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
-	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.confirm"); err != nil {
+	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.user.confirm"); err != nil {
 		tx.Rollback()
 		return err
 	}
-
 	tx.Commit()
 	s := p.Layout.Session(c)
-	s.AddFlash(p.I18n.T(l, "nut.users.confirm.success"), NOTICE)
+	s.AddFlash(p.I18n.T(l, "nut.emails.user.confirm.success"), NOTICE)
 	p.Layout.Save(c, s)
 
 	return nil
@@ -158,7 +292,7 @@ func (p *Plugin) getUsersUnlockToken(l string, c *gin.Context) error {
 		return err
 	}
 	if !user.IsLock() {
-		return p.I18n.E(l, "nut.errors.user-not-lock")
+		return p.I18n.E(l, "nut.errors.user.not-lock")
 	}
 
 	tx := p.DB.Begin()
@@ -174,7 +308,7 @@ func (p *Plugin) getUsersUnlockToken(l string, c *gin.Context) error {
 	tx.Commit()
 
 	s := p.Layout.Session(c)
-	s.AddFlash(p.I18n.T(l, "nut.users.unlock.success"), NOTICE)
+	s.AddFlash(p.I18n.T(l, "nut.emails.user.unlock.success"), NOTICE)
 	p.Layout.Save(c, s)
 
 	return nil

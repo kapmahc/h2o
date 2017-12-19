@@ -18,6 +18,16 @@
   PATH="$NPM_PACKAGES/bin:$PATH"
   ```
 
+- install atom editor
+
+  ```
+  sudo pacman -S --needed gconf base-devel git nodejs npm libsecret python2 libx11 libxkbfile
+  git clone --depth=1 https://github.com/atom/atom.git
+  cd atom
+  script/bootstrap
+  script/build --compress-artifacts
+  ```
+
 ## for ant design
 
 - change backend server(add to file .env.development.local)
