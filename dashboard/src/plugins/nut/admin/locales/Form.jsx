@@ -16,7 +16,7 @@ class Widget extends Component {
     const {setFieldsValue} = this.props.form
     const {code} = this.props.match.params
     if (code) {
-      get(`/api/admin/locales/${code}`).then(setFieldsValue).catch(message.error)
+      get(`/admin/locales/${code}`).then(setFieldsValue).catch(message.error)
     }
   }
   handleSubmit = (e) => {
@@ -25,7 +25,7 @@ class Widget extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        post('/api/admin/locales', values).then(() => {
+        post('/admin/locales', values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
           push('/admin/locales')
         }).catch(message.error);

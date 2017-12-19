@@ -18,7 +18,7 @@ class Widget extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         values.type = 'text'
-        post('/api/leave-words', values).then(() => {
+        post('/leave-words', values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }

@@ -19,13 +19,13 @@ class Widget extends Component {
     items: []
   }
   componentDidMount() {
-    get('/api/admin/friend-links').then((rst) => {
+    get('/admin/friend-links').then((rst) => {
       this.setState({items: rst})
     }).catch(message.error);
   }
   handleRemove = (id) => {
     const {formatMessage} = this.props.intl
-    _delete(`/api/admin/friend-links/${id}`).then((rst) => {
+    _delete(`/admin/friend-links/${id}`).then((rst) => {
       message.success(formatMessage({id: 'helpers.success'}))
       var items = this.state.items.filter((it) => it.id !== id)
       this.setState({items})

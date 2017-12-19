@@ -29,7 +29,7 @@ class Widget extends Component {
     const {setFieldsValue} = this.props.form
     const {id} = this.props.match.params
     if (id) {
-      get(`/api/forum/articles/${id}`).then((rst) => {
+      get(`/forum/articles/${id}`).then((rst) => {
         setFieldsValue({title: rst.title})
         this.setState({
           body: rst.body,
@@ -39,7 +39,7 @@ class Widget extends Component {
         })
       }).catch(message.error)
     }
-    get('/api/forum/tags').then((rst) => this.setState({
+    get('/forum/tags').then((rst) => this.setState({
       tagOptions: rst.map((t) => {
         return {label: t.name, value: t.id}
       })
@@ -60,8 +60,8 @@ class Widget extends Component {
       if (!err) {
         post(
           id
-          ? `/api/forum/articles/${id}`
-          : '/api/forum/articles',
+          ? `/forum/articles/${id}`
+          : '/forum/articles',
         Object.assign({}, values, {
           type: 'html',
           body: this.state.body,

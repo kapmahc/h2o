@@ -125,7 +125,7 @@ CREATE INDEX idx_links_lang ON links (lang);
 CREATE TABLE cards (
   id BIGSERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
-  summary VARCHAR(2048) NOT NULL,
+  summary TEXT NOT NULL,
   type VARCHAR(8) NOT NULL DEFAULT 'markdown',
   action VARCHAR(32) NOT NULL,
   href VARCHAR(255) NOT NULL,

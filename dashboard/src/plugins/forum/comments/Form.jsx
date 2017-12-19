@@ -18,7 +18,7 @@ class Widget extends Component {
   componentDidMount() {
     const {id} = this.props.match.params
     if (id) {
-      get(`/api/forum/comments/${id}`).then((rst) => {
+      get(`/forum/comments/${id}`).then((rst) => {
         this.setState({body: rst.body})
       }).catch(message.error)
     }
@@ -35,8 +35,8 @@ class Widget extends Component {
       if (!err) {
         post(
           id
-          ? `/api/forum/comments/${id}`
-          : `/api/forum/comments?articleId=${articleId}`,
+          ? `/forum/comments/${id}`
+          : `/forum/comments?articleId=${articleId}`,
         Object.assign({}, values, {
           type: 'html',
           body: this.state.body

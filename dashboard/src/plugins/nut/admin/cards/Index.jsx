@@ -13,20 +13,19 @@ import {push} from 'react-router-redux'
 
 import Layout from '../../../../layout'
 import {get, _delete} from '../../../../ajax'
-import {UEditor} from '../../../../components/form'
 
 class Widget extends Component {
   state = {
     items: []
   }
   componentDidMount() {
-    get('/api/admin/cards').then((rst) => {
+    get('/admin/cards').then((rst) => {
       this.setState({items: rst})
     }).catch(message.error);
   }
   handleRemove = (id) => {
     const {formatMessage} = this.props.intl
-    _delete(`/api/admin/cards/${id}`).then((rst) => {
+    _delete(`/admin/cards/${id}`).then((rst) => {
       message.success(formatMessage({id: 'helpers.success'}))
       var items = this.state.items.filter((it) => it.id !== id)
       this.setState({items})
@@ -58,7 +57,6 @@ class Widget extends Component {
                 key: 'action',
                 render: (text, record) => (<span>
                   <Button onClick={(e) => push(`/admin/cards/edit/${record.id}`)} shape="circle" icon="edit"/>
-                  <UEditor target={record.id} action="/cards/summary/edit"/>
                   <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
                     <Button type="danger" shape="circle" icon="delete"/>
                   </Popconfirm>

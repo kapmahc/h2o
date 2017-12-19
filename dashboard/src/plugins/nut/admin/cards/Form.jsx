@@ -27,7 +27,7 @@ class Widget extends Component {
     const {setFieldsValue} = this.props.form
     const {id} = this.props.match.params
     if (id) {
-      get(`/api/admin/cards/${id}`).then((rst) => {
+      get(`/admin/cards/${id}`).then((rst) => {
         setFieldsValue({
           title: rst.title,
           action: rst.action,
@@ -54,8 +54,8 @@ class Widget extends Component {
       if (!err) {
         post(
           id
-          ? `/api/admin/cards/${id}`
-          : '/api/admin/cards',
+          ? `/admin/cards/${id}`
+          : '/admin/cards',
         Object.assign({}, values, {
           sortOrder: parseInt(values.sortOrder, 10),
           type: 'html',

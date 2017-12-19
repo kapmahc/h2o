@@ -16,7 +16,7 @@ class Widget extends Component {
     const {setFieldsValue} = this.props.form
     const {id} = this.props.match.params
     if (id) {
-      get(`/api/forum/tags/${id}`).then((rst) => setFieldsValue({name: rst.name})).catch(message.error)
+      get(`/forum/tags/${id}`).then((rst) => setFieldsValue({name: rst.name})).catch(message.error)
     }
   }
   handleSubmit = (e) => {
@@ -28,8 +28,8 @@ class Widget extends Component {
       if (!err) {
         post(
           id
-          ? `/api/forum/tags/${id}`
-          : '/api/forum/tags',
+          ? `/forum/tags/${id}`
+          : '/forum/tags',
         values).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
           push('/forum/tags')

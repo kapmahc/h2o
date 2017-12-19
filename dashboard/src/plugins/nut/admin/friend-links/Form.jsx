@@ -24,7 +24,7 @@ class Widget extends Component {
     const {setFieldsValue} = this.props.form
     const {id} = this.props.match.params
     if (id) {
-      get(`/api/admin/friend-links/${id}`).then((rst) => setFieldsValue({title: rst.title, home: rst.home, logo: rst.logo, sortOrder: rst.sortOrder.toString()})).catch(message.error)
+      get(`/admin/friend-links/${id}`).then((rst) => setFieldsValue({title: rst.title, home: rst.home, logo: rst.logo, sortOrder: rst.sortOrder.toString()})).catch(message.error)
     } else {
       setFieldsValue({sortOrder: '0'})
     }
@@ -38,8 +38,8 @@ class Widget extends Component {
       if (!err) {
         post(
           id
-          ? `/api/admin/friend-links/${id}`
-          : '/api/admin/friend-links',
+          ? `/admin/friend-links/${id}`
+          : '/admin/friend-links',
         Object.assign({}, values, {
           sortOrder: parseInt(values.sortOrder, 10)
         })).then(() => {

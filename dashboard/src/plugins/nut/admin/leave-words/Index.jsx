@@ -19,13 +19,13 @@ class Widget extends Component {
     items: []
   }
   componentDidMount() {
-    get('/api/admin/leave-words').then((rst) => {
+    get('/admin/leave-words').then((rst) => {
       this.setState({items: rst})
     }).catch(message.error);
   }
   handleRemove = (id) => {
     const {formatMessage} = this.props.intl
-    _delete(`/api/admin/leave-words/${id}`).then((rst) => {
+    _delete(`/admin/leave-words/${id}`).then((rst) => {
       message.success(formatMessage({id: 'helpers.success'}))
       var items = this.state.items.filter((it) => it.id !== id)
       this.setState({items})
