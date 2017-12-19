@@ -14,7 +14,15 @@ import (
 	gomail "gopkg.in/gomail.v2"
 )
 
-func (p *Plugin) getUserProfile(l string, c *gin.Context) (interface{}, error) {
+func (p *Plugin) deleteUsersSignOut(l string, c *gin.Context) (interface{}, error) {
+	user := c.MustGet(CurrentUser).(*User)
+	if err := p.Dao.AddLog(p.DB, user.ID, c.ClientIP(), l, "nut.logs.user.sign-out"); err != nil {
+		return nil, err
+	}
+	return gin.H{}, nil
+}
+
+func (p *Plugin) getUsersProfile(l string, c *gin.Context) (interface{}, error) {
 	user := c.MustGet(CurrentUser).(*User)
 	return gin.H{
 		"name":  user.Name,
@@ -28,7 +36,7 @@ type fmUserProfile struct {
 	Logo string `json:"logo" binding:"required"`
 }
 
-func (p *Plugin) postUserProfile(l string, c *gin.Context) (interface{}, error) {
+func (p *Plugin) postUsersProfile(l string, c *gin.Context) (interface{}, error) {
 	var fm fmUserProfile
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
@@ -49,7 +57,7 @@ type fmUserChangePassword struct {
 	PasswordConfirmation string `json:"passwordConfirmation" binding:"eqfield=NewPassword"`
 }
 
-func (p *Plugin) postUserChangePassword(l string, c *gin.Context) (interface{}, error) {
+func (p *Plugin) postUsersChangePassword(l string, c *gin.Context) (interface{}, error) {
 	var fm fmUserChangePassword
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
@@ -72,7 +80,7 @@ func (p *Plugin) postUserChangePassword(l string, c *gin.Context) (interface{}, 
 	return gin.H{}, nil
 }
 
-func (p *Plugin) getUserLogs(l string, c *gin.Context) (interface{}, error) {
+func (p *Plugin) getUsersLogs(l string, c *gin.Context) (interface{}, error) {
 	user := c.MustGet(CurrentUser).(*User)
 	var items []Log
 	if err := p.DB.Where("user_id = ?", user.ID).Find(&items).Error; err != nil {

@@ -26,7 +26,7 @@ class Widget extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         post('/api/admin/locales', values).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           push('/admin/locales')
         }).catch(message.error);
       }

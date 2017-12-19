@@ -21,12 +21,12 @@ class Widget extends Component {
     switch (key) {
       case "/users/sign-out":
         confirm({
-          title: formatMessage({id: "messages.are-you-sure"}),
+          title: formatMessage({id: "helpers.are-you-sure"}),
           onOk() {
-            _delete('/api/users/sign-out').then(() => {
+            _delete('/users/sign-out').then(() => {
               signOut()
               push('/users/sign-in')
-              message.success(formatMessage({id: 'messages.success'}))
+              message.success(formatMessage({id: 'helpers.success'}))
             }).catch(message.error)
           }
         });

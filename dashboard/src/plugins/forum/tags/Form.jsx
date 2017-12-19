@@ -31,7 +31,7 @@ class Widget extends Component {
           ? `/api/forum/tags/${id}`
           : '/api/forum/tags',
         values).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           push('/forum/tags')
         }).catch(message.error);
       }

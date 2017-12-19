@@ -39,10 +39,11 @@ func (p *Plugin) Mount() error {
 	ung.GET("/confirm/:token", p.Layout.Redirect("/", p.getUsersConfirmToken))
 	ung.GET("/unlock/:token", p.Layout.Redirect("/", p.getUsersUnlockToken))
 	umg := p.Router.Group("/users", p.Layout.MustSignInMiddleware)
-	umg.GET("/logs", p.Layout.JSON(p.getUserLogs))
-	umg.GET("/profile", p.Layout.JSON(p.getUserProfile))
-	umg.POST("/profile", p.Layout.JSON(p.postUserProfile))
-	umg.POST("/change-password", p.Layout.JSON(p.postUserChangePassword))
+	umg.GET("/logs", p.Layout.JSON(p.getUsersLogs))
+	umg.GET("/profile", p.Layout.JSON(p.getUsersProfile))
+	umg.POST("/profile", p.Layout.JSON(p.postUsersProfile))
+	umg.POST("/change-password", p.Layout.JSON(p.postUsersChangePassword))
+	umg.DELETE("/sign-out", p.Layout.JSON(p.deleteUsersSignOut))
 
 	p.Jobber.Register(SendEmailJob, p.doSendEmail)
 	return nil

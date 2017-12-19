@@ -26,7 +26,7 @@ class Widget extends Component {
   handleRemove = (id) => {
     const {formatMessage} = this.props.intl
     _delete(`/api/admin/leave-words/${id}`).then((rst) => {
-      message.success(formatMessage({id: 'messages.success'}))
+      message.success(formatMessage({id: 'helpers.success'}))
       var items = this.state.items.filter((it) => it.id !== id)
       this.setState({items})
     }).catch(message.error)
@@ -55,7 +55,7 @@ class Widget extends Component {
                 title: 'Action',
                 key: 'action',
                 render: (text, record) => (<span>
-                  <Popconfirm title={<FormattedMessage id = "messages.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
+                  <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
                     <Button type="danger" shape="circle" icon="delete"/>
                   </Popconfirm>
                 </span>)

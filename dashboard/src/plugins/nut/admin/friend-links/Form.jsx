@@ -43,7 +43,7 @@ class Widget extends Component {
         Object.assign({}, values, {
           sortOrder: parseInt(values.sortOrder, 10)
         })).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           push('/admin/friend-links')
         }).catch(message.error);
       }

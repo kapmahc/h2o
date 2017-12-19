@@ -19,7 +19,7 @@ class Widget extends Component {
       if (!err) {
         values.type = 'text'
         post('/api/leave-words', values).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }
     });

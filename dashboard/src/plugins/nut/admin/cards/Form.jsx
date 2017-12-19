@@ -61,7 +61,7 @@ class Widget extends Component {
           type: 'html',
           summary: this.state.summary
         })).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           push('/admin/cards')
         }).catch(message.error);
       }

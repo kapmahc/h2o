@@ -67,7 +67,7 @@ class Widget extends Component {
           body: this.state.body,
           tags: this.state.tagValues
         })).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           push('/forum/articles')
         }).catch(message.error);
       }

@@ -32,7 +32,7 @@ class Widget extends Component {
         post('/api/admin/site/smtp', Object.assign({}, values, {
           port: parseInt(values.port, 10)
         })).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
         }).catch(message.error);
       }
     });

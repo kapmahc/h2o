@@ -41,7 +41,7 @@ class Widget extends Component {
           type: 'html',
           body: this.state.body
         })).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           push('/forum/comments')
         }).catch(message.error);
       }

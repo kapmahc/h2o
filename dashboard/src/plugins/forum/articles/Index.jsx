@@ -28,7 +28,7 @@ class Widget extends Component {
   handleRemove = (id) => {
     const {formatMessage} = this.props.intl
     _delete(`/api/forum/articles/${id}`).then((rst) => {
-      message.success(formatMessage({id: 'messages.success'}))
+      message.success(formatMessage({id: 'helpers.success'}))
       var items = this.state.items.filter((it) => it.id !== id)
       this.setState({items})
     }).catch(message.error)
@@ -55,7 +55,7 @@ class Widget extends Component {
                   <CopyToClipboard text={`/forum/articles/show/${record.id}`}><Button shape="circle" icon="copy"/></CopyToClipboard>
                   <Button onClick={(e) => push(`/forum/articles/edit/${record.id}`)} shape="circle" icon="edit"/>
                   <UEditor target={record.id} action="/forum/articles/body/edit"/>
-                  <Popconfirm title={<FormattedMessage id = "messages.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
+                  <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
                     <Button type="danger" shape="circle" icon="delete"/>
                   </Popconfirm>
                 </span>)

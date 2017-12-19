@@ -17,7 +17,7 @@ class Widget extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         post('/api/users/change-password', values).then(() => {
-          message.success(formatMessage({id: "messages.success"}))
+          message.success(formatMessage({id: "helpers.success"}))
           setFieldsValue({currentPassword: "", newPassword: "", passwordConfirmation: ""})
         }).catch(message.error);
       }

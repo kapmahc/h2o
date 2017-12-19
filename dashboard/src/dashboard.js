@@ -4,7 +4,7 @@ const menus = (user) => {
     // sign in?
     items.push({
       icon: "user",
-      label: "nut.personal.title",
+      label: "nut.self.title",
       key: "personal",
       items: [
         {
@@ -25,7 +25,7 @@ const menus = (user) => {
 
     var forum = {
       icon: "tablet",
-      label: "forum.title",
+      label: "forum.dashboard.title",
       key: "forum",
       items: [
         {
@@ -86,8 +86,8 @@ const menus = (user) => {
       })
     }
     items.push(forum)
-    items.push({icon: "notification", label: "survey.title", key: "survey", items: []})
-    items.push({icon: "shopping-cart", label: "shop.title", key: "shop", items: []})
+    items.push({icon: "notification", label: "survey.dashboard.title", key: "survey", items: []})
+    items.push({icon: "shopping-cart", label: "shop.dashboard.title", key: "shop", items: []})
 
     items.push({icon: "logout", label: "nut.users.sign-out.title", key: "/users/sign-out"})
   } else {
