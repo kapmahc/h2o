@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {Row, Col, Collapse, Table, message} from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import PropTypes from 'prop-types'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import {docco} from 'react-syntax-highlighter/styles/hljs'
 
 import Layout from '../../../../layout'
 import {get} from '../../../../ajax'
@@ -29,14 +31,14 @@ Hash.propTypes = {
 class Widget extends Component {
   state = {
     os: {},
-    postgresql: {},
-    redis: [],
+    database: {},
+    redis: "",
     routes: [],
     jobber: {},
     network: {}
   }
   componentDidMount() {
-    get('/api/admin/site/status').then((rst) => {
+    get('/admin/site/status').then((rst) => {
       this.setState(rst)
     }).catch(message.error);
   }
@@ -45,7 +47,7 @@ class Widget extends Component {
       redis,
       os,
       network,
-      postgresql,
+      database,
       jobber,
       routes
     } = this.state
@@ -67,18 +69,18 @@ class Widget extends Component {
             <Panel key="network" header={(<FormattedMessage id="nut.admin.site.status.network"/>)}>
               <Hash item={network}/>
             </Panel>
-            <Panel key="postgresql" header={(<FormattedMessage id="nut.admin.site.status.postgresql"/>)}>
-              <Hash item={postgresql}/>
+            <Panel key="database" header={(<FormattedMessage id="nut.admin.site.status.database"/>)}>
+              <Hash item={database}/>
             </Panel>
             <Panel key="jobber" header={(<FormattedMessage id="nut.admin.site.status.jobber"/>)}>
               <Hash item={jobber}/>
             </Panel>
             <Panel key="redis" header={(<FormattedMessage id="nut.admin.site.status.redis"/>)}>
-              {redis.map((v, k) => (<div key={k}>{v}</div>))}
+              <SyntaxHighlighter style={docco}>{redis}</SyntaxHighlighter>
             </Panel>
             <Panel header={(<FormattedMessage id='nut.admin.site.status.routes'/>)} key="routes">
               <Table rowKey="id" dataSource={routes.map((v, k) => {
-                  return Object.assign({}, v, {id: k})
+                  return {id: k, method: v.Method, path: v.Path}
                 })} columns={[
                   {
                     title: 'METHOD',

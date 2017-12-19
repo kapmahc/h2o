@@ -3,6 +3,7 @@ package nut
 import (
 	"encoding/base64"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/web"
@@ -21,6 +22,7 @@ type Plugin struct {
 	S3       *web.S3        `inject:""`
 	Router   *gin.Engine    `inject:""`
 	DB       *gorm.DB       `inject:""`
+	Redis    *redis.Pool    `inject:""`
 	Render   *render.Render `inject:""`
 	Dao      *Dao           `inject:""`
 	Layout   *Layout        `inject:""`

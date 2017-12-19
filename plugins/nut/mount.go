@@ -50,6 +50,9 @@ func (p *Plugin) Mount() error {
 	p.Router.POST("/attachments", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.createAttachments))
 	p.Router.DELETE("/attachments/:id", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.destroyAttachments))
 
+	ag := p.Router.Group("/admin", p.Layout.MustAdminMiddleware)
+	ag.GET("/site/status", p.Layout.JSON(p.getAdminSiteStatus))
+
 	p.Jobber.Register(SendEmailJob, p.doSendEmail)
 	return nil
 }
