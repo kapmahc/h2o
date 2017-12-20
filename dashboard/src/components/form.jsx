@@ -6,6 +6,8 @@ import ReactQuill from 'react-quill'
 
 const FormItem = Form.Item
 
+export const DATE_FORMAT = "YYYY-MM-DD"
+
 export const formItemLayout = {
   labelCol: {
     xs: {

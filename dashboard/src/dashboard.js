@@ -86,7 +86,20 @@ const menus = (user) => {
       })
     }
     items.push(forum)
-    items.push({icon: "notification", label: "survey.dashboard.title", key: "survey", items: []})
+    items.push({
+      icon: "notification",
+      label: "survey.dashboard.title",
+      key: "survey",
+      items: [
+        {
+          label: "survey.forms.index.title",
+          key: "/survey/forms"
+        }, {
+          label: "survey.records.index.title",
+          key: "/survey/records"
+        }
+      ]
+    })
     items.push({icon: "shopping-cart", label: "shop.dashboard.title", key: "shop", items: []})
 
     items.push({icon: "logout", label: "nut.users.sign-out.title", key: "/users/sign-out"})

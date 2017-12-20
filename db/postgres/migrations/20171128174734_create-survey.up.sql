@@ -3,7 +3,6 @@ CREATE TABLE survey_forms (
   title      VARCHAR(255)                NOT NULL,
   body       TEXT                        NOT NULL,
   type       VARCHAR(8)                  NOT NULL DEFAULT 'markdown',
-  uid        VARCHAR(36) NOT NULL,
   mode       VARCHAR(8)                  NOT NULL,
   user_id    BIGINT                      NOT NULL REFERENCES users,
   start_up   DATE                        NOT NULL DEFAULT current_date,
@@ -13,8 +12,6 @@ CREATE TABLE survey_forms (
 );
 CREATE INDEX idx_survey_forms_type
   ON survey_forms (type);
-CREATE UNIQUE INDEX idx_survey_forms_uid
-  ON survey_forms (uid);
 
 CREATE TABLE survey_fields (
   id         BIGSERIAL PRIMARY KEY,

@@ -18,7 +18,7 @@ const Hash = ({item}) => (<Table rowKey="key" dataSource={Object.entries(item).m
       key: 'key',
       dataIndex: 'key'
     }, {
-      title: <FormattedMessage id="attributes.val"/>,
+      title: <FormattedMessage id="attributes.value"/>,
       key: 'val',
       dataIndex: 'val'
     }

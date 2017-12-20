@@ -9,7 +9,6 @@ import (
 // Form form
 type Form struct {
 	ID        uint      `gorm:"primary_key" json:"id"`
-	UID       string    `json:"uid"`
 	Mode      string    `json:"mode"`
 	Title     string    `json:"title"`
 	Body      string    `json:"body"`
@@ -21,8 +20,8 @@ type Form struct {
 
 	User    nut.User
 	UserID  uint
-	Fields  []Field
-	Records []Record
+	Fields  []Field  `json:"fields"`
+	Records []Record `json:"records"`
 }
 
 // TableName table name
