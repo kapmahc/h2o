@@ -8,17 +8,17 @@ import {push} from 'react-router-redux'
 import Footer from './Footer'
 import LeftNavPanel from './LeftNavPanel'
 import TopNavBar from './TopNavBar'
-import {signIn, signOut, refresh, TOKEN} from '../actions'
-import {get} from '../ajax'
+import {signIn, signOut, refresh} from '../actions'
+import {get, token} from '../ajax'
 
 const {Header, Content, Sider} = Layout
 
 class Widget extends Component {
   componentDidMount() {
     const {signIn, refresh, info} = this.props
-    var token = sessionStorage.getItem(TOKEN)
-    if (token) {
-      signIn(token)
+    var tkn = token()
+    if (tkn) {
+      signIn(tkn)
     }
     if (info.languages.length === 0) {
       get('/layout').then((rst) => refresh(rst)).catch(message.error)

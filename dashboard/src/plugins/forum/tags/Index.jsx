@@ -13,7 +13,7 @@ import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
 import Layout from '../../../layout'
-import {get, _delete} from '../../../ajax'
+import {get, _delete, backend} from '../../../ajax'
 
 class Widget extends Component {
   state = {
@@ -46,12 +46,12 @@ class Widget extends Component {
               {
                 title: <FormattedMessage id="attributes.name"/>,
                 key: 'name',
-                render: (text, record) => (<a href={`/forum/tags/show/${record.id}`} target="_blank">{record.name}</a>)
+                render: (text, record) => (<a href={backend(`/forum/htdocs/tags/${record.id}`)} target="_blank">{record.name}</a>)
               }, {
                 title: 'Action',
                 key: 'action',
                 render: (text, record) => (<span>
-                  <CopyToClipboard text={`/forum/tags/show/${record.id}`}><Button shape="circle" icon="copy"/></CopyToClipboard>
+                  <CopyToClipboard text={`/forum/htdocs/tags/${record.id}`}><Button shape="circle" icon="copy"/></CopyToClipboard>
                   <Button onClick={(e) => push(`/forum/tags/edit/${record.id}`)} shape="circle" icon="edit"/>
                   <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
                     <Button type="danger" shape="circle" icon="delete"/>

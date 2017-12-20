@@ -15,8 +15,7 @@ import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
 import Layout from '../../../layout'
-import {get, _delete, backend} from '../../../ajax'
-import {TOKEN} from '../../../actions'
+import {token, get, _delete, backend} from '../../../ajax'
 
 class Widget extends Component {
   state = {
@@ -44,7 +43,7 @@ class Widget extends Component {
       <Row>
         <Col>
           <Upload multiple={true} withCredentials={true} name="file" action={backend("/attachments")} headers={{
-              'Authorization' : `BEARER ${window.sessionStorage.getItem(TOKEN)}`
+              'Authorization' : `BEARER ${token()}`
             }}>
             <Button>
               <Icon type="upload"/>

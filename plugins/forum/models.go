@@ -11,6 +11,7 @@ type Article struct {
 	ID        uint      `gorm:"primary_key" json:"id"`
 	Title     string    `json:"title"`
 	Body      string    `json:"body"`
+	Lang      string    `json:"lang"`
 	Type      string    `json:"type"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`

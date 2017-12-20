@@ -11,6 +11,10 @@ import {
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
+// import TagSelect from 'ant-design-pro/lib/TagSelect'
+// <TagSelect checkedTags={[1, 3]} onChange={this.handleTagsChange} expandable={true}>
+//   {this.state.tagOptions.map(it => (<TagSelect.Option key={it.id} value={it.id}>{it.name}</TagSelect.Option>))}
+// </TagSelect>
 
 import Layout from '../../../layout'
 import {post, get} from '../../../ajax'
@@ -40,6 +44,7 @@ class Widget extends Component {
       }).catch(message.error)
     }
     get('/forum/tags').then((rst) => this.setState({
+      // tagOptions: rst,
       tagOptions: rst.map((t) => {
         return {label: t.name, value: t.id}
       })
@@ -111,7 +116,7 @@ class Widget extends Component {
                 })(<Input/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "forum.attributes.artile.tags" />}>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "forum.attributes.article.tags" />}>
               <CheckboxGroup options={this.state.tagOptions} value={this.state.tagValues} onChange={this.handleTagsChange}/>
             </FormItem>
             <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.body" />}>

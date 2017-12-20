@@ -1,5 +1,9 @@
 import {TOKEN} from './actions'
 
+export const token = () => {
+  return localStorage.getItem(TOKEN)
+}
+
 export const backend = (path) => {
   return `${process.env.REACT_APP_BACKEND}${path}`
 }
@@ -19,7 +23,7 @@ export const options = (method) => {
     mode: 'cors',
     credentials: 'include',
     headers: {
-      'Authorization': `BEARER ${window.sessionStorage.getItem(TOKEN)}`
+      'Authorization': `BEARER ${token()}`
     }
   }
 }

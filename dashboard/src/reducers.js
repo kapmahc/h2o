@@ -7,14 +7,14 @@ const currentUser = (state = {}, action) => {
     case USERS_SIGN_IN:
       try {
         var u = jwtDecode(action.token);
-        sessionStorage.setItem(TOKEN, action.token);
+        localStorage.setItem(TOKEN, action.token);
         return u
       } catch (e) {
         console.error(e)
       }
       return {}
     case USERS_SIGN_OUT:
-      sessionStorage.removeItem(TOKEN);
+      localStorage.removeItem(TOKEN);
       return {}
     default:
       return state
