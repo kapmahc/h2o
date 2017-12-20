@@ -10,9 +10,10 @@ import {
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
+import {CopyToClipboard} from 'react-copy-to-clipboard'
 
 import Layout from '../../../layout'
-import {get, _delete} from '../../../ajax'
+import {get, _delete, backend} from '../../../ajax'
 import PlainText from '../../../components/PlainText'
 
 class Widget extends Component {
@@ -50,6 +51,8 @@ class Widget extends Component {
                 title: 'Action',
                 key: 'action',
                 render: (text, record) => (<span>
+                  <CopyToClipboard text={backend(`/forum/htdocs/articles/${record.articleId}#${record.id}`)}><Button shape="circle" icon="copy"/></CopyToClipboard>
+                  <Button onClick={(e) => window.open(backend(`/forum/htdocs/articles/${record.articleId}#${record.id}`), '_blank').focus()} shape="circle" icon="eye"/>
                   <Button onClick={(e) => push(`/forum/comments/edit/${record.id}`)} shape="circle" icon="edit"/>
                   <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
                     <Button type="danger" shape="circle" icon="delete"/>

@@ -2,6 +2,7 @@ package forum
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kapmahc/h2o/plugins/nut"
@@ -12,10 +13,8 @@ func (p *Plugin) indexComments(l string, c *gin.Context) (interface{}, error) {
 	var items []Comment
 	db := p.DB
 	user := c.MustGet(nut.CurrentUser).(*nut.User)
-	if c.MustGet(nut.IsAdmin).(bool) {
-		db = p.DB.Where("lang = ?", l)
-	} else {
-		p.DB.Where("lang = ? AND user_id = ?", l, user.ID)
+	if !c.MustGet(nut.IsAdmin).(bool) {
+		p.DB.Where("user_id = ?", user.ID)
 	}
 	if err := db.Order("updated_at DESC").Find(&items).Error; err != nil {
 		return nil, err
@@ -34,10 +33,15 @@ func (p *Plugin) createComment(l string, c *gin.Context) (interface{}, error) {
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
+	aid, err := strconv.Atoi(c.Query("articleId"))
+	if err != nil {
+		return nil, err
+	}
 	it := Comment{
-		Type:   fm.Type,
-		Body:   fm.Body,
-		UserID: user.ID,
+		Type:      fm.Type,
+		Body:      fm.Body,
+		ArticleID: uint(aid),
+		UserID:    user.ID,
 	}
 	if err := p.DB.Create(&it).Error; err != nil {
 		return nil, err

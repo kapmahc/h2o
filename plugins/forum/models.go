@@ -53,7 +53,7 @@ type Comment struct {
 	User      nut.User `json:"user"`
 	UserID    uint
 	Article   Article `json:"article"`
-	ArticleID uint
+	ArticleID uint    `json:"articleId"`
 }
 
 // TableName table name
