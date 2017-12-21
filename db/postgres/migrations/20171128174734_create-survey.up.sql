@@ -32,7 +32,10 @@ CREATE UNIQUE INDEX idx_survey_fields_name_form_id
 CREATE TABLE survey_records (
   id         BIGSERIAL PRIMARY KEY,
   value      TEXT                        NOT NULL,
+  email      VARCHAR(255)                NOT NULL,
   form_id    BIGINT                      NOT NULL REFERENCES survey_forms,
   created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
+CREATE INDEX idx_survey_records_email
+  ON survey_records (email);
