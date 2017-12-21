@@ -8,7 +8,7 @@ import {push} from 'react-router-redux'
 import Layout from '../../../layout'
 import {post} from '../../../ajax'
 import {Submit, formItemLayout} from '../../../components/form'
-import {signIn} from '../../../actions'
+import {signIn, TOKEN} from '../../../actions'
 
 const FormItem = Form.Item
 
@@ -19,6 +19,7 @@ class Widget extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         post('/users/sign-in', values).then((rst) => {
+          localStorage.setItem(TOKEN, rst.token)
           signIn(rst.token)
           push('/users/logs')
         }).catch(message.error);

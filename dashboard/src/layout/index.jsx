@@ -15,10 +15,12 @@ const {Header, Content, Sider} = Layout
 
 class Widget extends Component {
   componentDidMount() {
-    const {signIn, refresh, info} = this.props
-    var tkn = token()
-    if (tkn) {
-      signIn(tkn)
+    const {signIn, refresh, info, user} = this.props
+    if (!user.uid) {
+      var tkn = token()
+      if (tkn) {
+        signIn(tkn)
+      }
     }
     if (info.languages.length === 0) {
       get('/layout').then((rst) => refresh(rst)).catch(message.error)

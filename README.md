@@ -20,7 +20,7 @@ enable autosave
 
 - go-plus
 - file-icons
-- atom-beautify
+- atom-beautify(enable newline, beautify on save; need python-sqlparse)
 - language-babel
 - language-ini
 

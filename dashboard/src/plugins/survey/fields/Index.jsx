@@ -10,11 +10,9 @@ import {
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
-import {CopyToClipboard} from 'react-copy-to-clipboard'
 
 import Layout from '../../../layout'
-import {get, _delete, backend} from '../../../ajax'
-import PlainText from '../../../components/PlainText'
+import {get, _delete} from '../../../ajax'
 
 class Widget extends Component {
   state = {
