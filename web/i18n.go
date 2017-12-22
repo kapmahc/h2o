@@ -71,7 +71,6 @@ func (p *I18n) Middleware(db *gorm.DB) (gin.HandlerFunc, error) {
 			c.SetCookie(LOCALE, lang, math.MaxInt32, "/", "", c.Request.TLS != nil, false)
 		}
 		c.Set(LOCALE, lang)
-		c.Set("languages", langs)
 	}, nil
 }
 

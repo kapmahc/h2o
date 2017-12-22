@@ -2,28 +2,6 @@ package forum
 
 import "github.com/gin-gonic/gin"
 
-func (p *Plugin) showTagH(l string, c *gin.Context) (gin.H, error) {
-	var it Tag
-	if err := p.DB.Where("id = ?", c.Param("id")).Find(&it).Error; err != nil {
-		return nil, err
-	}
-	return gin.H{
-		"tag":   it,
-		"title": it.Name,
-	}, nil
-}
-
-func (p *Plugin) indexTagsH(l string, c *gin.Context) (gin.H, error) {
-	var items []Tag
-	if err := p.DB.Select([]string{"id", "name"}).Order("updated_at DESC").Find(&items).Error; err != nil {
-		return nil, err
-	}
-	return gin.H{
-		"tags":  items,
-		"title": p.I18n.T(l, "forum.tags.index.title"),
-	}, nil
-}
-
 func (p *Plugin) indexTags(l string, c *gin.Context) (interface{}, error) {
 	var items []Tag
 	if err := p.DB.Order("updated_at DESC").Find(&items).Error; err != nil {

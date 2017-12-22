@@ -1,0 +1,10 @@
+{{range .comments}}
+  <h2>{{.Article.Title}}</h2>
+  <hr/>
+  <blockquote class="blockquote">
+    <p class="mb-0">{{str2htm .Body}}</p>
+    <footer class="blockquote-footer">
+      <cite><a target="_blank" href="/forum/htdocs/articles/{{.ArticleID}}">{{dtf .UpdatedAt}}</a></cite>
+    </footer>
+  </blockquote>
+{{end}}

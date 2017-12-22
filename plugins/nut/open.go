@@ -56,14 +56,27 @@ func (p *Plugin) openRender(theme string) *render.Render {
 		"eq": func(a interface{}, b interface{}) bool {
 			return a == b
 		},
-		"substr": func(s string, l int) string {
-			return s[0:l]
+		"substr": func(s string, b, e int) string {
+			l := len(s)
+			if b < 0 {
+				b = 0
+			}
+			if e > l {
+				e = l
+			}
+			return s[b:e]
 		},
 		"str2htm": func(s string) template.HTML {
 			return template.HTML(s)
 		},
 		"site": func(k string) interface{} {
 			switch k {
+			case "dashboard":
+				ss := viper.GetStringSlice("server.frontend")
+				if len(ss) > 0 {
+					return ss[0]
+				}
+				return ""
 			case "version":
 				return web.Version
 			case "author":

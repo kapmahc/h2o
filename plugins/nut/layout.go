@@ -177,6 +177,9 @@ func (p *Layout) HTML(name string, handler HTMLHandlerFunc) gin.HandlerFunc {
 			payload = gin.H{}
 		}
 		payload["locale"] = lang
+		if langs, er := p.I18n.Languages(p.DB); er == nil {
+			payload["languages"] = langs
+		}
 		payload["flashes"] = flashes
 		payload["session"] = p.Session(c).Values
 		if err == nil {

@@ -1,7 +1,7 @@
 <hr>
 <footer>
   <p class="float-right">
-    {{t .locale "footer.others"}}
+    {{t .locale "footer.other-languages"}}
     {{range .languages}}
     <a href="/?locale={{.}}">{{t $.locale (printf "languages.%s" .)}}</a>
     {{end}}

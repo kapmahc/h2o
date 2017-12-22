@@ -34,8 +34,11 @@ func (p *Plugin) Shell() []cli.Command {
 // Mount register
 func (p *Plugin) Mount() error {
 	ht := p.Router.Group("/forum/htdocs")
-	ht.GET("/tags", p.Layout.HTML("forum/tags/index.html", p.indexTagsH))
-	ht.GET("/tags/:id", p.Layout.HTML("forum/tags/show.html", p.indexTagsH))
+	ht.GET("/tags", p.Layout.HTML("forum/tags/index", p.indexTagsH))
+	ht.GET("/tags/:id", p.Layout.HTML("forum/tags/show", p.showTagH))
+	ht.GET("/articles", p.Layout.HTML("forum/articles/index", p.indexArticlesH))
+	ht.GET("/articles/:id", p.Layout.HTML("forum/articles/show", p.showArticleH))
+	ht.GET("/comments", p.Layout.HTML("forum/comments/index", p.indexCommentsH))
 
 	rt := p.Router.Group("/forum")
 
