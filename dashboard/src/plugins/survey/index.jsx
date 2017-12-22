@@ -5,6 +5,7 @@ import IndexForms from './forms/Index'
 import FormForm from './forms/Form'
 import IndexFields from './fields/Index'
 import FormField from './fields/Form'
+import IndexRecords from './records/Index'
 
 const routes = [
   (< Route key = "survey.forms.edit" path = "/survey/forms/edit/:id" component = {
@@ -25,6 +26,10 @@ const routes = [
   } />),
   (< Route key = "survey.fields.index" path = "/survey/fields/:formId" component = {
     IndexFields
+  } />),
+
+  (< Route key = "survey.fields.index" path = "/survey/records/:formId" component = {
+    IndexRecords
   } />)
 ]
 

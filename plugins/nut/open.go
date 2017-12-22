@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/SermoDigital/jose/crypto"
@@ -68,6 +69,9 @@ func (p *Plugin) openRender(theme string) *render.Render {
 		},
 		"str2htm": func(s string) template.HTML {
 			return template.HTML(s)
+		},
+		"split": func(str, sep string) []string {
+			return strings.Split(str, sep)
 		},
 		"site": func(k string) interface{} {
 			switch k {

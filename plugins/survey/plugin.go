@@ -35,6 +35,7 @@ func (p *Plugin) Shell() []cli.Command {
 func (p *Plugin) Mount() error {
 	ht := p.Router.Group("/survey/htdocs")
 	ht.GET("/forms/apply/:id", p.Layout.HTML("survey/forms/edit", p.getApplyForm))
+	ht.POST("/forms/apply/:id", p.Layout.JSON(p.postApplyForm))
 	ht.GET("/forms/edit/:token", p.Layout.HTML("survey/forms/edit", p.getEditForm))
 	ht.GET("/forms/cancel/:token", p.Layout.Redirect("/", p.getCancelForm))
 
@@ -50,6 +51,9 @@ func (p *Plugin) Mount() error {
 	rt.GET("/fields/:id", p.Layout.JSON(p.showField))
 	rt.POST("/fields/:id", p.Layout.MustSignInMiddleware, p.canEditField, p.Layout.JSON(p.updateField))
 	rt.DELETE("/fields/:id", p.Layout.MustSignInMiddleware, p.canEditField, p.Layout.JSON(p.destroyField))
+
+	rt.GET("/records", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.indexRecords))
+	rt.DELETE("/records/:id", p.Layout.MustSignInMiddleware, p.canEditRecord, p.Layout.JSON(p.destroyRecord))
 
 	return nil
 }

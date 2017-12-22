@@ -94,9 +94,6 @@ const menus = (user) => {
         {
           label: "survey.forms.index.title",
           key: "/survey/forms"
-        }, {
-          label: "survey.records.index.title",
-          key: "/survey/records"
         }
       ]
     })

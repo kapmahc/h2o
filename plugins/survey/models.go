@@ -60,12 +60,13 @@ func (Field) TableName() string {
 // Record record
 type Record struct {
 	ID        uint      `gorm:"primary_key" json:"id"`
+	Email     string    `json:"email"`
 	Value     string    `json:"value"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`
 
 	Form   Form
-	FormID uint
+	FormID uint `json:"formId"`
 }
 
 // TableName table name
