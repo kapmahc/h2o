@@ -5,8 +5,8 @@
   </head>
   <body>
     {{template "layouts/application/header" .}}
-    <div class="container">
-      {{yield}}
+    {{yield}}
+    <div class="container">      
       {{template "layouts/application/footer" .}}
     </div>
   </body>

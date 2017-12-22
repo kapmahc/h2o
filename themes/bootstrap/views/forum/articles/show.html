@@ -1,3 +1,5 @@
+<div class="container">
+<br/>
 
 <h2>{{.article.Title}}</h2>
 <hr/>
@@ -16,7 +18,7 @@
 <br/>
 <h4>
   {{t .locale "forum.attributes.article.comments"}}
-  <a href="{{site "dashboard"}}/forum/comments/new/{{.article.ID}}" target="_blank">{{t .locale "buttons.new"}}</a>  
+  <a href="{{site "dashboard"}}/forum/comments/new/{{.article.ID}}" target="_blank">{{t .locale "buttons.new"}}</a>
 </h4>
 <hr/>
 {{range .article.Comments}}
@@ -27,3 +29,5 @@
     </footer>
   </blockquote>
 {{end}}
+
+</div>
