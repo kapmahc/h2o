@@ -9,6 +9,7 @@ import {
 } from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
+import {push} from 'react-router-redux'
 
 import Layout from '../../../layout'
 import {get, _delete} from '../../../ajax'
@@ -32,7 +33,6 @@ class Widget extends Component {
     }).catch(message.error)
   }
   render() {
-    const {push} = this.props
     const {formId} = this.props.match.params
     return (<Layout breads={[
         {
