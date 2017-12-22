@@ -124,17 +124,12 @@ func (p *Plugin) postAdminSiteAuthor(l string, c *gin.Context) (interface{}, err
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
-	db := p.DB.Begin()
-	for k, v := range map[string]string{
+	if err := p.Settings.Set(p.DB, "site.author", map[string]string{
 		"email": fm.Email,
 		"name":  fm.Name,
-	} {
-		if err := p.Settings.Set(db, "site.author."+k, v, false); err != nil {
-			db.Rollback()
-			return nil, err
-		}
+	}, false); err != nil {
+		return nil, err
 	}
-	db.Commit()
 	return gin.H{}, nil
 }
 

@@ -29,12 +29,8 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	for _, k := range []string{"title", "subhead", "keywords", "description", "copyright"} {
 		site[k] = p.I18n.T(l, "site."+k)
 	}
-	author := gin.H{}
-	for _, k := range []string{"name", "email"} {
-		var v string
-		p.Settings.Get(p.DB, "site.author."+k, &v)
-		author[k] = v
-	}
+	author := make(map[string]string)
+	p.Settings.Get(p.DB, "site.author", &author)
 	site["author"] = author
 
 	// home
