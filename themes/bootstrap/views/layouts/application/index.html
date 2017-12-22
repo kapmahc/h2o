@@ -4,9 +4,10 @@
     {{template "layouts/application/metas" .}}
   </head>
   <body>
-    {{template "layouts/application/header" .}}
+    {{template "layouts/application/header" .}}    
+    {{template "layouts/application/flash" .}}
     {{yield}}
-    <div class="container">      
+    <div class="container">
       {{template "layouts/application/footer" .}}
     </div>
   </body>

@@ -3,7 +3,13 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>{{str2htm .flash.error}}</strong>
+  <strong>
+    <ol>
+      {{range .flash.error}}
+        <li>{{str2htm .}}</li>
+      {{end}}
+    </ol>
+  </strong>
 </div>
 {{end}}
 
@@ -12,7 +18,11 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>{{str2htm .flash.warning}}</strong>
+  <strong>
+    {{range .flash.warning}}
+      <li>{{str2htm .}}</li>
+    {{end}}
+  </strong>
 </div>
 {{end}}
 
@@ -21,6 +31,10 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>{{str2htm .flash.notice}}</strong>
+  <strong>
+    {{range .flash.notice}}
+      <li>{{str2htm .}}</li>
+    {{end}}
+  </strong>
 </div>
 {{end}}

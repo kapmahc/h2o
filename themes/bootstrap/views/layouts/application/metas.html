@@ -5,9 +5,10 @@
 {{$author := site "author"}}
 <meta name="author" content="{{$author.name}}<{{$author.email}}>">
 <link rel="icon" type="image/png" href="{{site "favicon"}}" />
-<title>{{.title}}|{{t .locale "subhead"}}|{{t .locale "title"}}</title>
+<title>{{.title}}|{{t .locale "site.subhead"}}|{{t .locale "site.title"}}</title>
 {{assets_css "/3rd/bootstrap/dist/css/bootstrap.min.css"}}
 {{assets_css "/3rd/font-awesome/css/font-awesome.min.css"}}
+{{assets_css "/3rd/quill/dist/quill.snow.css"}}
 {{assets_css "/assets/application.css"}}
 {{assets_js "/3rd/jquery/dist/jquery.min.js"}}
 {{assets_js "/3rd/popper.js/dist/umd/popper.min.js"}}

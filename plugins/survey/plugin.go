@@ -33,8 +33,12 @@ func (p *Plugin) Shell() []cli.Command {
 
 // Mount register
 func (p *Plugin) Mount() error {
-	rt := p.Router.Group("/survey")
+	ht := p.Router.Group("/survey/htdocs")
+	ht.GET("/forms/apply/:id", p.Layout.HTML("survey/forms/edit", p.getApplyForm))
+	ht.GET("/forms/edit/:token", p.Layout.HTML("survey/forms/edit", p.getEditForm))
+	ht.GET("/forms/cancel/:token", p.Layout.Redirect("/", p.getCancelForm))
 
+	rt := p.Router.Group("/survey")
 	rt.GET("/forms", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.indexForms))
 	rt.POST("/forms", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.createForm))
 	rt.GET("/forms/:id", p.Layout.JSON(p.showForm))

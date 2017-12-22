@@ -46,12 +46,12 @@ class Widget extends Component {
               {
                 title: <FormattedMessage id="attributes.title"/>,
                 key: 'title',
-                render: (text, record) => (<a href={backend(`/survey/htdocs/forms/${record.id}`)} target="_blank">{record.title}</a>)
+                render: (text, record) => (<a href={backend(`/survey/htdocs/forms/apply/${record.id}`)} target="_blank">{record.title}</a>)
               }, {
                 title: 'Action',
                 key: 'action',
                 render: (text, record) => (<span>
-                  <CopyToClipboard text={backend(`/survey/htdocs/forms/${record.id}`)}><Button shape="circle" icon="copy"/></CopyToClipboard>
+                  <CopyToClipboard text={backend(`/survey/htdocs/forms/apply/${record.id}`)}><Button shape="circle" icon="copy"/></CopyToClipboard>
                   <Button onClick={(e) => push(`/survey/forms/edit/${record.id}`)} shape="circle" icon="edit"/>
                   <Button onClick={(e) => push(`/survey/fields/${record.id}`)} shape="circle" icon="profile"/>
                   <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={(e) => this.handleRemove(record.id)}>
