@@ -47,9 +47,9 @@ func (p *Plugin) getAdminSiteSMTP(l string, c *gin.Context) (interface{}, error)
 		delete(smtp, "password")
 	} else {
 		smtp = map[string]interface{}{
-			"host": "localhost",
-			"port": 25,
-			"user": "whoami@change-me.com",
+			"host":     "localhost",
+			"port":     25,
+			"username": "whoami@change-me.com",
 		}
 	}
 	return smtp, nil
@@ -58,7 +58,7 @@ func (p *Plugin) getAdminSiteSMTP(l string, c *gin.Context) (interface{}, error)
 type fmSiteSMTP struct {
 	Host                 string `json:"host" binding:"required"`
 	Port                 int    `json:"port"`
-	User                 string `json:"user" binding:"email"`
+	Username             string `json:"username" binding:"email"`
 	Password             string `json:"password" binding:"required,min=6"`
 	PasswordConfirmation string `json:"passwordConfirmation" binding:"eqfield=Password"`
 }
@@ -71,7 +71,7 @@ func (p *Plugin) postAdminSiteSMTP(l string, c *gin.Context) (interface{}, error
 	if err := p.Settings.Set(p.DB, "site.smtp", map[string]interface{}{
 		"host":     fm.Host,
 		"port":     fm.Port,
-		"user":     fm.User,
+		"username": fm.Username,
 		"password": fm.Password,
 	}, true); err != nil {
 		return nil, err

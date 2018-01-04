@@ -72,7 +72,7 @@ class Widget extends Component {
             </FormItem>
             <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.user" />} hasFeedback={true}>
               {
-                getFieldDecorator('user', {
+                getFieldDecorator('username', {
                   rules: [
                     {
                       type: 'email',
