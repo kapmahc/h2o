@@ -15,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
+	gomail "gopkg.in/gomail.v2"
 )
 
 type fmSiteHome struct {
@@ -74,6 +75,31 @@ func (p *Plugin) postAdminSiteSMTP(l string, c *gin.Context) (interface{}, error
 		"username": fm.Username,
 		"password": fm.Password,
 	}, true); err != nil {
+		return nil, err
+	}
+	return gin.H{}, nil
+}
+
+func (p *Plugin) patchAdminSiteSMTP(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteSMTP
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+	user := c.MustGet(CurrentUser).(*User)
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", fm.Username)
+	msg.SetHeader("To", user.Email)
+	msg.SetHeader("Subject", "Hi")
+	msg.SetBody("text/html", "This is a test email")
+
+	dia := gomail.NewDialer(
+		fm.Host,
+		fm.Port,
+		fm.Username,
+		fm.Password,
+	)
+
+	if err := dia.DialAndSend(msg); err != nil {
 		return nil, err
 	}
 	return gin.H{}, nil

@@ -59,6 +59,7 @@ func (p *Plugin) Mount() error {
 	ag.POST("/site/seo", p.Layout.JSON(p.postAdminSiteSeo))
 	ag.GET("/site/smtp", p.Layout.JSON(p.getAdminSiteSMTP))
 	ag.POST("/site/smtp", p.Layout.JSON(p.postAdminSiteSMTP))
+	ag.PATCH("/site/smtp", p.Layout.JSON(p.patchAdminSiteSMTP))
 	ag.POST("/site/home", p.Layout.JSON(p.postAdminSiteHome))
 	ag.GET("/links", p.Layout.JSON(p.indexAdminLinks))
 	ag.POST("/links", p.Layout.JSON(p.createAdminLink))

@@ -6,6 +6,8 @@ import {
   Col,
   Input,
   Select,
+  Button,
+  Popconfirm,
   message
 } from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
@@ -13,7 +15,7 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
 import Layout from '../../../../layout'
-import {post, get} from '../../../../ajax'
+import {post, get, patch} from '../../../../ajax'
 import {Submit, formItemLayout} from '../../../../components/form'
 
 const FormItem = Form.Item
@@ -30,6 +32,18 @@ class Widget extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         post('/admin/site/smtp', Object.assign({}, values, {
+          port: parseInt(values.port, 10)
+        })).then(() => {
+          message.success(formatMessage({id: "helpers.success"}))
+        }).catch(message.error);
+      }
+    });
+  }
+  handleTest = () => {
+    const {formatMessage} = this.props.intl
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        patch('/admin/site/smtp', Object.assign({}, values, {
           port: parseInt(values.port, 10)
         })).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
@@ -111,7 +125,14 @@ class Widget extends Component {
                 })(<Input type="password"/>)
               }
             </FormItem>
-            <Submit/>
+            <Submit>
+              &nbsp; &nbsp;
+              <Popconfirm title={<FormattedMessage id = "helpers.are-you-sure" />} onConfirm={this.handleTest}>
+                <Button type="danger">
+                  <FormattedMessage id="buttons.test"/>
+                </Button>
+              </Popconfirm>
+            </Submit>
           </Form>
         </Col>
       </Row>
@@ -121,11 +142,12 @@ class Widget extends Component {
 
 Widget.propTypes = {
   intl: intlShape.isRequired,
-  push: PropTypes.func.isRequired
+  push: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
 }
 
 const WidgetF = Form.create()(injectIntl(Widget))
 
-export default connect(state => ({}), {
+export default connect(state => ({user: state.currentUser}), {
   push
 },)(WidgetF)

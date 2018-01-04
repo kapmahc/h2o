@@ -29,16 +29,22 @@ export const options = (method) => {
 }
 
 export const get = (path) => {
-  return fetch(backend(path), options('get')).then(parse)
+  return fetch(backend(path), options('GET')).then(parse)
 }
 
 export const _delete = (path) => {
-  return fetch(backend(path), options('delete')).then(parse)
+  return fetch(backend(path), options('DELETE')).then(parse)
 }
 
+// https://github.github.io/fetch/#options
 export const post = (path, body) => {
-  var data = options('post')
+  var data = options('POST')
   data.body = JSON.stringify(body)
-  // https://github.github.io/fetch/#options
+  return fetch(backend(path), data).then(parse)
+}
+
+export const patch = (path, body) => {
+  var data = options('PATCH')
+  data.body = JSON.stringify(body)
   return fetch(backend(path), data).then(parse)
 }

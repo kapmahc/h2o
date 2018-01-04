@@ -78,9 +78,14 @@ func (p *Plugin) Shell() []cli.Command {
 							Name:  "deny, d",
 							Usage: "deny",
 						},
+						cli.BoolFlag{
+							Name:  "confirm, c",
+							Usage: "with confirm user",
+						},
 					},
 					Action: web.InjectAction(func(c *cli.Context) error {
 						deny := c.Bool("deny")
+						confirm := c.Bool("confirm")
 						years := c.Int("years")
 						name := c.String("name")
 						uid := c.String("user")
@@ -98,6 +103,12 @@ func (p *Plugin) Shell() []cli.Command {
 							return err
 						}
 						db := p.DB.Begin()
+						if confirm {
+							if er := p.Dao.confirmUser(db, language.AmericanEnglish.String(), "0.0.0.0", user.ID); er != nil {
+								db.Rollback()
+								return er
+							}
+						}
 						role, err := p.Dao.GetRole(db, name, DefaultResourceType, DefaultResourceID)
 						if err != nil {
 							db.Rollback()
