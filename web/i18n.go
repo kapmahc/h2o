@@ -41,18 +41,15 @@ func (p Locale) TableName() string {
 
 // I18n i18n
 type I18n struct {
-	DB    *gorm.DB `inject:""`
-	Cache *Cache   `inject:""`
+	DB        *gorm.DB `inject:""`
+	Cache     *Cache   `inject:""`
+	Languages []string `inject:"languages"`
 }
 
 // Middleware locale middleware
-func (p *I18n) Middleware(db *gorm.DB) (gin.HandlerFunc, error) {
-	langs, err := p.Languages(db)
-	if err != nil {
-		return nil, err
-	}
+func (p *I18n) Middleware() (gin.HandlerFunc, error) {
 	var tags []language.Tag
-	for _, l := range langs {
+	for _, l := range p.Languages {
 		t, e := language.Parse(l)
 		if e != nil {
 			return nil, e
@@ -90,13 +87,13 @@ func (p *I18n) detectLocale(r *http.Request, k string) (string, bool) {
 }
 
 // Languages language tags
-func (p *I18n) Languages(db *gorm.DB) ([]string, error) {
-	var langs []string
-	if err := db.Model(&Locale{}).Pluck("DISTINCT(lang)", &langs).Error; err != nil {
-		return nil, err
-	}
-	return langs, nil
-}
+// func (p *I18n) Languages(db *gorm.DB) ([]string, error) {
+// 	var langs []string
+// 	if err := db.Model(&Locale{}).Pluck("DISTINCT(lang)", &langs).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	return langs, nil
+// }
 
 // Sync sync from filesystem to database
 func (p *I18n) Sync(dir string) error {

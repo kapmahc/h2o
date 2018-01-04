@@ -9,27 +9,35 @@ import (
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
 	"github.com/unrolled/render"
+	"golang.org/x/text/language"
 )
 
 // Plugin plugin
 type Plugin struct {
-	I18n     *web.I18n      `inject:""`
-	Cache    *web.Cache     `inject:""`
-	Jwt      *web.Jwt       `inject:""`
-	Jobber   *web.Jobber    `inject:""`
-	Settings *web.Settings  `inject:""`
-	Security *web.Security  `inject:""`
-	S3       *web.S3        `inject:""`
-	Router   *gin.Engine    `inject:""`
-	DB       *gorm.DB       `inject:""`
-	Redis    *redis.Pool    `inject:""`
-	Render   *render.Render `inject:""`
-	Dao      *Dao           `inject:""`
-	Layout   *Layout        `inject:""`
+	I18n      *web.I18n      `inject:""`
+	Cache     *web.Cache     `inject:""`
+	Jwt       *web.Jwt       `inject:""`
+	Jobber    *web.Jobber    `inject:""`
+	Settings  *web.Settings  `inject:""`
+	Security  *web.Security  `inject:""`
+	S3        *web.S3        `inject:""`
+	Router    *gin.Engine    `inject:""`
+	DB        *gorm.DB       `inject:""`
+	Redis     *redis.Pool    `inject:""`
+	Render    *render.Render `inject:""`
+	Dao       *Dao           `inject:""`
+	Layout    *Layout        `inject:""`
+	Languages []string       `inject:"languages"`
 }
 
 func init() {
 	web.Register(&Plugin{})
+
+	viper.SetDefault("languages", []string{
+		language.AmericanEnglish.String(),
+		language.SimplifiedChinese.String(),
+		language.TraditionalChinese.String(),
+	})
 
 	viper.SetDefault("aws", map[string]interface{}{
 		"access_key_id":     "change-me",

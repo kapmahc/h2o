@@ -99,8 +99,7 @@ func (p *Plugin) openRender(theme string) *render.Render {
 				}
 				return favicon
 			case "languages":
-				langs, _ := p.I18n.Languages(p.DB)
-				return langs
+				return p.Languages[:]
 			default:
 				return k
 			}
@@ -227,6 +226,7 @@ func (p *Plugin) Init(g *inject.Graph) error {
 	}
 
 	return g.Provide(
+		&inject.Object{Value: viper.GetStringSlice("languages"), Name: "languages"},
 		&inject.Object{Value: db},
 		&inject.Object{Value: redis},
 		&inject.Object{Value: security},

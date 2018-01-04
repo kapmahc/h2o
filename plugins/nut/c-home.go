@@ -42,12 +42,9 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	site["favicon"] = favicon
 
 	// i18n
-	langs, err := p.I18n.Languages(p.DB)
-	if err != nil {
-		return nil, err
-	}
+
 	site[web.LOCALE] = l
-	site["languages"] = langs
+	site["languages"] = p.Languages[:]
 
 	// current-user
 	user, ok := c.Get(CurrentUser)

@@ -47,12 +47,13 @@ type ObjectHandlerFunc func(string, *gin.Context) (interface{}, error)
 
 // Layout layout
 type Layout struct {
-	Render *render.Render `inject:""`
-	Dao    *Dao           `inject:""`
-	Store  sessions.Store `inject:""`
-	Jwt    *web.Jwt       `inject:""`
-	DB     *gorm.DB       `inject:""`
-	I18n   *web.I18n      `inject:""`
+	Render    *render.Render `inject:""`
+	Dao       *Dao           `inject:""`
+	Store     sessions.Store `inject:""`
+	Jwt       *web.Jwt       `inject:""`
+	DB        *gorm.DB       `inject:""`
+	I18n      *web.I18n      `inject:""`
+	Languages []string       `inject:"languages"`
 }
 
 // MustSignInMiddleware must sign in middleware
@@ -177,9 +178,7 @@ func (p *Layout) HTML(name string, handler HTMLHandlerFunc) gin.HandlerFunc {
 			payload = gin.H{}
 		}
 		payload["locale"] = lang
-		if langs, er := p.I18n.Languages(p.DB); er == nil {
-			payload["languages"] = langs
-		}
+		payload["languages"] = p.Languages[:]
 		payload["flash"] = flashes
 		payload["session"] = p.Session(c).Values
 		if err == nil {
