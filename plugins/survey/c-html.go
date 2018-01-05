@@ -57,6 +57,17 @@ func (p *Plugin) getApplyForm(l string, c *gin.Context) (gin.H, error) {
 	}, nil
 }
 
+func (p *Plugin) getForms(l string, c *gin.Context) (gin.H, error) {
+	var forms []Form
+	if err := p.DB.Select([]string{"title", "body", "type", "start_up", "shut_down"}).Order("updated_at DESC").Find(&forms).Error; err != nil {
+		return nil, err
+	}
+	return gin.H{
+		"forms":   forms,
+		nut.TITLE: p.I18n.T(l, "survey.forms.index.title"),
+	}, nil
+}
+
 func (p *Plugin) getEditForm(l string, c *gin.Context) (gin.H, error) {
 	it, options, err := p.selectForm(c.Param("id"))
 	if err != nil {

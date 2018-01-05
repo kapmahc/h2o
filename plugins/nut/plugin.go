@@ -21,6 +21,7 @@ type Plugin struct {
 	Settings  *web.Settings  `inject:""`
 	Security  *web.Security  `inject:""`
 	S3        *web.S3        `inject:""`
+	Sitemap   *web.Sitemap   `inject:""`
 	Router    *gin.Engine    `inject:""`
 	DB        *gorm.DB       `inject:""`
 	Redis     *redis.Pool    `inject:""`

@@ -1,8 +1,11 @@
 package survey
 
 import (
+	"fmt"
+
 	"github.com/facebookgo/inject"
 	"github.com/gin-gonic/gin"
+	"github.com/ikeikeikeike/go-sitemap-generator/stm"
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/plugins/nut"
 	"github.com/kapmahc/h2o/web"
@@ -12,13 +15,14 @@ import (
 
 // Plugin plugin
 type Plugin struct {
-	I18n   *web.I18n      `inject:""`
-	Cache  *web.Cache     `inject:""`
-	Jwt    *web.Jwt       `inject:""`
-	Router *gin.Engine    `inject:""`
-	DB     *gorm.DB       `inject:""`
-	Render *render.Render `inject:""`
-	Layout *nut.Layout    `inject:""`
+	I18n    *web.I18n      `inject:""`
+	Cache   *web.Cache     `inject:""`
+	Sitemap *web.Sitemap   `inject:""`
+	Jwt     *web.Jwt       `inject:""`
+	Router  *gin.Engine    `inject:""`
+	DB      *gorm.DB       `inject:""`
+	Render  *render.Render `inject:""`
+	Layout  *nut.Layout    `inject:""`
 }
 
 // Init init beans
@@ -31,9 +35,31 @@ func (p *Plugin) Shell() []cli.Command {
 	return []cli.Command{}
 }
 
+func (p *Plugin) sitemap() ([]stm.URL, error) {
+	items := []stm.URL{
+		{"loc": "/survey/htdocs/forms"},
+	}
+
+	var forms []Form
+	if err := p.DB.Select([]string{"id", "updated_at"}).Order("updated_at DESC").Find(&forms).Error; err != nil {
+		return nil, err
+	}
+	for _, it := range forms {
+		items = append(items, stm.URL{
+			"loc":     fmt.Sprintf("/survey/htdocs/forms/apply/%d", it.ID),
+			"lastmod": it.UpdatedAt,
+		})
+	}
+
+	return items, nil
+}
+
 // Mount register
 func (p *Plugin) Mount() error {
+	p.Sitemap.Register(p.sitemap)
+	// --------------
 	ht := p.Router.Group("/survey/htdocs")
+	ht.GET("/forms", p.Layout.HTML("survey/forms/index", p.getForms))
 	ht.GET("/forms/apply/:id", p.Layout.HTML("survey/forms/edit", p.getApplyForm))
 	ht.POST("/forms/apply/:id", p.Layout.JSON(p.postApplyForm))
 	ht.GET("/forms/edit/:token", p.Layout.HTML("survey/forms/edit", p.getEditForm))

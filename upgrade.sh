@@ -30,6 +30,7 @@ govendor fetch github.com/sirupsen/logrus
 govendor fetch github.com/sirupsen/logrus/hooks/syslog
 govendor fetch github.com/BurntSushi/toml
 govendor fetch gopkg.in/gomail.v2
+govendor fetch github.com/ikeikeikeike/go-sitemap-generator/stm
 govendor fetch github.com/aws/aws-sdk-go/aws/session
 govendor fetch github.com/aws/aws-sdk-go/service/s3
 govendor fetch github.com/kapmahc/stardict

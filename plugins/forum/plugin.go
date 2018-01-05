@@ -1,8 +1,11 @@
 package forum
 
 import (
+	"fmt"
+
 	"github.com/facebookgo/inject"
 	"github.com/gin-gonic/gin"
+	"github.com/ikeikeikeike/go-sitemap-generator/stm"
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/plugins/nut"
 	"github.com/kapmahc/h2o/web"
@@ -12,13 +15,14 @@ import (
 
 // Plugin plugin
 type Plugin struct {
-	I18n   *web.I18n      `inject:""`
-	Cache  *web.Cache     `inject:""`
-	Jwt    *web.Jwt       `inject:""`
-	Layout *nut.Layout    `inject:""`
-	Router *gin.Engine    `inject:""`
-	DB     *gorm.DB       `inject:""`
-	Render *render.Render `inject:""`
+	I18n    *web.I18n      `inject:""`
+	Cache   *web.Cache     `inject:""`
+	Jwt     *web.Jwt       `inject:""`
+	Sitemap *web.Sitemap   `inject:""`
+	Layout  *nut.Layout    `inject:""`
+	Router  *gin.Engine    `inject:""`
+	DB      *gorm.DB       `inject:""`
+	Render  *render.Render `inject:""`
 }
 
 // Init init beans
@@ -31,8 +35,41 @@ func (p *Plugin) Shell() []cli.Command {
 	return []cli.Command{}
 }
 
+func (p *Plugin) sitemap() ([]stm.URL, error) {
+	items := []stm.URL{
+		{"loc": "/forum/htdocs/articles"},
+		{"loc": "/forum/htdocs/tags"},
+		{"loc": "/forum/htdocs/comments"},
+	}
+
+	var articles []Article
+	if err := p.DB.Select([]string{"id", "updated_at"}).Order("updated_at DESC").Find(&articles).Error; err != nil {
+		return nil, err
+	}
+	for _, it := range articles {
+		items = append(items, stm.URL{
+			"loc":     fmt.Sprintf("/forum/htdocs/articles/%d", it.ID),
+			"lastmod": it.UpdatedAt,
+		})
+	}
+
+	var tags []Tag
+	if err := p.DB.Select([]string{"id", "updated_at"}).Order("updated_at DESC").Find(&tags).Error; err != nil {
+		return nil, err
+	}
+	for _, it := range tags {
+		items = append(items, stm.URL{
+			"loc":     fmt.Sprintf("/forum/htdocs/tags/%d", it.ID),
+			"lastmod": it.UpdatedAt,
+		})
+	}
+	return items, nil
+}
+
 // Mount register
 func (p *Plugin) Mount() error {
+	p.Sitemap.Register(p.sitemap)
+	// ----------
 	ht := p.Router.Group("/forum/htdocs")
 	ht.GET("/tags", p.Layout.HTML("forum/tags/index", p.indexTagsH))
 	ht.GET("/tags/:id", p.Layout.HTML("forum/tags/show", p.showTagH))

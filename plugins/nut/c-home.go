@@ -75,3 +75,10 @@ func (p *Plugin) getRobotsTxt(c *gin.Context) {
 	}
 	c.String(http.StatusInternalServerError, err.Error())
 }
+
+func (p *Plugin) getSitemapGz(c *gin.Context) {
+	err := p.Sitemap.Generate(p.Layout.Backend(c), c.Writer)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+	}
+}

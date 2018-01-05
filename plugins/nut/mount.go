@@ -1,14 +1,28 @@
 package nut
 
 import (
+	"fmt"
 	"path"
 
+	"github.com/ikeikeikeike/go-sitemap-generator/stm"
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
 )
 
+func (p *Plugin) sitemap() ([]stm.URL, error) {
+	var items []stm.URL
+	for _, l := range p.Languages {
+		items = append(items, stm.URL{
+			"loc": fmt.Sprintf("/?locale=%s", l),
+		})
+	}
+	return items, nil
+}
+
 // Mount register
 func (p *Plugin) Mount() error {
+	p.Sitemap.Register(p.sitemap)
+	// --------------
 	i18m, err := p.I18n.Middleware()
 	if err != nil {
 		return err
@@ -27,6 +41,7 @@ func (p *Plugin) Mount() error {
 
 	p.Router.GET("/", p.getHome)
 	p.Router.GET("/robots.txt", p.getRobotsTxt)
+	p.Router.GET("/sitemap.xml.gz", p.getSitemapGz)
 	p.Router.GET("/locales/:lang", p.Layout.JSON(p.getLocales))
 	p.Router.GET("/layout", p.Layout.JSON(p.getLayout))
 	p.Router.POST("/leave-words", p.Layout.JSON(p.createLeaveWord))
