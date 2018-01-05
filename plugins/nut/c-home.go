@@ -33,7 +33,7 @@ func (p *Plugin) getDonate(l string, c *gin.Context) (gin.H, error) {
 	rst := gin.H{
 		"body": item["body"],
 		"type": item["type"],
-		TITLE:  p.I18n.T(l, "nut.donate.titme"),
+		TITLE:  p.I18n.T(l, "nut.donate.title"),
 	}
 	if paypal, ok := item["paypal"]; ok && paypal.(string) != "" {
 		var buf bytes.Buffer

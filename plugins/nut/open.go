@@ -50,13 +50,13 @@ func (p *Plugin) openJobber() (*web.Jobber, error) {
 
 func (p *Plugin) openRender(theme string) *render.Render {
 	helpers := template.FuncMap{
-		"fmt": fmt.Sprintf,
+		// "fmt": fmt.Sprintf,
 		"dtf": func(t time.Time) string {
 			return t.Format(time.RFC822)
 		},
-		"eq": func(a interface{}, b interface{}) bool {
-			return a == b
-		},
+		// "eq": func(a interface{}, b interface{}) bool {
+		// 	return a == b
+		// },
 		"substr": func(s string, b, e int) string {
 			l := len(s)
 			if b < 0 {
