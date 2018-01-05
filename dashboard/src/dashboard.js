@@ -61,6 +61,9 @@ const menus = (user) => {
             label: "nut.admin.site.smtp.title",
             key: "/admin/site/smtp"
           }, {
+            label: "nut.admin.site.donate.title",
+            key: "/admin/site/donate"
+          }, {
             label: "nut.admin.site.home.title",
             key: "/admin/site/home"
           }, {

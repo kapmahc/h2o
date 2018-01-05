@@ -17,6 +17,7 @@ import NewLeaveWord from './leave-words/New'
 import AdminSiteStatus from './admin/site/Status'
 import AdminSiteInfo from './admin/site/Info'
 import AdminSiteAuthor from './admin/site/Author'
+import AdminSiteDonate from './admin/site/Donate'
 import AdminSiteSeo from './admin/site/Seo'
 import AdminSiteSmtp from './admin/site/Smtp'
 import AdminSiteHome from './admin/site/Home'
@@ -89,6 +90,9 @@ const routes = [
   } />),
   (< Route key = "nut.admin.site.smtp" path = "/admin/site/smtp" component = {
     AdminSiteSmtp
+  } />),
+  (< Route key = "nut.admin.site.donate" path = "/admin/site/donate" component = {
+    AdminSiteDonate
   } />),
   (< Route key = "nut.admin.site.home" path = "/admin/site/home" component = {
     AdminSiteHome

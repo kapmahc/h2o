@@ -45,6 +45,9 @@ func (p *Plugin) Mount() error {
 		}
 	}
 
+	ht := p.Router.Group("/htdocs")
+	ht.GET("/donate", p.Layout.HTML("nut/donate", p.getDonate))
+
 	p.Router.GET("/", p.getHome)
 	p.Router.GET("/robots.txt", p.getRobotsTxt)
 	p.Router.GET("/sitemap.xml.gz", p.getSitemapGz)
@@ -83,6 +86,8 @@ func (p *Plugin) Mount() error {
 	ag.GET("/site/smtp", p.Layout.JSON(p.getAdminSiteSMTP))
 	ag.POST("/site/smtp", p.Layout.JSON(p.postAdminSiteSMTP))
 	ag.PATCH("/site/smtp", p.Layout.JSON(p.patchAdminSiteSMTP))
+	ag.GET("/site/donate", p.Layout.JSON(p.getAdminSiteDonate))
+	ag.POST("/site/donate", p.Layout.JSON(p.postAdminSiteDonate))
 	ag.POST("/site/home", p.Layout.JSON(p.postAdminSiteHome))
 	ag.GET("/links", p.Layout.JSON(p.indexAdminLinks))
 	ag.POST("/links", p.Layout.JSON(p.createAdminLink))

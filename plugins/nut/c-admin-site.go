@@ -139,6 +139,39 @@ func (p *Plugin) postAdminSiteSeo(l string, c *gin.Context) (interface{}, error)
 	return gin.H{}, nil
 }
 
+func (p *Plugin) getAdminSiteDonate(l string, c *gin.Context) (interface{}, error) {
+	item := make(map[string]interface{})
+	if err := p.Settings.Get(p.DB, "site.donate", &item); err != nil {
+		item["paypal"] = ""
+		item["body"] = ""
+		item["type"] = web.TypeHTML
+	}
+	return item, nil
+}
+
+type fmSiteDonate struct {
+	Body   string `json:"body" binding:"required"`
+	Type   string `json:"type" binding:"required"`
+	Paypal string `json:"paypal"`
+}
+
+func (p *Plugin) postAdminSiteDonate(l string, c *gin.Context) (interface{}, error) {
+	var fm fmSiteDonate
+	if err := c.BindJSON(&fm); err != nil {
+		return nil, err
+	}
+
+	if err := p.Settings.Set(p.DB, "site.donate", map[string]interface{}{
+		"body":   fm.Body,
+		"type":   fm.Type,
+		"paypal": fm.Paypal,
+	}, false); err != nil {
+		return nil, err
+	}
+
+	return gin.H{}, nil
+}
+
 type fmSiteAuthor struct {
 	Email string `json:"email" binding:"email"`
 	Name  string `json:"name" binding:"required"`

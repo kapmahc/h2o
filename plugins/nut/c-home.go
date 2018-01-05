@@ -1,6 +1,8 @@
 package nut
 
 import (
+	"bytes"
+	h_template "html/template"
 	"net/http"
 	"path"
 	"text/template"
@@ -22,6 +24,32 @@ func (p *Plugin) getHome(c *gin.Context) {
 		return gin.H{}, nil
 	})(c)
 }
+
+func (p *Plugin) getDonate(l string, c *gin.Context) (gin.H, error) {
+	item := make(map[string]interface{})
+	if err := p.Settings.Get(p.DB, "site.donate", &item); err != nil {
+		return nil, err
+	}
+	rst := gin.H{
+		"body": item["body"],
+		"type": item["type"],
+		TITLE:  p.I18n.T(l, "nut.donate.titme"),
+	}
+	if paypal, ok := item["paypal"]; ok && paypal.(string) != "" {
+		var buf bytes.Buffer
+		tpl, err := template.ParseFiles(path.Join("templates", "paypal.html"))
+		if err != nil {
+			return nil, err
+		}
+		if err := tpl.Execute(&buf, gin.H{"id": paypal}); err != nil {
+			return nil, err
+		}
+		rst["paypal"] = h_template.HTML(buf.Bytes())
+	}
+	return rst, nil
+}
+
+// ------------------
 
 func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
 	items, err := p.I18n.All(c.Param("lang"))
@@ -65,6 +93,8 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 
 	return site, nil
 }
+
+// ------------
 
 // http://www.robotstxt.org/robotstxt.html
 func (p *Plugin) getRobotsTxt(c *gin.Context) {
