@@ -195,6 +195,7 @@ func (p *I18n) E(lang, code string, args ...interface{}) error {
 func (p *I18n) All(lang string) (map[string]string, error) {
 	var items []Locale
 	if err := p.DB.Select([]string{"code", "message"}).
+		Where("lang = ?", lang).
 		Order("code ASC").Find(&items).Error; err != nil {
 		return nil, err
 	}
