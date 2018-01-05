@@ -13,7 +13,7 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
 import Layout from '../../../../layout'
-import {post, get} from '../../../../ajax'
+import {post, get, backend} from '../../../../ajax'
 import {Submit, formItemLayout} from '../../../../components/form'
 
 const FormItem = Form.Item
@@ -66,18 +66,6 @@ class Widget extends Component {
                 })(<Input/>)
               }
             </FormItem>
-            <FormItem {...formItemLayout} label={<FormattedMessage id = "nut.admin.site.seo.baiduVerifyCode" />} hasFeedback={true}>
-              {
-                getFieldDecorator('baiduVerifyCode', {
-                  rules: [
-                    {
-                      required: true,
-                      message: formatMessage({id: "errors.empty-email"})
-                    }
-                  ]
-                })(<Input/>)
-              }
-            </FormItem>
             <Submit/>
           </Form>
         </Col>
@@ -89,8 +77,8 @@ class Widget extends Component {
           }}>
           <Card>
             {
-              ['/robots.txt', '/sitemap.xml.gz', `/google${this.state.item.googleVerifyCode}.html`, `/baidu_verify_${this.state.item.baiduVerifyCode}.html`].concat(this.props.site.languages.map(it => `/rss-${it}.atom`)).map((it, id) => (<p key={id}>
-                <a href={it} target='_blank'>{it}</a>
+              ['/robots.txt', '/sitemap.xml.gz'].concat(this.props.site.languages.map(it => `/rss-${it}.atom`)).map((it, id) => (<p key={id}>
+                <a href={backend(it)} target='_blank'>{it}</a>
               </p>))
             }
           </Card>

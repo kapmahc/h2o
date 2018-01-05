@@ -1,6 +1,10 @@
 package nut
 
 import (
+	"net/http"
+	"path"
+	"text/template"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kapmahc/h2o/web"
 )
@@ -59,4 +63,15 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	}
 
 	return site, nil
+}
+
+// http://www.robotstxt.org/robotstxt.html
+func (p *Plugin) getRobotsTxt(c *gin.Context) {
+	tpl, err := template.ParseFiles(path.Join("templates", "robots.txt"))
+	if err == nil {
+		if err = tpl.Execute(c.Writer, gin.H{"home": p.Layout.Backend(c)}); err == nil {
+			return
+		}
+	}
+	c.String(http.StatusInternalServerError, err.Error())
 }

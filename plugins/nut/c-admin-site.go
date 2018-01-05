@@ -105,20 +105,20 @@ func (p *Plugin) patchAdminSiteSMTP(l string, c *gin.Context) (interface{}, erro
 	return gin.H{}, nil
 }
 
+const (
+	googleSiteVerification = "google-site-verification"
+)
+
 func (p *Plugin) getAdminSiteSeo(l string, c *gin.Context) (interface{}, error) {
 	var googleVerifyCode string
-	p.Settings.Get(p.DB, "site.google.verify.code", &googleVerifyCode)
-	var baiduVerifyCode string
-	p.Settings.Get(p.DB, "site.baidu.verify.code", &baiduVerifyCode)
+	p.Settings.Get(p.DB, googleSiteVerification, &googleVerifyCode)
 	return gin.H{
 		"googleVerifyCode": googleVerifyCode,
-		"baiduVerifyCode":  baiduVerifyCode,
 	}, nil
 }
 
 type fmSiteSeo struct {
-	GoogleVerifyCode string `json:"googleVerifyCode" binding:"required"`
-	BaiduVerifyCode  string `json:"baiduVerifyCode" binding:"required"`
+	GoogleVerifyCode string `json:"googleVerifyCode"`
 }
 
 func (p *Plugin) postAdminSiteSeo(l string, c *gin.Context) (interface{}, error) {
@@ -128,8 +128,7 @@ func (p *Plugin) postAdminSiteSeo(l string, c *gin.Context) (interface{}, error)
 	}
 	db := p.DB.Begin()
 	for k, v := range map[string]string{
-		"site.google.verify.code": fm.GoogleVerifyCode,
-		"site.baidu.verify.code":  fm.BaiduVerifyCode,
+		googleSiteVerification: fm.GoogleVerifyCode,
 	} {
 		if err := p.Settings.Set(db, k, v, false); err != nil {
 			db.Rollback()

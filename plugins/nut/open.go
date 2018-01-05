@@ -100,6 +100,10 @@ func (p *Plugin) openRender(theme string) *render.Render {
 				return favicon
 			case "languages":
 				return p.Languages[:]
+			case googleSiteVerification:
+				var code string
+				p.Settings.Get(p.DB, googleSiteVerification, &code)
+				return code
 			default:
 				return k
 			}

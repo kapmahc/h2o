@@ -1,11 +1,12 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="{{t .locale "site.description"}}">
-<meta name="keywords" content="{{t .locale "site.keywords"}}">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="{{t .locale "site.description"}}" />
+<meta name="keywords" content="{{t .locale "site.keywords"}}" />
 {{$author := site "author"}}
-<meta name="author" content="{{$author.name}}<{{$author.email}}>">
-<link rel="icon" type="image/png" href="{{site "favicon"}}" />
+<meta name="author" content="{{$author.name}}<{{$author.email}}>" />
+<meta name="google-site-verification" content="{{site "google-site-verification"}}" />
 <title>{{.title}}|{{t .locale "site.subhead"}}|{{t .locale "site.title"}}</title>
+<link rel="icon" type="image/png" href="{{site "favicon"}}" />
 {{assets_css "/3rd/bootstrap/dist/css/bootstrap.min.css"}}
 {{assets_css "/3rd/font-awesome/css/font-awesome.min.css"}}
 {{assets_css "/3rd/quill/dist/quill.snow.css"}}

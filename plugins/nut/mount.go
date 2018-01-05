@@ -26,6 +26,7 @@ func (p *Plugin) Mount() error {
 	}
 
 	p.Router.GET("/", p.getHome)
+	p.Router.GET("/robots.txt", p.getRobotsTxt)
 	p.Router.GET("/locales/:lang", p.Layout.JSON(p.getLocales))
 	p.Router.GET("/layout", p.Layout.JSON(p.getLayout))
 	p.Router.POST("/leave-words", p.Layout.JSON(p.createLeaveWord))
