@@ -237,6 +237,7 @@ func (p *Plugin) Init(g *inject.Graph) error {
 		&inject.Object{Value: jobber},
 		&inject.Object{Value: s3},
 		&inject.Object{Value: web.NewSitemap()},
+		&inject.Object{Value: web.NewRSS()},
 		&inject.Object{Value: web.NewCache("cache://")},
 		&inject.Object{Value: web.NewJwt(secret, crypto.SigningMethodHS512)},
 		&inject.Object{Value: gin.Default()},

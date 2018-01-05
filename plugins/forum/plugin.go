@@ -5,6 +5,7 @@ import (
 
 	"github.com/facebookgo/inject"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/feeds"
 	"github.com/ikeikeikeike/go-sitemap-generator/stm"
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/plugins/nut"
@@ -19,6 +20,7 @@ type Plugin struct {
 	Cache   *web.Cache     `inject:""`
 	Jwt     *web.Jwt       `inject:""`
 	Sitemap *web.Sitemap   `inject:""`
+	RSS     *web.RSS       `inject:""`
 	Layout  *nut.Layout    `inject:""`
 	Router  *gin.Engine    `inject:""`
 	DB      *gorm.DB       `inject:""`
@@ -33,6 +35,34 @@ func (p *Plugin) Init(*inject.Graph) error {
 // Shell console commands
 func (p *Plugin) Shell() []cli.Command {
 	return []cli.Command{}
+}
+
+func (p *Plugin) rss(l string) ([]*feeds.Item, error) {
+	var items []*feeds.Item
+
+	var articles []Article
+	if err := p.DB.
+		Select([]string{"id", "title", "body", "type", "updated_at"}).
+		Where("lang = ?", l).
+		Order("updated_at DESC").
+		Limit(20).
+		Find(&articles).Error; err != nil {
+		return nil, err
+	}
+	for _, it := range articles {
+		var u nut.User
+		if err := p.DB.Select([]string{"email"}).Where("id = ?", it.UserID).First(&u).Error; err == nil {
+			it.User = u
+		}
+		items = append(items, &feeds.Item{
+			Title:       it.Title,
+			Link:        &feeds.Link{Href: fmt.Sprintf("/forum/htdocs/articles/%d", it.ID)},
+			Description: it.Body,
+			Author:      &feeds.Author{Name: it.User.Name},
+			Created:     it.UpdatedAt,
+		})
+	}
+	return items, nil
 }
 
 func (p *Plugin) sitemap() ([]stm.URL, error) {
@@ -68,6 +98,7 @@ func (p *Plugin) sitemap() ([]stm.URL, error) {
 
 // Mount register
 func (p *Plugin) Mount() error {
+	p.RSS.Register(p.rss)
 	p.Sitemap.Register(p.sitemap)
 	// ----------
 	ht := p.Router.Group("/forum/htdocs")

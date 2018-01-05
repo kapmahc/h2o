@@ -27,8 +27,8 @@ func (p *Sitemap) Register(handlers ...SitemapHandler) {
 	p.handlers = append(p.handlers, handlers...)
 }
 
-// Generate xml.gz content body
-func (p *Sitemap) Generate(h string, w io.Writer) error {
+// ToXMLGz write xml.gz
+func (p *Sitemap) ToXMLGz(h string, w io.Writer) error {
 	sm := stm.NewSitemap()
 	sm.Create()
 	sm.SetDefaultHost(h)

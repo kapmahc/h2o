@@ -6,6 +6,7 @@ import (
 	"text/template"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/feeds"
 	"github.com/kapmahc/h2o/web"
 )
 
@@ -77,7 +78,33 @@ func (p *Plugin) getRobotsTxt(c *gin.Context) {
 }
 
 func (p *Plugin) getSitemapGz(c *gin.Context) {
-	err := p.Sitemap.Generate(p.Layout.Backend(c), c.Writer)
+	err := p.Sitemap.ToXMLGz(p.Layout.Backend(c), c.Writer)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+	}
+}
+
+func (p *Plugin) getRssAtom(c *gin.Context) {
+	lang := c.Param("lang")
+	host := p.Layout.Backend(c)
+	var author map[string]string
+	if err := p.Settings.Get(p.DB, "site.author", &author); err != nil {
+		author = map[string]string{
+			"name":  "",
+			"email": "",
+		}
+	}
+	err := p.RSS.ToAtom(
+		host,
+		lang,
+		p.I18n.T(lang, "site.title"),
+		p.I18n.T(lang, "site.description"),
+		&feeds.Author{
+			Name:  author["name"],
+			Email: author["email"],
+		},
+		c.Writer,
+	)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 	}

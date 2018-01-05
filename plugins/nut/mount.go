@@ -12,9 +12,15 @@ import (
 func (p *Plugin) sitemap() ([]stm.URL, error) {
 	var items []stm.URL
 	for _, l := range p.Languages {
-		items = append(items, stm.URL{
-			"loc": fmt.Sprintf("/?locale=%s", l),
-		})
+		items = append(
+			items,
+			stm.URL{
+				"loc": fmt.Sprintf("/?locale=%s", l),
+			},
+			stm.URL{
+				"loc": fmt.Sprintf("/rss/%s", l),
+			},
+		)
 	}
 	return items, nil
 }
@@ -42,6 +48,7 @@ func (p *Plugin) Mount() error {
 	p.Router.GET("/", p.getHome)
 	p.Router.GET("/robots.txt", p.getRobotsTxt)
 	p.Router.GET("/sitemap.xml.gz", p.getSitemapGz)
+	p.Router.GET("/rss/:lang", p.getRssAtom)
 	p.Router.GET("/locales/:lang", p.Layout.JSON(p.getLocales))
 	p.Router.GET("/layout", p.Layout.JSON(p.getLayout))
 	p.Router.POST("/leave-words", p.Layout.JSON(p.createLeaveWord))
