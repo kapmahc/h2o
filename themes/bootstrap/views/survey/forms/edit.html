@@ -15,12 +15,14 @@
     {{if eq .Type "text"}}
       <div class="form-group">
         <label for="{{.Name}}">{{.Label}} {{if .Required}}(*){{end}}:</label>
-        <input type="text" class="form-control" id="{{.Name}}" name="{{.Name}}" value="{{index $.values .Name}}"/>
+        <input aria-describedby="{{.Name}}Help" type="text" class="form-control" id="{{.Name}}" name="{{.Name}}" value="{{index $.values .Name}}"/>
+        <small id="{{.Name}}Help" class="form-text text-muted">{{.Body}}</small>
       </div>
     {{else if eq .Type "textarea"}}
       <div class="form-group">
         <label for="{{.Name}}">{{.Label}} {{if .Required}}(*){{end}}:</label>
-        <textarea class="form-control" id="{{.Name}}" name="{{.Name}}" rows="6">{{index $.values .Name}}</textarea>
+        <textarea aria-describedby="{{.Name}}Help" class="form-control" id="{{.Name}}" name="{{.Name}}" rows="6">{{index $.values .Name}}</textarea>
+        <small id="{{.Name}}Help" class="form-text text-muted">{{.Body}}</small>
       </div>
     {{else if eq .Type "select"}}
       <div class="form-group">

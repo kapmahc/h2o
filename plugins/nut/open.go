@@ -57,6 +57,9 @@ func (p *Plugin) openRender(theme string) *render.Render {
 		// "eq": func(a interface{}, b interface{}) bool {
 		// 	return a == b
 		// },
+		"join": func(args []string, sep string) string {
+			return strings.Join(args, sep)
+		},
 		"substr": func(s string, b, e int) string {
 			l := len(s)
 			if b < 0 {

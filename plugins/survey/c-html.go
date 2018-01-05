@@ -31,9 +31,9 @@ func (p *Plugin) parseFormData(r *http.Request, f *Form) (string, []byte, error)
 	val := gin.H{}
 	for _, fd := range f.Fields {
 		switch {
-		case fd.Type == "text" || fd.Type == "textarea" || fd.Type == "select" || fd.Type == "radios":
+		case fd.Type == typeText || fd.Type == typeTextarea || fd.Type == typeSelect || fd.Type == typeRadios:
 			val[fd.Name] = r.Form.Get(fd.Name)
-		case fd.Type == "checkboxes":
+		case fd.Type == typeCheckboxes:
 			val[fd.Name] = r.Form[fd.Name]
 		}
 	}
@@ -95,14 +95,23 @@ func (p *Plugin) selectForm(id string) (*Form, map[string][]string, error) {
 
 	options := make(map[string][]string)
 	for _, fd := range it.Fields {
+		var val []string
+		if err := json.Unmarshal([]byte(fd.Body), &val); err != nil {
+			return nil, nil, err
+		}
+
 		switch {
-		case fd.Type == "select" || fd.Type == "checkboxes" || fd.Type == "radios":
-			var val []string
-			if err := json.Unmarshal([]byte(fd.Body), &val); err != nil {
-				return nil, nil, err
-			}
+		case fd.Type == typeSelect || fd.Type == typeCheckboxes || fd.Type == typeRadios:
 			options[fd.Name] = val
 		}
 	}
 	return &it, options, nil
 }
+
+const (
+	typeSelect     = "select"
+	typeCheckboxes = "checkboxs"
+	typeRadios     = "radios"
+	typeText       = "text"
+	typeTextarea   = "textarea"
+)
