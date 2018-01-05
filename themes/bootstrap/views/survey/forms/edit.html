@@ -16,13 +16,13 @@
       <div class="form-group">
         <label for="{{.Name}}">{{.Label}} {{if .Required}}(*){{end}}:</label>
         <input aria-describedby="{{.Name}}Help" type="text" class="form-control" id="{{.Name}}" name="{{.Name}}" value="{{index $.values .Name}}"/>
-        <small id="{{.Name}}Help" class="form-text text-muted">{{.Body}}</small>
+        <small id="{{.Name}}Help" class="form-text text-muted">{{index $.options .Name}}</small>
       </div>
     {{else if eq .Type "textarea"}}
       <div class="form-group">
         <label for="{{.Name}}">{{.Label}} {{if .Required}}(*){{end}}:</label>
         <textarea aria-describedby="{{.Name}}Help" class="form-control" id="{{.Name}}" name="{{.Name}}" rows="6">{{index $.values .Name}}</textarea>
-        <small id="{{.Name}}Help" class="form-text text-muted">{{.Body}}</small>
+        <small id="{{.Name}}Help" class="form-text text-muted">{{index $.options .Name}}</small>
       </div>
     {{else if eq .Type "select"}}
       <div class="form-group">

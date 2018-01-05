@@ -3,6 +3,7 @@ package survey
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kapmahc/h2o/plugins/nut"
@@ -84,7 +85,7 @@ func (p *Plugin) getCancelForm(l string, c *gin.Context) error {
 	return nil
 }
 
-func (p *Plugin) selectForm(id string) (*Form, map[string][]string, error) {
+func (p *Plugin) selectForm(id string) (*Form, map[string]interface{}, error) {
 	var it Form
 	if err := p.DB.Where("id = ?", id).First(&it).Error; err != nil {
 		return nil, nil, err
@@ -93,7 +94,7 @@ func (p *Plugin) selectForm(id string) (*Form, map[string][]string, error) {
 		return nil, nil, err
 	}
 
-	options := make(map[string][]string)
+	options := make(map[string]interface{})
 	for _, fd := range it.Fields {
 		var val []string
 		if err := json.Unmarshal([]byte(fd.Body), &val); err != nil {
@@ -103,14 +104,17 @@ func (p *Plugin) selectForm(id string) (*Form, map[string][]string, error) {
 		switch {
 		case fd.Type == typeSelect || fd.Type == typeCheckboxes || fd.Type == typeRadios:
 			options[fd.Name] = val
+		default:
+			options[fd.Name] = strings.Join(val, "\n")
 		}
+
 	}
 	return &it, options, nil
 }
 
 const (
 	typeSelect     = "select"
-	typeCheckboxes = "checkboxs"
+	typeCheckboxes = "checkboxes"
 	typeRadios     = "radios"
 	typeText       = "text"
 	typeTextarea   = "textarea"
