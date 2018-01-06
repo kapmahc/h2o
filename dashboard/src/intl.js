@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import antdEnUs from 'antd/lib/locale-provider/en_US'
+import antdZhHant from 'antd/lib/locale-provider/zh_TW'
 import dataEnUs from 'react-intl/locale-data/en'
 import dataZhHans from 'react-intl/locale-data/zh'
 
@@ -15,6 +16,8 @@ export const get = () => {
   switch (lang) {
     case 'zh-Hans':
       return {locale: lang, data: dataZhHans, antd: null}
+    case 'zh-Hant':
+      return {locale: lang, data: dataZhHans, antd: antdZhHant}
     default:
       return {locale: 'en-US', data: dataEnUs, antd: antdEnUs}
   }

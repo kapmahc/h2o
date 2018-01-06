@@ -33,8 +33,10 @@ class Widget extends Component {
     if (id) {
       get(`/survey/forms/${id}`).then((rst) => {
         setFieldsValue({title: rst.title})
-        console.log(rst.startUp, rst.shutDown)
-        this.setState({body: rst.body, startUp: rst.startUp, shutDown: rst.shutDown})
+        this.setState({
+          body: rst.body, startUp: rst.startUp.split('T')[0],
+          shutDown: rst.shutDown.split('T')[0]
+        })
       }).catch(message.error)
     }
   }
