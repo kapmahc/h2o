@@ -10,7 +10,7 @@ import (
 
 func (p *Plugin) indexFields(l string, c *gin.Context) (interface{}, error) {
 	var items []Field
-	if err := p.DB.Where("form_id = ?", c.Query("formId")).Order("sort_order DESC").Find(&items).Error; err != nil {
+	if err := p.DB.Where("form_id = ?", c.Query("formId")).Order("sort_order ASC").Find(&items).Error; err != nil {
 		return nil, err
 	}
 	return items, nil
