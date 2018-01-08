@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/SermoDigital/jose/jws"
@@ -104,7 +105,7 @@ func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) 
 		return nil, err
 	}
 	db := p.DB.Begin()
-	user, err := p.Dao.SignIn(db, l, c.ClientIP(), fm.Email, fm.Password)
+	user, err := p.Dao.SignIn(db, l, c.ClientIP(), strings.ToLower(fm.Email), fm.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -128,17 +129,17 @@ type fmUserSignUp struct {
 }
 
 func (p *Plugin) postUsersSignUp(l string, c *gin.Context) (interface{}, error) {
-	log.Printf("%+v", c.Request.Header)
 	var fm fmUserSignUp
 	if err := c.BindJSON(&fm); err != nil {
 		return nil, err
 	}
-	if _, err := p.Dao.GetUserByEmail(p.DB, fm.Email); err == nil {
+	email := strings.ToLower(fm.Email)
+	if _, err := p.Dao.GetUserByEmail(p.DB, email); err == nil {
 		return nil, p.I18n.E(l, "nut.errors.user.email-already-exist")
 	}
 	ip := c.ClientIP()
 	tx := p.DB.Begin()
-	user, err := p.Dao.AddEmailUser(tx, l, ip, fm.Name, fm.Email, fm.Password)
+	user, err := p.Dao.AddEmailUser(tx, l, ip, fm.Name, email, fm.Password)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
