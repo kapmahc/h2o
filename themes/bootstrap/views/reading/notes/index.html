@@ -1,0 +1,13 @@
+<div class="container">
+<br/>
+{{range .notes}}
+  <h2>{{.Book.Title}}</h2>
+  <hr/>
+  <blockquote class="blockquote">
+    <p class="mb-0">{{str2htm .Body}}</p>
+    <footer class="blockquote-footer">
+      <cite><a target="_blank" href="/reading/htdocs/books/{{.BookID}}">{{dtf .UpdatedAt}}</a></cite>
+    </footer>
+  </blockquote>
+{{end}}
+</div>

@@ -18,7 +18,7 @@ class Widget extends Component {
   componentDidMount() {
     const {id} = this.props.match.params
     if (id) {
-      get(`/forum/comments/${id}`).then((rst) => {
+      get(`/reading/notes/${id}`).then((rst) => {
         this.setState({body: rst.body})
       }).catch(message.error)
     }
@@ -29,40 +29,40 @@ class Widget extends Component {
   handleSubmit = (e) => {
     const {formatMessage} = this.props.intl
     const {push} = this.props
-    const {id, articleId} = this.props.match.params
+    const {id, bookId} = this.props.match.params
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         post(
           id
-          ? `/forum/comments/${id}`
-          : `/forum/comments?articleId=${articleId}`,
+          ? `/reading/notes/${id}`
+          : `/reading/notes?bookId=${bookId}`,
         Object.assign({}, values, {
           type: 'html',
           body: this.state.body
         })).then(() => {
           message.success(formatMessage({id: "helpers.success"}))
-          push('/forum/comments')
+          push('/reading/notes')
         }).catch(message.error);
       }
     });
   }
   render() {
-    const {id, articleId} = this.props.match.params
+    const {id, bookId} = this.props.match.params
     return (<Layout breads={[
         {
-          href: '/forum/comments',
-          label: <FormattedMessage id='forum.comments.index.title'/>
+          href: '/reading/notes',
+          label: <FormattedMessage id='reading.notes.index.title'/>
         },
         id
           ? {
-            href: `/forum/comments/edit/${id}`,
+            href: `/reading/notes/edit/${id}`,
             label: (<FormattedMessage id={"buttons.edit"} values={{
                 id: id
               }}/>)
           }
           : {
-            href: `/forum/comments/new/${articleId}`,
+            href: `/reading/notes/new/${bookId}`,
             label: <FormattedMessage id={"buttons.new"}/>
           }
       ]}>

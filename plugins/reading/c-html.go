@@ -19,6 +19,24 @@ import (
 
 // http://www.cbeta.org/cbreader/help/cbr_toc.htm
 
+func (p *Plugin) indexNotesH(l string, c *gin.Context) (gin.H, error) {
+	var items []Note
+	if err := p.DB.Order("updated_at DESC").Find(&items).Error; err != nil {
+		return nil, err
+	}
+	for id, it := range items {
+		var b Book
+		if err := p.DB.Select([]string{"id", "title"}).Where("id = ?", it.BookID).First(&b).Error; err != nil {
+			return nil, err
+		}
+		items[id].Book = b
+	}
+	return gin.H{
+		"notes":   items,
+		nut.TITLE: p.I18n.T(l, "reading.notes.index.title"),
+	}, nil
+}
+
 func (p *Plugin) showBookH(l string, c *gin.Context) (gin.H, error) {
 	var buf bytes.Buffer
 	it, bk, err := p.readBook(c.Param("id"))

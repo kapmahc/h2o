@@ -32,16 +32,16 @@ func (Book) TableName() string {
 
 // Note note
 type Note struct {
-	ID        uint `gorm:"primary_key" json:"id"`
-	Type      string
-	Body      string
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	ID        uint      `gorm:"primary_key" json:"id"`
+	Type      string    `json:"type"`
+	Body      string    `json:"body"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"createdAt"`
 
 	User   nut.User
-	UserID uint
+	UserID uint `json:"userId"`
 	Book   Book
-	BookID uint
+	BookID uint `json:"bookId"`
 }
 
 // TableName table name
