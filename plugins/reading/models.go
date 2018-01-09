@@ -22,6 +22,7 @@ type Book struct {
 	Cover       string    `json:"cover"`
 	UpdatedAt   time.Time
 	CreatedAt   time.Time
+	Notes       []Note `json:"comments"`
 }
 
 // TableName table name

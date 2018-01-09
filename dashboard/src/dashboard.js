@@ -37,9 +37,23 @@ const menus = (user) => {
         }
       ]
     }
+
+    var reading = {
+      icon: "book",
+      label: "reading.dashboard.title",
+      key: "reading",
+      items: [
+        {
+          label: "reading.books.index.title",
+          key: "/reading/books"
+        }
+      ]
+    }
+
     if (user.admin) {
       // administrator?
       forum.items.push({label: "forum.tags.index.title", key: "/forum/tags"})
+      reading.items.push({label: "reading.notes.index.title", key: "/reading/notes"})
       items.push({
         icon: "setting",
         label: "nut.settings.title",
@@ -89,6 +103,7 @@ const menus = (user) => {
       })
     }
     items.push(forum)
+    items.push(reading)
     items.push({
       icon: "notification",
       label: "survey.dashboard.title",

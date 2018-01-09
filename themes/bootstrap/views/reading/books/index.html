@@ -1,0 +1,18 @@
+<div class="container">
+<br/>
+<div class="row">
+  {{range .books}}
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">{{.Title}} {{.Subject}}</h4>
+        <p class="card-text">{{.Author}}</p>
+        <a target="_blank" href="/reading/htdocs/books/{{.ID}}" class="btn btn-primary">{{t $.locale "buttons.more"}}</a>
+      </div>
+    </div>
+    <br/>
+  </div>
+  {{end}}
+</div>
+{{template "layouts/application/pagination" .pagination}}
+</div>
