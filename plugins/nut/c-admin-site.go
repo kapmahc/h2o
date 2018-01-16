@@ -23,7 +23,7 @@ func (p *Plugin) getAdminSiteHome(l string, c *gin.Context) (interface{}, error)
 	var favicon string
 	p.Settings.Get(p.DB, "site.favicon", &favicon)
 	var home map[string]string
-	p.Settings.Get(p.DB, "site.home", &home)
+	p.Settings.Get(p.DB, "site.home."+l, &home)
 	var links []gin.H
 	if err := p.RSS.Walk(l, func(items ...*feeds.Item) error {
 		for _, it := range items {
@@ -57,7 +57,7 @@ func (p *Plugin) postAdminSiteHome(l string, c *gin.Context) (interface{}, error
 	db := p.DB.Begin()
 	for k, v := range map[string]interface{}{
 		"site.favicon": fm.Favicon,
-		"site.home": map[string]string{
+		"site.home." + l: map[string]string{
 			"theme": fm.Theme,
 			"href":  fm.Href,
 		},

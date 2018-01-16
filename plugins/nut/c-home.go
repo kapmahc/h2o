@@ -13,10 +13,11 @@ import (
 )
 
 func (p *Plugin) getHome(c *gin.Context) {
+	lang := c.MustGet(web.LOCALE).(string)
 	// carousel off-canvas
 	theme := c.Query("theme")
 	var home map[string]string
-	if err := p.Settings.Get(p.DB, "site.home", &home); err == nil {
+	if err := p.Settings.Get(p.DB, "site.home."+lang, &home); err == nil {
 		href := home["href"]
 		if href != "" {
 			c.Redirect(http.StatusFound, href)
