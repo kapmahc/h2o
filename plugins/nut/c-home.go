@@ -15,11 +15,21 @@ import (
 func (p *Plugin) getHome(c *gin.Context) {
 	// carousel off-canvas
 	theme := c.Query("theme")
-	if theme == "" {
-		if err := p.Settings.Get(p.DB, "site.home.theme", &theme); err != nil {
-			theme = "off-canvas"
+	var home map[string]string
+	if err := p.Settings.Get(p.DB, "site.home", &home); err == nil {
+		href := home["href"]
+		if href != "" {
+			c.Redirect(http.StatusFound, href)
+			return
+		}
+		if theme == "" {
+			theme = home["theme"]
 		}
 	}
+	if theme == "" {
+		theme = "off-canvas"
+	}
+
 	p.Layout.HTML("nut/home/"+theme, func(string, *gin.Context) (gin.H, error) {
 		return gin.H{}, nil
 	})(c)
@@ -66,10 +76,7 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	p.Settings.Get(p.DB, "site.author", &author)
 	site["author"] = author
 
-	// home
-	var home string
-	p.Settings.Get(p.DB, "site.home.theme", &home)
-	site["home"] = home
+	// favicon
 	var favicon string
 	p.Settings.Get(p.DB, "site.favicon", &favicon)
 	site["favicon"] = favicon

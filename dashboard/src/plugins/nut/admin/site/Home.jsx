@@ -20,9 +20,27 @@ const FormItem = Form.Item
 const Option = Select.Option
 
 class Widget extends Component {
+  state = {
+    links: []
+  }
   componentDidMount() {
     const {setFieldsValue} = this.props.form
-    get('/layout').then((rst) => setFieldsValue({favicon: rst.favicon, theme: rst.home})).catch(message.error)
+    get('/admin/site/home').then((rst) => {
+      setFieldsValue({favicon: rst.favicon})
+      if (rst.home) {
+        setFieldsValue(rst.home)
+      }
+      this.setState({
+        links: rst.links
+          ? [
+            {
+              href: '',
+              title: 'NULL'
+            }
+          ].concat(rst.links)
+          : []
+      })
+    }).catch(message.error)
   }
   handleSubmit = (e) => {
     const {formatMessage} = this.props.intl
@@ -65,6 +83,16 @@ class Widget extends Component {
               {
                 getFieldDecorator('theme')(<Select>
                   {["off-canvas", "carousel", "album"].map((p) => (<Option key={p} value={p}>{p}</Option>))}
+                </Select>)
+              }
+            </FormItem>
+            <FormItem {...formItemLayout} label={<FormattedMessage id = "attributes.href" />}>
+              {
+                getFieldDecorator('href')(<Select>
+                  {
+                    this.state.links.map((p, i) => (<Option key={i} value={p.href}>
+                      {p.title}</Option>))
+                  }
                 </Select>)
               }
             </FormItem>
