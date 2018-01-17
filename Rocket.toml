@@ -1,0 +1,15 @@
+[global]
+address = "localhost"
+port = 8080
+limits = { forms = 32768 }
+template_dir = "themes/moon"
+
+[development]
+log = "normal"
+secret_key = "mT6FHJOfA+0JDzW7tdhP2EaQqF2N6jrkD04bSgErFPU="
+workers = 8
+
+[production]
+log = "critical"
+secret_key = "ND6sf2/2feD+QSwVLl1fhB5kKV5sF5a/Lc+I6az07q0="
+workers = 2
