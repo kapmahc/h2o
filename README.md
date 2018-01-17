@@ -4,12 +4,28 @@ A complete open source e-commerce solution by Rust.
 
 ## Install
 
-```
-curl https://sh.rustup.rs -sSf | sh
-rustup override set nightly
-cargo install rustfmt-nightly
-cargo install racer
-```
+- install rust
+
+  ```
+  curl https://sh.rustup.rs -sSf | sh
+  rustup default nightly
+  cargo install rustfmt-nightly
+  cargo install racer
+  rustup component add rust-src
+  ```
+
+- add to your .zshrc
+
+  ```
+  export PATH="$HOME/.cargo/bin:$PATH"
+  export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+  ```
+
+- test racer
+
+  ```
+  racer complete std::io::B
+  ```
 
 ## Atom plugins
 
