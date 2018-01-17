@@ -6,6 +6,9 @@ A complete open source e-commerce solution by Rust.
 
 ```
 curl https://sh.rustup.rs -sSf | sh
+rustup override set nightly
+cargo install rustfmt-nightly
+cargo install racer
 ```
 
 ## Atom plugins
@@ -13,6 +16,7 @@ curl https://sh.rustup.rs -sSf | sh
 enable autosave
 
 - language-rust
+- racer
 - file-icons
 - atom-beautify(enable newline, beautify on save; need python-sqlparse)
 - language-babel

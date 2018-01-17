@@ -1,5 +1,6 @@
-# Rust  
-/vendor/*/
+# Rust
+/target/
+**/*.rs.bk
 
 # Javascript
 /node_modules/

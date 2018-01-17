@@ -1,0 +1,11 @@
+[package]
+name = "h2o"
+version = "1.0.0"
+authors = ["Jeremy Zheng <jitang.zheng@gmail.com>"]
+
+[dependencies]
+rocket = "0.3.6"
+rocket_codegen = "0.3.6"
+
+[profile.release]
+lto = true

@@ -1,0 +1,9 @@
+DROP TABLE mall_properties;
+DROP TABLE mall_journals;
+DROP TABLE mall_variants;
+DROP TABLE mall_products_tags;
+DROP TABLE mall_products;
+DROP TABLE mall_vendors;
+DROP TABLE mall_tags;
+DROP TABLE mall_stores;
+DROP TABLE mall_addresses;
