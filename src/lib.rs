@@ -4,6 +4,7 @@ extern crate rand;
 extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
+extern crate time;
 extern crate toml;
 
 pub mod nut;

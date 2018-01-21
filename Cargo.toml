@@ -18,6 +18,7 @@ rand = "0.4"
 base64 = "0.9"
 postgres = "0.15"
 mysql = "12.1"
+time = "0.1"
 
 [profile.release]
 lto = true

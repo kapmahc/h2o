@@ -1,14 +1,16 @@
 use std::fs;
 use std::os::unix::fs::OpenOptionsExt;
 use std::io::Write;
+use std::path::{Path, PathBuf};
 
 use rand::{self, Rng};
 use docopt::Docopt;
 use toml;
+use time;
 use rocket;
 use base64;
 
-use super::result::Result;
+use super::result::{Error, Result};
 use super::env;
 
 #[derive(Debug, Deserialize)]
@@ -47,7 +49,7 @@ HOMEPAGE: {homepage}
 
 USAGE:
   {name} generate config
-  {name} generate (locale|migration) [--name]
+  {name} generate (locale|migration) [--name=<fn>]
   {name} generate nginx [--https]
   {name} database (create|connect|migrate|rollback|status|drop)
   {name} start [--daemon]
@@ -58,7 +60,7 @@ USAGE:
 OPTIONS:
   -h --help     Show this screen.
   --version     Show version.
-  --name        File's name.
+  --name=<fn>   File's name.
   --https       Using https?
   --daemon      Run as daemon mode?
     ",
@@ -69,6 +71,7 @@ OPTIONS:
         authors = env::AUTHORS,
     );
     let args: Args = try!(try!(Docopt::new(usage)).deserialize());
+    // println!("{:?}", args);
     let app = App {};
 
     if args.flag_version {
@@ -114,7 +117,7 @@ OPTIONS:
             return app.database_drop();
         }
     }
-    println!("{:?}", args);
+
     return Ok(());
 }
 
@@ -134,10 +137,49 @@ impl App {
     }
 
     fn generate_locale(&self, name: String) -> Result<()> {
+        if name.is_empty() {
+            return Err(Error::NotFound);
+        }
+        let root = Path::new(self.locales_dir());
+        try!(fs::create_dir_all(&root));
+
+        let mut file = root.join(name);
+        file.set_extension(self.locales_ext());
+        println!("generate file {}", file.display());
+        try!(
+            fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .open(file)
+        );
+
         return Ok(());
     }
 
     fn generate_migration(&self, name: String) -> Result<()> {
+        if name.is_empty() {
+            return Err(Error::NotFound);
+        }
+
+        let root = self.migrations_dir("postgres".to_string())
+            .join(try!(time::strftime("%Y%m%d%H%M%S", &time::now_utc())))
+            .join(name);
+        try!(fs::create_dir_all(&root));
+        let files = vec!["up", "down"];
+        for n in files.into_iter() {
+            let mut file = root.join(n);
+            file.set_extension(self.migrations_ext());
+            println!("generate file {}", file.display());
+            try!(
+                fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .mode(0o600)
+                    .open(file)
+            );
+        }
+
         return Ok(());
     }
 
@@ -226,5 +268,17 @@ impl App {
 
     fn config_file(&self) -> &'static str {
         return "config.toml";
+    }
+    fn locales_dir(&self) -> &'static str {
+        return "locales";
+    }
+    fn locales_ext(&self) -> &'static str {
+        return "ini";
+    }
+    fn migrations_dir(&self, driver: String) -> PathBuf {
+        return Path::new("db").join(driver).join("migrations");
+    }
+    fn migrations_ext(&self) -> &'static str {
+        return "sql";
     }
 }
