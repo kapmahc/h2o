@@ -1,20 +1,25 @@
 use std::ops::Deref;
 use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 
 use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::{PostgresConnectionManager, TlsMode};
+use postgres;
+use postgres::types::FromSql;
+use chrono::{DateTime, NaiveDateTime, Utc};
 
 use super::env;
 use super::result::{Error, Result};
 
 pub trait Database {
+    fn driver(&self) -> &str;
     fn ping(&self) -> Result<()>;
     fn create(&self) -> Result<()>;
     fn drop(&self) -> Result<()>;
     fn open(&mut self) -> Result<()>;
     fn up(&self, name: String, script: String) -> Result<()>;
     fn down(&self, name: String, script: String) -> Result<()>;
-    fn versions(&self) -> Result<Vec<String>>;
+    fn versions(&self) -> Result<Vec<(String, NaiveDateTime)>>;
 }
 
 pub struct PostgreSQL {
@@ -42,39 +47,65 @@ impl PostgreSQL {
         return Ok(pool);
     }
 
-    fn check(&self) -> Result<()> {
-        return Ok(());
-    }
-
     fn tls_mode(&self) -> TlsMode {
         return match self.config.extra.get("sslmode") {
             _ => TlsMode::None,
         };
     }
 
-    fn query<DB>(&self, f: DB) -> Result<()>
-    where
-        DB: Fn(PooledConnection<PostgresConnectionManager>) -> Result<()>,
-    {
+    pub fn client(&self) -> Result<PooledConnection<PostgresConnectionManager>> {
         match self.pool {
-            Some(ref pool) => {
-                let con = try!(pool.get());
-                return f(con);
+            Some(ref p) => {
+                let c = try!(p.get());
+                Ok(c)
             }
             None => Err(Error::NotFound),
         }
     }
-    fn transaction(&self) -> Result<()> {
+
+    // fn query<F>(&self, f: F) -> Result<()>
+    // where
+    //     F: Fn(PooledConnection<PostgresConnectionManager>) -> Result<()>,
+    // {
+    //     match self.pool {
+    //         Some(ref pool) => {
+    //             let con = try!(pool.get());
+    //             return f(con);
+    //         }
+    //         None => Err(Error::NotFound),
+    //     }
+    // }
+
+    // fn transaction<F>(&self, f: F) -> Result<()>
+    // where
+    //     F: Fn(&postgres::transaction::Transaction) -> Result<()>,
+    // {
+    //     self.query(|c| {
+    //         let t = try!(c.transaction());
+    //         match f(&t) {
+    //             Ok(_) => {
+    //                 try!(t.commit());
+    //                 Ok(())
+    //             }
+    //             Err(e) => Err(e),
+    //         }
+    //     })
+    // }
+
+    fn check(&self, t: &postgres::transaction::Transaction) -> Result<()> {
+        try!(t.execute(
+            "CREATE TABLE IF NOT EXISTS schema_migrations(version VARCHAR(255) PRIMARY KEY, created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW())",
+            &[]
+        ));
         return Ok(());
     }
 }
 
 impl Database for PostgreSQL {
     fn ping(&self) -> Result<()> {
-        self.query(|c| {
-            try!(c.execute("SELECT NOW()", &[]));
-            return Ok(());
-        })
+        let c = try!(self.client());
+        try!(c.execute("SELECT NOW()", &[]));
+        return Ok(());
     }
     fn open(&mut self) -> Result<()> {
         self.pool = Some(Box::new(try!(Pool::new(try!(
@@ -115,17 +146,45 @@ impl Database for PostgreSQL {
 
     fn up(&self, name: String, script: String) -> Result<()> {
         info!("migrate {}", name);
-        // try!(con.execute(script, &[]));
-        return Ok(());
+        let c = try!(self.client());
+        let t = try!(c.transaction());
+        try!(t.batch_execute(&script));
+        try!(t.execute(
+            "INSERT INTO schema_migrations(version) VALUES($1)",
+            &[&name]
+        ));
+        try!(t.commit());
+        Ok(())
     }
 
     fn down(&self, name: String, script: String) -> Result<()> {
         info!("rollback {}", name);
-        return Ok(());
+        let c = try!(self.client());
+        let t = try!(c.transaction());
+        try!(t.batch_execute(&script));
+        try!(t.execute("DELETE FROM schema_migrations WHERE version = $1", &[&name]));
+        try!(t.commit());
+        Ok(())
     }
 
-    fn versions(&self) -> Result<Vec<String>> {
-        let items = vec!["".to_string()];
-        return Ok(items);
+    fn driver(&self) -> &str {
+        &self.config.driver
+    }
+
+    fn versions(&self) -> Result<Vec<(String, NaiveDateTime)>> {
+        let mut items = Vec::new();
+        let c = try!(self.client());
+        let t = try!(c.transaction());
+        try!(self.check(&t));
+        for row in &t.query(
+            "SELECT version, created_at FROM schema_migrations ORDER BY version ASC",
+            &[],
+        )? {
+            let version: String = row.get("version");
+            let created_at: NaiveDateTime = row.get("created_at");
+            items.push((version, created_at))
+        }
+        try!(t.commit());
+        Ok(items)
     }
 }

@@ -1,11 +1,12 @@
 use std::fs;
+use std::ffi::OsString;
 use std::os::unix::fs::OpenOptionsExt;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use rand::{self, Rng};
 use toml;
-use time;
+use chrono::prelude::{DateTime, Utc};
 use rocket;
 use base64;
 
@@ -55,9 +56,10 @@ impl App {
         }
 
         let cfg = try!(self.parse_config());
+        let now: DateTime<Utc> = Utc::now();
         let root = self.migrations_dir(cfg.database.driver).join(format!(
             "{}_{}",
-            try!(time::strftime("%Y%m%d%H%M%S", &time::now_utc())),
+            now.format("%Y%m%d%H%M%S"),
             name
         ));
         try!(fs::create_dir_all(&root));
@@ -137,29 +139,98 @@ impl App {
     }
 
     pub fn database_migrate(&self) -> Result<()> {
-        return Ok(());
+        self.database(
+            |d| {
+                let mut files = Vec::new();
+                for it in try!(fs::read_dir(self.migrations_dir(d.driver().to_string()))) {
+                    files.push(try!(it));
+                }
+                files.sort_by_key(|it| it.path());
+
+                let versions = try!(d.versions());
+                let items: Vec<String> = versions
+                    .iter()
+                    .map(|it| {
+                        let &(ref vr, ref _ts) = it;
+                        vr.to_string()
+                    })
+                    .collect();
+
+                for it in files {
+                    if let Some(path) = it.path().file_name() {
+                        if let Some(name) = path.to_str() {
+                            info!("find migration {}", name);
+                            if !items.contains(&name.to_string()) {
+                                let mut file = it.path().join("up");
+                                file.set_extension(self.migrations_ext());
+                                let mut fd = try!(fs::OpenOptions::new().read(true).open(file));
+                                let mut buf = String::new();
+                                try!(fd.read_to_string(&mut buf));
+                                try!(d.up(name.to_string(), buf));
+                            }
+                        }
+                    }
+                }
+                Ok(())
+            },
+            true,
+        )
     }
 
     pub fn database_rollback(&self) -> Result<()> {
-        return Ok(());
+        self.database(
+            |d| match try!(d.versions()).pop() {
+                Some(it) => {
+                    let (vr, _ts) = it;
+                    let name = vr.to_string();
+                    let mut file = self.migrations_dir(d.driver().to_string())
+                        .join(&name)
+                        .join("down");
+                    file.set_extension(self.migrations_ext());
+                    let mut fd = try!(fs::OpenOptions::new().read(true).open(file));
+                    let mut buf = String::new();
+                    try!(fd.read_to_string(&mut buf));
+                    try!(d.down(name, buf));
+                    Ok(())
+                }
+                None => Err(Error::NotFound),
+            },
+            true,
+        )
     }
 
     pub fn database_status(&self) -> Result<()> {
-        return Ok(());
+        self.database(
+            |c| {
+                println!("{:<32}\t{}", "VERSION", "CREATED AT");
+                for (v, t) in try!(c.versions()) {
+                    println!(
+                        "{:<32}\t{}",
+                        v,
+                        DateTime::<Utc>::from_utc(t, Utc).to_rfc2822()
+                    );
+                }
+                Ok(())
+            },
+            true,
+        )
     }
 
-    pub fn database<F>(&self, f: F) -> Result<()>
+    pub fn database<F>(&self, f: F, open: bool) -> Result<()>
     where
         F: Fn(&Database) -> Result<()>,
     {
         let cfg = try!(self.parse_config()).database;
-        return match cfg.driver.as_ref() {
+        match cfg.driver.as_ref() {
             env::POSTGRESQL => {
-                let con = PostgreSQL::new(cfg);
+                let mut con = PostgreSQL::new(cfg);
+                if open {
+                    try!(con.open());
+                }
                 return f(&con);
             }
             _ => Err(Error::NotFound),
-        };
+        }
     }
 
     pub fn show_version(&self) -> Result<()> {

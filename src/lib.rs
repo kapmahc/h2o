@@ -1,4 +1,5 @@
 extern crate base64;
+extern crate chrono;
 extern crate docopt;
 #[macro_use]
 extern crate log;
@@ -11,7 +12,6 @@ extern crate redis as _redis;
 extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
-extern crate time;
 extern crate toml;
 
 pub mod nut;

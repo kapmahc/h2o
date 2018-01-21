@@ -16,11 +16,11 @@ rocket = "0.3.6"
 rocket_codegen = "0.3.6"
 rand = "0.4"
 base64 = "0.9"
-time = "0.1"
+chrono = { version = "0.4", features = ["serde"] }
 r2d2 = "0.8"
 r2d2_redis = "0.7"
 r2d2_postgres = "0.14"
-postgres = "0.15"
+postgres = { version = "0.15", features = ["with-chrono", "with-uuid"]}
 redis = "0.8"
 log = "0.4"
 env_logger = "0.5"

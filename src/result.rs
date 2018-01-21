@@ -2,7 +2,6 @@ use std::{error, fmt, io, result};
 
 use docopt;
 use toml;
-use time;
 use _redis;
 use r2d2;
 use postgres;
@@ -15,7 +14,6 @@ pub enum Error {
     Docopt(docopt::Error),
     TomlSer(toml::ser::Error),
     TomlDe(toml::de::Error),
-    TimeParse(time::ParseError),
     Redis(_redis::RedisError),
     R2d2(r2d2::Error),
     Postgres(postgres::Error),
@@ -29,7 +27,6 @@ impl fmt::Display for Error {
             Error::Docopt(ref err) => err.fmt(f),
             Error::TomlSer(ref err) => err.fmt(f),
             Error::TomlDe(ref err) => err.fmt(f),
-            Error::TimeParse(ref err) => err.fmt(f),
             Error::Redis(ref err) => err.fmt(f),
             Error::R2d2(ref err) => err.fmt(f),
             Error::Postgres(ref err) => err.fmt(f),
@@ -45,7 +42,6 @@ impl error::Error for Error {
             Error::Docopt(ref err) => err.description(),
             Error::TomlSer(ref err) => err.description(),
             Error::TomlDe(ref err) => err.description(),
-            Error::TimeParse(ref err) => err.description(),
             Error::Redis(ref err) => err.description(),
             Error::R2d2(ref err) => err.description(),
             Error::Postgres(ref err) => err.description(),
@@ -59,7 +55,6 @@ impl error::Error for Error {
             Error::Docopt(ref err) => Some(err),
             Error::TomlSer(ref err) => Some(err),
             Error::TomlDe(ref err) => Some(err),
-            Error::TimeParse(ref err) => Some(err),
             Error::Redis(ref err) => Some(err),
             Error::R2d2(ref err) => Some(err),
             Error::Postgres(ref err) => Some(err),
@@ -89,12 +84,6 @@ impl From<toml::ser::Error> for Error {
 impl From<toml::de::Error> for Error {
     fn from(err: toml::de::Error) -> Error {
         Error::TomlDe(err)
-    }
-}
-
-impl From<time::ParseError> for Error {
-    fn from(err: time::ParseError) -> Error {
-        Error::TimeParse(err)
     }
 }
 
