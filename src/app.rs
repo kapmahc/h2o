@@ -1,8 +1,8 @@
 use std::fs;
-use std::ffi::OsString;
 use std::os::unix::fs::OpenOptionsExt;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use rand::{self, Rng};
 use toml;
@@ -135,7 +135,25 @@ impl App {
     }
 
     pub fn database_connect(&self) -> Result<()> {
-        return Ok(());
+        let cfg = try!(self.parse_config()).database;
+        match cfg.driver.as_ref() {
+            env::POSTGRESQL => {
+                try!(
+                    Command::new("psql")
+                        .arg("-U")
+                        .arg(cfg.user)
+                        .arg("-h")
+                        .arg(cfg.host)
+                        .arg("-p")
+                        .arg(cfg.port.to_string())
+                        .arg("-d")
+                        .arg(cfg.name)
+                        .status()
+                );
+                Ok(())
+            }
+            _ => Err(Error::NotFound),
+        }
     }
 
     pub fn database_migrate(&self) -> Result<()> {

@@ -1,12 +1,7 @@
-use std::ops::Deref;
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
-
 use r2d2::{Pool, PooledConnection};
 use r2d2_postgres::{PostgresConnectionManager, TlsMode};
 use postgres;
-use postgres::types::FromSql;
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::NaiveDateTime;
 
 use super::env;
 use super::result::{Error, Result};
