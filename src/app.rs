@@ -1,6 +1,15 @@
+use std::fs;
+use std::os::unix::fs::OpenOptionsExt;
+use std::io::Write;
+
+use rand::{self, Rng};
 use docopt::Docopt;
+use toml;
+use rocket;
+use base64;
 
 use super::result::Result;
+use super::env;
 
 #[derive(Debug, Deserialize)]
 struct Args {
@@ -38,7 +47,7 @@ HOMEPAGE: {homepage}
 
 USAGE:
   {name} generate config
-  {name} generate (locale|migration) [--name=<fn>]
+  {name} generate (locale|migration) [--name]
   {name} generate nginx [--https]
   {name} database (create|connect|migrate|rollback|status|drop)
   {name} start [--daemon]
@@ -49,22 +58,173 @@ USAGE:
 OPTIONS:
   -h --help     Show this screen.
   --version     Show version.
-  --speed=<kn>  Speed in knots [default: 10].
-  --moored      Moored (anchored) mine.
-  --drifting    Drifting mine.
+  --name        File's name.
+  --https       Using https?
+  --daemon      Run as daemon mode?
     ",
-        version = env!("CARGO_PKG_VERSION"),
-        name = env!("CARGO_PKG_NAME"),
-        description = env!("CARGO_PKG_DESCRIPTION"),
-        homepage = env!("CARGO_PKG_HOMEPAGE"),
-        authors = env!("CARGO_PKG_AUTHORS")
+        version = env::VERSION,
+        name = env::NAME,
+        description = env::DESCRIPTION,
+        homepage = env::HOMEPAGE,
+        authors = env::AUTHORS,
     );
     let args: Args = try!(try!(Docopt::new(usage)).deserialize());
+    let app = App {};
+
     if args.flag_version {
-        println!("{}", version = env!("CARGO_PKG_VERSION"));
+        return app.show_version();
+    }
+    if args.cmd_start {
+        return app.start(args.flag_daemon);
+    }
+    if args.cmd_stop {
+        return app.stop();
+    }
+    if args.cmd_generate {
+        if args.cmd_config {
+            return app.generate_config();
+        }
+        if args.cmd_nginx {
+            return app.generate_nginx(args.flag_https);
+        }
+        if args.cmd_migration {
+            return app.generate_migration(args.flag_name);
+        }
+        if args.cmd_locale {
+            return app.generate_locale(args.flag_name);
+        }
+    }
+    if args.cmd_database {
+        if args.cmd_create {
+            return app.database_create();
+        }
+        if args.cmd_connect {
+            return app.database_connect();
+        }
+        if args.cmd_migrate {
+            return app.database_migrate();
+        }
+        if args.cmd_rollback {
+            return app.database_rollback();
+        }
+        if args.cmd_status {
+            return app.database_status();
+        }
+        if args.cmd_drop {
+            return app.database_drop();
+        }
+    }
+    println!("{:?}", args);
+    return Ok(());
+}
+
+struct App {}
+
+impl App {
+    fn start(&self, daemon: bool) -> Result<()> {
         return Ok(());
     }
 
-    println!("{:?}", args);
-    return Ok(());
+    fn stop(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn generate_nginx(&self, https: bool) -> Result<()> {
+        return Ok(());
+    }
+
+    fn generate_locale(&self, name: String) -> Result<()> {
+        return Ok(());
+    }
+
+    fn generate_migration(&self, name: String) -> Result<()> {
+        return Ok(());
+    }
+
+    fn generate_config(&self) -> Result<()> {
+        let mut secret: Vec<u8> = (0..32).collect();
+        rand::thread_rng().shuffle(&mut secret);
+
+        let cfg = env::Config {
+            secret: base64::encode(&secret),
+            env: rocket::config::Environment::Development.to_string(),
+            http: env::Http {
+                name: "www.change-me.com".to_string(),
+                limits: 1 << 15,
+                port: 8080,
+                workers: 4,
+                theme: "moon".to_string(),
+            },
+            database: env::Database {
+                driver: "postgres".to_string(),
+                host: "localhost".to_string(),
+                port: 5432,
+                user: "postgres".to_string(),
+                name: env::NAME.to_string(),
+                password: "".to_string(),
+                extra: [("sslmode".to_string(), "disable".to_string())]
+                    .iter()
+                    .cloned()
+                    .collect(),
+            },
+            redis: env::Redis {
+                host: "localhost".to_string(),
+                port: 6379,
+                db: 0,
+            },
+            rabbitmq: env::RabbitMQ {
+                host: "localhost".to_string(),
+                port: 5672,
+                user: "guest".to_string(),
+                password: "guest".to_string(),
+                _virtual: env::NAME.to_string(),
+            },
+        };
+        let buf = try!(toml::to_vec(&cfg));
+
+        let name = self.config_file();
+        println!("generate file {}", name);
+        let mut file = try!(
+            fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .open(name)
+        );
+        try!(file.write_all(&buf));
+        return Ok(());
+    }
+
+    fn database_create(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn database_connect(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn database_migrate(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn database_rollback(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn database_status(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn database_drop(&self) -> Result<()> {
+        return Ok(());
+    }
+
+    fn show_version(&self) -> Result<()> {
+        println!("{}", env::VERSION);
+        return Ok(());
+    }
+
+    fn config_file(&self) -> &'static str {
+        return "config.toml";
+    }
 }
