@@ -6,6 +6,8 @@ pub const DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 pub const HOMEPAGE: &'static str = env!("CARGO_PKG_HOMEPAGE");
 pub const AUTHORS: &'static str = env!("CARGO_PKG_AUTHORS");
 
+pub const POSTGRESQL: &'static str = "postgres";
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     pub secret: String,
@@ -13,7 +15,7 @@ pub struct Config {
     pub http: Http,
     pub database: Database,
     pub redis: Redis,
-    pub rabbitmq: RabbitMQ,
+    // pub rabbitmq: RabbitMQ,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

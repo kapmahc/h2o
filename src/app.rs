@@ -11,6 +11,7 @@ use base64;
 
 use super::result::{Error, Result};
 use super::env;
+use super::db::{Database, PostgreSQL};
 
 pub struct App {}
 
@@ -92,7 +93,7 @@ impl App {
                 theme: "moon".to_string(),
             },
             database: env::Database {
-                driver: "postgres".to_string(),
+                driver: env::POSTGRESQL.to_string(),
                 host: "localhost".to_string(),
                 port: 5432,
                 user: "postgres".to_string(),
@@ -108,13 +109,13 @@ impl App {
                 port: 6379,
                 db: 0,
             },
-            rabbitmq: env::RabbitMQ {
-                host: "localhost".to_string(),
-                port: 5672,
-                user: "guest".to_string(),
-                password: "guest".to_string(),
-                _virtual: env::NAME.to_string(),
-            },
+            // rabbitmq: env::RabbitMQ {
+            //     host: "localhost".to_string(),
+            //     port: 5672,
+            //     user: "guest".to_string(),
+            //     password: "guest".to_string(),
+            //     _virtual: env::NAME.to_string(),
+            // },
         };
         let buf = try!(toml::to_vec(&cfg));
 
@@ -128,10 +129,6 @@ impl App {
                 .open(name)
         );
         try!(file.write_all(&buf));
-        return Ok(());
-    }
-
-    pub fn database_create(&self) -> Result<()> {
         return Ok(());
     }
 
@@ -151,8 +148,18 @@ impl App {
         return Ok(());
     }
 
-    pub fn database_drop(&self) -> Result<()> {
-        return Ok(());
+    pub fn database<F>(&self, f: F) -> Result<()>
+    where
+        F: Fn(&Database) -> Result<()>,
+    {
+        let cfg = try!(self.parse_config()).database;
+        return match cfg.driver.as_ref() {
+            env::POSTGRESQL => {
+                let con = PostgreSQL::new(cfg);
+                return f(&con);
+            }
+            _ => Err(Error::NotFound),
+        };
     }
 
     pub fn show_version(&self) -> Result<()> {

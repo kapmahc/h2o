@@ -89,7 +89,7 @@ OPTIONS:
     }
     if args.cmd_database {
         if args.cmd_create {
-            return app.database_create();
+            return app.database(|c| c.create());
         }
         if args.cmd_connect {
             return app.database_connect();
@@ -104,7 +104,7 @@ OPTIONS:
             return app.database_status();
         }
         if args.cmd_drop {
-            return app.database_drop();
+            return app.database(|c| c.drop());
         }
     }
 
