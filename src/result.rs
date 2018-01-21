@@ -3,6 +3,9 @@ use std::{error, fmt, io, result};
 use docopt;
 use toml;
 use time;
+use _redis;
+use r2d2;
+use postgres;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -13,6 +16,9 @@ pub enum Error {
     TomlSer(toml::ser::Error),
     TomlDe(toml::de::Error),
     TimeParse(time::ParseError),
+    Redis(_redis::RedisError),
+    R2d2(r2d2::Error),
+    Postgres(postgres::Error),
     NotFound,
 }
 
@@ -24,6 +30,9 @@ impl fmt::Display for Error {
             Error::TomlSer(ref err) => err.fmt(f),
             Error::TomlDe(ref err) => err.fmt(f),
             Error::TimeParse(ref err) => err.fmt(f),
+            Error::Redis(ref err) => err.fmt(f),
+            Error::R2d2(ref err) => err.fmt(f),
+            Error::Postgres(ref err) => err.fmt(f),
             Error::NotFound => write!(f, "Not found."),
         }
     }
@@ -37,6 +46,9 @@ impl error::Error for Error {
             Error::TomlSer(ref err) => err.description(),
             Error::TomlDe(ref err) => err.description(),
             Error::TimeParse(ref err) => err.description(),
+            Error::Redis(ref err) => err.description(),
+            Error::R2d2(ref err) => err.description(),
+            Error::Postgres(ref err) => err.description(),
             Error::NotFound => "not found",
         }
     }
@@ -48,6 +60,9 @@ impl error::Error for Error {
             Error::TomlSer(ref err) => Some(err),
             Error::TomlDe(ref err) => Some(err),
             Error::TimeParse(ref err) => Some(err),
+            Error::Redis(ref err) => Some(err),
+            Error::R2d2(ref err) => Some(err),
+            Error::Postgres(ref err) => Some(err),
             Error::NotFound => None,
         }
     }
@@ -80,5 +95,23 @@ impl From<toml::de::Error> for Error {
 impl From<time::ParseError> for Error {
     fn from(err: time::ParseError) -> Error {
         Error::TimeParse(err)
+    }
+}
+
+impl From<_redis::RedisError> for Error {
+    fn from(err: _redis::RedisError) -> Error {
+        Error::Redis(err)
+    }
+}
+
+impl From<r2d2::Error> for Error {
+    fn from(err: r2d2::Error) -> Error {
+        Error::R2d2(err)
+    }
+}
+
+impl From<postgres::Error> for Error {
+    fn from(err: postgres::Error) -> Error {
+        Error::Postgres(err)
     }
 }
