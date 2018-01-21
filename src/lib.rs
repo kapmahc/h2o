@@ -1,5 +1,9 @@
 extern crate base64;
+#[macro_use]
+extern crate diesel;
 extern crate docopt;
+extern crate r2d2;
+extern crate r2d2_diesel;
 extern crate rand;
 extern crate rocket;
 #[macro_use]

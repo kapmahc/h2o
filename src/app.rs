@@ -1,6 +1,6 @@
 use std::fs;
 use std::os::unix::fs::OpenOptionsExt;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use rand::{self, Rng};
@@ -162,9 +162,12 @@ impl App {
             return Err(Error::NotFound);
         }
 
-        let root = self.migrations_dir("postgres".to_string())
-            .join(try!(time::strftime("%Y%m%d%H%M%S", &time::now_utc())))
-            .join(name);
+        let cfg = try!(self.parse_config());
+        let root = self.migrations_dir(cfg.database.driver).join(format!(
+            "{}_{}",
+            try!(time::strftime("%Y%m%d%H%M%S", &time::now_utc())),
+            name
+        ));
         try!(fs::create_dir_all(&root));
         let files = vec!["up", "down"];
         for n in files.into_iter() {
@@ -264,6 +267,14 @@ impl App {
     fn show_version(&self) -> Result<()> {
         println!("{}", env::VERSION);
         return Ok(());
+    }
+
+    fn parse_config(&self) -> Result<env::Config> {
+        let mut file = try!(fs::File::open(self.config_file()));
+        let mut buf = Vec::new();
+        try!(file.read_to_end(&mut buf));
+        let cfg: env::Config = try!(toml::from_slice(&buf));
+        return Ok(cfg);
     }
 
     fn config_file(&self) -> &'static str {
