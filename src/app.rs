@@ -3,12 +3,14 @@ use std::os::unix::fs::OpenOptionsExt;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::env::current_dir;
 
 use rand::{self, Rng};
 use toml;
 use chrono::prelude::{DateTime, Utc};
 use rocket;
 use base64;
+use handlebars::Handlebars;
 
 use super::result::{Error, Result};
 use super::env;
@@ -26,6 +28,32 @@ impl App {
     }
 
     pub fn generate_nginx(&self, https: bool) -> Result<()> {
+        let cur = try!(current_dir());
+        let cfg = try!(self.parse_config());
+        let mut fd = try!(
+            fs::OpenOptions::new()
+                .read(true)
+                .open(Path::new("templates").join("nginx.conf"))
+        );
+        let mut buf = String::new();
+        try!(fd.read_to_string(&mut buf));
+        let body = try!(Handlebars::new().render_template(
+            &buf,
+            &json!({"name": cfg.http.name, "port":cfg.http.port,"theme":cfg.http.theme, "ssl":https, "root":cur})
+        ));
+
+        let root = Path::new("tmp");
+        try!(fs::create_dir_all(&root));
+        let file = root.join("nginx.conf");
+        info!("generate file {}", file.display());
+        let mut tpl = try!(
+            fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o644)
+                .open(file)
+        );
+        try!(tpl.write_all(body.as_bytes()));
         return Ok(());
     }
 

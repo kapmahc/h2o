@@ -1,6 +1,7 @@
 extern crate base64;
 extern crate chrono;
 extern crate docopt;
+extern crate handlebars;
 #[macro_use]
 extern crate log;
 extern crate postgres;
@@ -12,6 +13,8 @@ extern crate redis as _redis;
 extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate serde_json;
 extern crate toml;
 
 pub mod nut;
