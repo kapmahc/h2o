@@ -14,7 +14,7 @@
           <div class="card-body">
             <h4 class="card-title">{{.Title}}</h4>
             <p class="card-text">{{str2htm .Summary}}</p>
-            <a href="{{.Href}}" class="btn btn-primary">{{.Action}} &raquo;</a>
+            <a href="{{.Href}}" target="_blank" class="btn btn-primary">{{.Action}} &raquo;</a>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
   <div class="col-md-3">
     <div class="list-group">
       {{range links .locale "sidebar"}}
-      <a href="{{.Href}}" class="list-group-item list-group-item-action">{{.Label}}</a>
+      <a href="{{.Href}}" target="_blank" class="list-group-item list-group-item-action">{{.Label}}</a>
       {{end}}
     </div>
   </div>

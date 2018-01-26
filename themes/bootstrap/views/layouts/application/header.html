@@ -9,7 +9,7 @@
         {{$items := links $.locale (printf "header.%d" .SortOrder)}}
         {{if eq (len $items) 0}}
           <li class="nav-item">
-            <a class="nav-link" href="{{.Href}}">{{.Label}}</a>
+            <a class="nav-link" target="_blank" href="{{.Href}}">{{.Label}}</a>
           </li>
         {{else}}
           <li class="nav-item dropdown">
@@ -18,7 +18,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="header-nav-{{$k}}">
               {{range $items}}
-                <a class="dropdown-item" href="{{.Href}}">{{.Label}}</a>
+                <a class="dropdown-item" target="_blank" href="{{.Href}}">{{.Label}}</a>
               {{end}}
             </div>
           </li>

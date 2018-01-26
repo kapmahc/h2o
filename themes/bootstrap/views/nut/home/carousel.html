@@ -14,7 +14,7 @@
               <div class="carousel-caption">
                 <h1>{{$v.Title}}</h1>
                 <p>{{str2htm $v.Summary}}</p>
-                <p><a class="btn btn-lg btn-primary" href="{{$v.Href}}" role="button">{{$v.Action}}</a></p>
+                <p><a class="btn btn-lg btn-primary" target="_blank" href="{{$v.Href}}" role="button">{{$v.Action}}</a></p>
               </div>
             </div>
           </div>
@@ -38,7 +38,7 @@
             <img class="rounded-circle" src="{{.Logo}}" alt="{{.Logo}}" width="140" height="140">
             <h2>{{.Title}}</h2>
             <p>{{str2htm .Summary}}</p>
-            <p><a class="btn btn-secondary" href="{{.Href}}" role="button">{{.Action}} &raquo;</a></p>
+            <p><a class="btn btn-secondary" target="_blank" href="{{.Href}}" role="button">{{.Action}} &raquo;</a></p>
           </div>
         {{end}}
       </div>
