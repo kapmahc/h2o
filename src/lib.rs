@@ -14,6 +14,7 @@ extern crate r2d2_redis;
 extern crate rand;
 extern crate redis as _redis;
 extern crate rocket;
+extern crate rocket_contrib;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]

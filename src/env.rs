@@ -11,7 +11,7 @@ pub const POSTGRESQL: &'static str = "postgres";
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     pub secret: String,
-    pub workers: u8,
+    pub workers: u16,
     pub env: String,
     pub http: Http,
     pub database: Database,

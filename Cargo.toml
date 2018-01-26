@@ -6,6 +6,9 @@ description = "A complete open source e-commerce solution by Rust"
 homepage = "https://github.com/kapmahc/h2o"
 license = "MIT"
 
+[profile.release]
+lto = true
+
 [dependencies]
 docopt = "0.8"
 # docopt_macros = "0.8"
@@ -30,5 +33,8 @@ rusoto_core = "0.31"
 rusoto_sqs = "0.31"
 rusoto_s3 = "0.31"
 
-[profile.release]
-lto = true
+
+[dependencies.rocket_contrib]
+version = "*"
+default-features = false
+features = ["handlebars_templates"]

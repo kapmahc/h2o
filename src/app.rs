@@ -10,37 +10,59 @@ use toml;
 use chrono::prelude::{DateTime, Utc};
 use rocket;
 use base64;
+use rocket_contrib;
 use handlebars::Handlebars;
 
 use super::result::{Error, Result};
 use super::env;
 use super::db::{Database, PostgreSQL};
-
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
+use super::nut;
 
 pub struct App {}
 
 impl App {
     pub fn start(&self) -> Result<()> {
         let etc = try!(self.parse_config());
+
         let env = match etc.env.parse::<rocket::config::Environment>() {
             Ok(v) => v,
             Err(_) => rocket::config::Environment::Development,
         };
+
+        let views = Path::new("themes").join(etc.http.theme).join("views");
+
         let cfg = try!(
             rocket::Config::build(env)
                 .address("localhost")
+                .workers(etc.workers)
+                .secret_key(etc.secret)
                 .port(etc.http.port)
+                .limits(
+                    rocket::config::Limits::new()
+                        .limit("forms", etc.http.limits)
+                        .limit("json", etc.http.limits)
+                )
+                .log_level(if env.is_prod() {
+                    rocket::config::LoggingLevel::Normal
+                } else {
+                    rocket::config::LoggingLevel::Debug
+                })
+                .extra(
+                    "template_dir",
+                    match views.to_str() {
+                        Some(v) => v,
+                        None => "templates",
+                    }
+                )
                 .finalize()
         );
-        let mut app = rocket::custom(cfg, false);
-        // app.mount("/", routes![index]);
-        // app.mount("/hi", routes![index]);
-        app.launch();
-        // rocket::ignite().mount("/", routes![index]).launch();
+        rocket::custom(cfg, false)
+            .mount(
+                "/",
+                routes![nut::users::get_sign_in, nut::users::get_sign_up],
+            )
+            .attach(rocket_contrib::Template::fairing())
+            .launch();
         return Ok(());
     }
 
@@ -141,7 +163,7 @@ impl App {
             workers: 4,
             http: env::Http {
                 name: "www.change-me.com".to_string(),
-                limits: 1 << 15,
+                limits: 1 << 25,
                 port: 8080,
                 theme: "moon".to_string(),
             },
