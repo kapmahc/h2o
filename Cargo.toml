@@ -26,6 +26,9 @@ log = "0.4"
 env_logger = "0.5"
 handlebars = "0.30"
 serde_json = "1.0"
+rusoto_core = "0.31"
+rusoto_sqs = "0.31"
+rusoto_s3 = "0.31"
 
 [profile.release]
 lto = true

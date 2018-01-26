@@ -8,7 +8,6 @@ struct Args {
     flag_version: bool,
     flag_https: bool,
     flag_name: String,
-    flag_daemon: bool,
 
     cmd_generate: bool,
     cmd_locale: bool,
@@ -25,7 +24,6 @@ struct Args {
     cmd_status: bool,
 
     cmd_start: bool,
-    cmd_stop: bool,
 }
 
 pub fn run() -> Result<()> {
@@ -42,8 +40,7 @@ USAGE:
   {name} generate (locale|migration) [--name=<fn>]
   {name} generate nginx [--https]
   {name} database (create|connect|migrate|rollback|status|drop)
-  {name} start [--daemon]
-  {name} stop
+  {name} start
   {name} (-h | --help)
   {name} --version
 
@@ -68,10 +65,7 @@ OPTIONS:
         return app.show_version();
     }
     if args.cmd_start {
-        return app.start(args.flag_daemon);
-    }
-    if args.cmd_stop {
-        return app.stop();
+        return app.start();
     }
     if args.cmd_generate {
         if args.cmd_config {

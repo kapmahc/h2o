@@ -6,6 +6,7 @@ use _redis;
 use r2d2;
 use postgres;
 use handlebars;
+use rocket;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -19,6 +20,8 @@ pub enum Error {
     R2d2(r2d2::Error),
     Postgres(postgres::Error),
     HandlebarsTemplateRender(handlebars::TemplateRenderError),
+    RocketConfig(rocket::config::ConfigError),
+    RocketLaunch(rocket::error::LaunchError),
     NotFound,
 }
 
@@ -33,6 +36,8 @@ impl fmt::Display for Error {
             Error::R2d2(ref err) => err.fmt(f),
             Error::Postgres(ref err) => err.fmt(f),
             Error::HandlebarsTemplateRender(ref err) => err.fmt(f),
+            Error::RocketConfig(ref err) => err.fmt(f),
+            Error::RocketLaunch(ref err) => err.fmt(f),
             Error::NotFound => write!(f, "Not found."),
         }
     }
@@ -49,6 +54,8 @@ impl error::Error for Error {
             Error::R2d2(ref err) => err.description(),
             Error::Postgres(ref err) => err.description(),
             Error::HandlebarsTemplateRender(ref err) => err.description(),
+            Error::RocketConfig(ref err) => err.description(),
+            Error::RocketLaunch(ref err) => err.description(),
             Error::NotFound => "not found",
         }
     }
@@ -63,6 +70,8 @@ impl error::Error for Error {
             Error::R2d2(ref err) => Some(err),
             Error::Postgres(ref err) => Some(err),
             Error::HandlebarsTemplateRender(ref err) => Some(err),
+            Error::RocketConfig(ref err) => Some(err),
+            Error::RocketLaunch(ref err) => Some(err),
             Error::NotFound => None,
         }
     }
@@ -113,5 +122,17 @@ impl From<postgres::Error> for Error {
 impl From<handlebars::TemplateRenderError> for Error {
     fn from(err: handlebars::TemplateRenderError) -> Error {
         Error::HandlebarsTemplateRender(err)
+    }
+}
+
+impl From<rocket::config::ConfigError> for Error {
+    fn from(err: rocket::config::ConfigError) -> Error {
+        Error::RocketConfig(err)
+    }
+}
+
+impl From<rocket::error::LaunchError> for Error {
+    fn from(err: rocket::error::LaunchError) -> Error {
+        Error::RocketLaunch(err)
     }
 }

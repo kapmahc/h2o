@@ -1,3 +1,6 @@
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
+
 extern crate base64;
 extern crate chrono;
 extern crate docopt;

@@ -16,14 +16,31 @@ use super::result::{Error, Result};
 use super::env;
 use super::db::{Database, PostgreSQL};
 
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
 pub struct App {}
 
 impl App {
-    pub fn start(&self, daemon: bool) -> Result<()> {
-        return Ok(());
-    }
-
-    pub fn stop(&self) -> Result<()> {
+    pub fn start(&self) -> Result<()> {
+        let etc = try!(self.parse_config());
+        let env = match etc.env.parse::<rocket::config::Environment>() {
+            Ok(v) => v,
+            Err(_) => rocket::config::Environment::Development,
+        };
+        let cfg = try!(
+            rocket::Config::build(env)
+                .address("localhost")
+                .port(etc.http.port)
+                .finalize()
+        );
+        let mut app = rocket::custom(cfg, false);
+        // app.mount("/", routes![index]);
+        // app.mount("/hi", routes![index]);
+        app.launch();
+        // rocket::ignite().mount("/", routes![index]).launch();
         return Ok(());
     }
 
@@ -39,7 +56,13 @@ impl App {
         try!(fd.read_to_string(&mut buf));
         let body = try!(Handlebars::new().render_template(
             &buf,
-            &json!({"name": cfg.http.name, "port":cfg.http.port,"theme":cfg.http.theme, "ssl":https, "root":cur})
+            &json!({
+                "name": cfg.http.name,
+                "port":cfg.http.port,
+                "theme":cfg.http.theme,
+                "ssl":https,
+                "root":cur,
+            })
         ));
 
         let root = Path::new("tmp");
@@ -115,11 +138,11 @@ impl App {
         let cfg = env::Config {
             secret: base64::encode(&secret),
             env: rocket::config::Environment::Development.to_string(),
+            workers: 4,
             http: env::Http {
                 name: "www.change-me.com".to_string(),
                 limits: 1 << 15,
                 port: 8080,
-                workers: 4,
                 theme: "moon".to_string(),
             },
             database: env::Database {
