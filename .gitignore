@@ -1,0 +1,14 @@
+# Javascript
+/node_modules/
+
+# Build
+/build
+/dist.tar.xz
+
+# Vim
+.*.swp
+.*.un~
+
+# Test
+/tmp
+/config.toml
