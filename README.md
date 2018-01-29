@@ -7,7 +7,7 @@ A complete open source e-commerce solution.
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
+CXX=clang++ CC=clang cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
 
 ## Documents
