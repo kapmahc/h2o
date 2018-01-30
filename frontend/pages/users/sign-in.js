@@ -11,7 +11,7 @@ export default class Widget extends React.Component {
       <Container>
         <Row>
           <Col>
-            <h2>sign in</h2>
+            <h2>sign in {process.env.BACKEND}</h2>
             <hr/>
             <form></form>
             <SharedLinks/>

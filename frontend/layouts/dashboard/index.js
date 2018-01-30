@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import Head from 'next/head'
 
-import antd_css from 'antd/dist/antd.css';
-import antd_pro_css from 'ant-design-pro/dist/ant-design-pro.css';
+import antd_css from 'antd/dist/antd.min.css';
+// import antd_pro_css from 'ant-design-pro/dist/ant-design-pro.css';
 import quill_snow_css from 'react-quill/dist/quill.snow.css';
 
 export default({
@@ -17,10 +17,6 @@ export default({
   <style jsx="jsx" global="global">
     {
       antd_css
-    }</style>
-  <style jsx="jsx" global="global">
-    {
-      antd_pro_css
     }</style>
   <style jsx="jsx" global="global">
     {

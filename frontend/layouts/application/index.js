@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Head from 'next/head'
 
-import bootstrap_css from 'bootstrap/dist/css/bootstrap.css';
+import bootstrap_css from 'bootstrap/dist/css/bootstrap.min.css';
 import quill_snow_css from 'react-quill/dist/quill.snow.css';
 
 import Header from './Header';

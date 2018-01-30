@@ -4,14 +4,14 @@ A complete open source e-commerce solution.
 
 ## Usage
 
-```
-go get -u github.com/kardianos/govendor
-go get -d -u github.com/kapmahc/h2o
-cd $GOPATH/src/github.com/kapmahc/h2o
-govendor sync
-npm install
-cd ant-design-pro-master && npm install
-make
+```bash
+  go get -u github.com/kardianos/govendor
+  go get -d -u github.com/kapmahc/h2o
+  cd $GOPATH/src/github.com/kapmahc/h2o
+  govendor sync
+  npm install
+  cd ant-design-pro-master && npm install
+  BACKEND=https://api.change-me.com make
 ```
 
 ## Atom plugins
