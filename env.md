@@ -7,8 +7,8 @@
   gvm install go1.4.3 -B
   gvm use go1.4.3
   export GOROOT_BOOTSTRAP=$GOROOT
-  gvm install go1.10beta2
-  gvm use go1.10beta2 --default
+  gvm install go1.10rc1
+  gvm use go1.10rc1 --default
   ```
 
 - nvm global package path
