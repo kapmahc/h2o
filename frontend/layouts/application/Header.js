@@ -12,8 +12,10 @@ import {
   DropdownMenu,
   DropdownItem
 } from 'reactstrap';
+import {connect} from 'react-redux';
+import Link from 'next/link';
 
-export default class Widget extends React.Component {
+class Widget extends React.Component {
   constructor(props) {
     super(props);
 
@@ -30,7 +32,9 @@ export default class Widget extends React.Component {
   render() {
     return (<header>
       <Navbar color="dark" fixed="top" dark={true} expand="md">
-        <NavbarBrand href="/">reactstrap</NavbarBrand>
+        <Link href="/">
+          <NavbarBrand>reactstrap</NavbarBrand>
+        </Link>
         <NavbarToggler onClick={this.toggle}/>
         <Collapse isOpen={this.state.isOpen} navbar={true}>
           <Nav className="ml-auto" navbar={true}>
@@ -62,4 +66,6 @@ export default class Widget extends React.Component {
       </Navbar>
     </header>);
   }
-}
+};
+
+export default connect(state => ({user: state.currentUser, site: state.siteInfo}))(Widget);

@@ -1,17 +1,20 @@
 import React from 'react';
 import {Container, Row, Col} from 'reactstrap';
+import withRedux from 'next-redux-wrapper';
 
+import makeStore from '../../store';
 import Layout from '../../layouts/application';
 import SharedLinks from '../../components/UsersSharedLinks';
 
-export default class Widget extends React.Component {
+class Widget extends React.Component {
   render() {
     return (<Layout>
       <br/>
       <Container>
         <Row>
           <Col>
-            <h2>confirm</h2>
+            <h2>confirm
+            </h2>
             <hr/>
             <form></form>
             <SharedLinks/>
@@ -20,4 +23,6 @@ export default class Widget extends React.Component {
       </Container>
     </Layout>)
   }
-}
+};
+
+export default withRedux(makeStore, (state) => ({}))(Widget);

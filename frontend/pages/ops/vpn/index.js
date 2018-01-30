@@ -2,9 +2,8 @@ import React from 'react';
 import {Container, Row, Col} from 'reactstrap';
 import withRedux from 'next-redux-wrapper';
 
-import makeStore from '../../store';
-import Layout from '../../layouts/application';
-import SharedLinks from '../../components/UsersSharedLinks';
+import makeStore from '../../../store';
+import Layout from '../../../layouts/application';
 
 class Widget extends React.Component {
   render() {
@@ -13,11 +12,9 @@ class Widget extends React.Component {
       <Container>
         <Row>
           <Col>
-            <h2>profile
+            <h2>vpn
             </h2>
             <hr/>
-            <form></form>
-            <SharedLinks/>
           </Col>
         </Row>
       </Container>

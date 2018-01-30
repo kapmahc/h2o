@@ -1,9 +1,11 @@
 import React from 'react';
 import {Button} from 'antd';
+import withRedux from 'next-redux-wrapper';
 
 import Layout from '../layouts/application';
+import makeStore from '../store';
 
-export default class Error extends React.Component {
+class Widget extends React.Component {
   static getInitialProps({res, err}) {
     const statusCode = res
       ? res.statusCode
@@ -19,3 +21,5 @@ export default class Error extends React.Component {
     </Layout>)
   }
 }
+
+export default withRedux(makeStore, (state) => ({}))(Widget);
