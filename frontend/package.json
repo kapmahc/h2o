@@ -1,7 +1,7 @@
 {
   "name": "h2o",
   "version": "1.0.0",
-  "description": "",
+  "description": "A complete open source e-commerce solution.",
   "main": "index.js",
   "scripts": {
     "dev": "next",

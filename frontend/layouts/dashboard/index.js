@@ -1,11 +1,14 @@
 import Link from 'next/link'
 import Head from 'next/head'
+import withRedux from 'next-redux-wrapper';
 
 import antd_css from 'antd/dist/antd.min.css';
 // import antd_pro_css from 'ant-design-pro/dist/ant-design-pro.css';
 import quill_snow_css from 'react-quill/dist/quill.snow.css';
 
-export default({
+import makeStore from '../../store';
+
+const Widget = ({
   children,
   title = 'This is the default title'
 }) => (<div>
@@ -44,3 +47,5 @@ export default({
     {'I`m here to stay'}
   </footer>
 </div>)
+
+export default withRedux(makeStore, (state) => ({}))(Widget);

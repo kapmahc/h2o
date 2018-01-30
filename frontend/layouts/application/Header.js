@@ -14,17 +14,32 @@ import {
 } from 'reactstrap';
 import {connect} from 'react-redux';
 import Link from 'next/link';
+import flush from 'styled-jsx/server';
+
+import {backend} from '../../utils';
 
 class Widget extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.toggle = this.toggle.bind(this);
-    this.state = {
-      isOpen: false
-    };
+  state = {
+    isOpen: false
   }
-  toggle() {
+  // componentDidMount() {
+  //   const res = await fetch(backend('/layout'));
+  //   const siteInfo = await res.json();
+  //    refresh(siteInfo);
+  //   console.log(siteInfo);
+  //   return {siteInfo};
+  //    const {signIn, refresh, info, user} = this.props
+  //    if (!user.uid) {
+  //      var tkn = token()
+  //      if (tkn) {
+  //        signIn(tkn)
+  //      }
+  //    }
+  //    if (info.languages.length === 0) {
+  //      get('/layout').then((rst) => refresh(rst)).catch(message.error)
+  //    }
+  // }
+  onToggle = () => {
     this.setState({
       isOpen: !this.state.isOpen
     });
@@ -35,7 +50,7 @@ class Widget extends React.Component {
         <Link href="/">
           <NavbarBrand>reactstrap</NavbarBrand>
         </Link>
-        <NavbarToggler onClick={this.toggle}/>
+        <NavbarToggler onClick={this.onToggle}/>
         <Collapse isOpen={this.state.isOpen} navbar={true}>
           <Nav className="ml-auto" navbar={true}>
             <NavItem>
