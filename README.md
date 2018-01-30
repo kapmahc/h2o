@@ -2,15 +2,31 @@
 
 A complete open source e-commerce solution.
 
+## For Development
+
+- install go by gvm
+
+  ```bash
+  GOPATH=$HOME/go
+  PATH=$GOPATH/bin:$PATH
+  export GOPATH PATH
+  ```
+
+- nvm global package path
+
+```bash
+NPM_PACKAGES="${HOME}/.npm-packages"
+PATH="$NPM_PACKAGES/bin:$PATH"
+export NPM_PACKAGES PATH
+```
+
 ## Usage
 
-```
+```bash
 go get -u github.com/kardianos/govendor
 go get -d -u github.com/kapmahc/h2o
 cd $GOPATH/src/github.com/kapmahc/h2o
 govendor sync
-npm install
-cd ant-design-pro-master && npm install
 make
 ```
 
@@ -46,15 +62,6 @@ CREATE DATABASE db-name WITH ENCODING = 'UTF8';
 CREATE USER user-name WITH PASSWORD 'change-me';
 GRANT ALL PRIVILEGES ON DATABASE db-name TO user-name;
 ```
-
-- ueditor
-
-  ```
-  cd node_modules/ueditor
-  npm install grunt-cli -g
-  npm install
-  grunt
-  ```
 
 - Chrome browser: F12 => Console settings => Log XMLHTTPRequests
 
