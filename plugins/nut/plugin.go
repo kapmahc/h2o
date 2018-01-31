@@ -8,28 +8,26 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
-	"github.com/unrolled/render"
 	"golang.org/x/text/language"
 )
 
 // Plugin plugin
 type Plugin struct {
-	I18n      *web.I18n      `inject:""`
-	Cache     *web.Cache     `inject:""`
-	Jwt       *web.Jwt       `inject:""`
-	Jobber    *web.Jobber    `inject:""`
-	Settings  *web.Settings  `inject:""`
-	Security  *web.Security  `inject:""`
-	S3        *web.S3        `inject:""`
-	Sitemap   *web.Sitemap   `inject:""`
-	RSS       *web.RSS       `inject:""`
-	Router    *gin.Engine    `inject:""`
-	DB        *gorm.DB       `inject:""`
-	Redis     *redis.Pool    `inject:""`
-	Render    *render.Render `inject:""`
-	Dao       *Dao           `inject:""`
-	Layout    *Layout        `inject:""`
-	Languages []string       `inject:"languages"`
+	I18n      *web.I18n     `inject:""`
+	Cache     *web.Cache    `inject:""`
+	Jwt       *web.Jwt      `inject:""`
+	Jobber    *web.Jobber   `inject:""`
+	Settings  *web.Settings `inject:""`
+	Security  *web.Security `inject:""`
+	S3        *web.S3       `inject:""`
+	Sitemap   *web.Sitemap  `inject:""`
+	RSS       *web.RSS      `inject:""`
+	Router    *gin.Engine   `inject:""`
+	DB        *gorm.DB      `inject:""`
+	Redis     *redis.Pool   `inject:""`
+	Dao       *Dao          `inject:""`
+	Layout    *Layout       `inject:""`
+	Languages []string      `inject:"languages"`
 }
 
 func init() {
@@ -80,7 +78,6 @@ func init() {
 		"frontend": []string{"http://localhost:3000"},
 		"backend":  "http://localhost:8080",
 		"name":     "change-me.com",
-		"theme":    "bootstrap",
 		"secure":   false,
 	})
 

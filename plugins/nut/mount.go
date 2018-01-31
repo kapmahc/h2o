@@ -2,11 +2,8 @@ package nut
 
 import (
 	"fmt"
-	"path"
 
 	"github.com/ikeikeikeike/go-sitemap-generator/stm"
-	"github.com/kapmahc/h2o/web"
-	"github.com/spf13/viper"
 )
 
 func (p *Plugin) sitemap() ([]stm.URL, error) {
@@ -36,19 +33,6 @@ func (p *Plugin) Mount() error {
 	p.Router.Use(i18m)
 	p.Router.Use(p.Layout.CurrentUserMiddleware)
 
-	if web.MODE() != web.PRODUCTION {
-		for k, v := range map[string]string{
-			"3rd":    "node_modules",
-			"assets": path.Join("themes", viper.GetString("server.theme"), "assets"),
-		} {
-			p.Router.Static("/"+k+"/", v)
-		}
-	}
-
-	ht := p.Router.Group("/htdocs")
-	ht.GET("/donate", p.Layout.HTML("nut/donate", p.getDonate))
-
-	p.Router.GET("/", p.getHome)
 	p.Router.GET("/robots.txt", p.getRobotsTxt)
 	p.Router.GET("/sitemap.xml.gz", p.getSitemapGz)
 	p.Router.GET("/rss/:lang", p.getRssAtom)
@@ -63,8 +47,8 @@ func (p *Plugin) Mount() error {
 	ung.POST("/unlock", p.Layout.JSON(p.postUsersUnlock))
 	ung.POST("/forgot-password", p.Layout.JSON(p.postUsersForgotPassword))
 	ung.POST("/reset-password", p.Layout.JSON(p.postUsersResetPassword))
-	ung.GET("/confirm/:token", p.Layout.Redirect("/", p.getUsersConfirmToken))
-	ung.GET("/unlock/:token", p.Layout.Redirect("/", p.getUsersUnlockToken))
+	ung.GET("/confirm/:token", p.Layout.JSON(p.getUsersConfirmToken))
+	ung.GET("/unlock/:token", p.Layout.JSON(p.getUsersUnlockToken))
 
 	umg := p.Router.Group("/users", p.Layout.MustSignInMiddleware)
 	umg.GET("/logs", p.Layout.JSON(p.getUsersLogs))

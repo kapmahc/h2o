@@ -254,72 +254,65 @@ func (p *Plugin) postUsersResetPassword(l string, c *gin.Context) (interface{}, 
 	return gin.H{}, nil
 }
 
-func (p *Plugin) getUsersConfirmToken(l string, c *gin.Context) error {
+func (p *Plugin) getUsersConfirmToken(l string, c *gin.Context) (interface{}, error) {
 	cm, err := p.Jwt.Validate([]byte(c.Param("token")))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if cm.Get("act").(string) != actConfirm {
-		return p.I18n.E(l, "errors.bad-action")
+		return nil, p.I18n.E(l, "errors.bad-action")
 	}
 	user, err := p.Dao.GetUserByUID(p.DB, cm.Get("uid").(string))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if user.IsConfirm() {
-		return p.I18n.E(l, "nut.errors.user.already-confirm")
+		return nil, p.I18n.E(l, "nut.errors.user.already-confirm")
 	}
 
 	tx := p.DB.Begin()
 	if err = tx.Model(user).Update("confirmed_at", time.Now()).Error; err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.user.confirm"); err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 	tx.Commit()
-	s := p.Layout.Session(c)
-	s.AddFlash(p.I18n.T(l, "nut.emails.user.confirm.success"), NOTICE)
-	p.Layout.Save(c, s)
 
-	return nil
+	return gin.H{}, nil
 }
 
-func (p *Plugin) getUsersUnlockToken(l string, c *gin.Context) error {
+func (p *Plugin) getUsersUnlockToken(l string, c *gin.Context) (interface{}, error) {
 	cm, err := p.Jwt.Validate([]byte(c.Param("token")))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if cm.Get("act").(string) != actUnlock {
-		return p.I18n.E(l, "errors.bad-action")
+		return nil, p.I18n.E(l, "errors.bad-action")
 	}
 	user, err := p.Dao.GetUserByUID(p.DB, cm.Get("uid").(string))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if !user.IsLock() {
-		return p.I18n.E(l, "nut.errors.user.not-lock")
+		return nil, p.I18n.E(l, "nut.errors.user.not-lock")
 	}
 
 	tx := p.DB.Begin()
 	if err = tx.Model(user).Update("locked_at", nil).Error; err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 	if err = p.Dao.AddLog(tx, user.ID, c.ClientIP(), l, "nut.logs.unlock"); err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	tx.Commit()
 
-	s := p.Layout.Session(c)
-	s.AddFlash(p.I18n.T(l, "nut.emails.user.unlock.success"), NOTICE)
-	p.Layout.Save(c, s)
-
-	return nil
+	return gin.H{}, nil
 }
 
 const (

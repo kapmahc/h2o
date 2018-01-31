@@ -13,31 +13,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kapmahc/epub"
-	"github.com/kapmahc/h2o/plugins/nut"
-	"github.com/kapmahc/h2o/web"
 )
 
 // http://www.cbeta.org/cbreader/help/cbr_toc.htm
 
-func (p *Plugin) indexNotesH(l string, c *gin.Context) (gin.H, error) {
-	var items []Note
-	if err := p.DB.Order("updated_at DESC").Find(&items).Error; err != nil {
-		return nil, err
-	}
-	for id, it := range items {
-		var b Book
-		if err := p.DB.Select([]string{"id", "title"}).Where("id = ?", it.BookID).First(&b).Error; err != nil {
-			return nil, err
-		}
-		items[id].Book = b
-	}
-	return gin.H{
-		"notes":   items,
-		nut.TITLE: p.I18n.T(l, "reading.notes.index.title"),
-	}, nil
-}
-
-func (p *Plugin) showBookH(l string, c *gin.Context) (gin.H, error) {
+func (p *Plugin) showBookH(l string, c *gin.Context) (interface{}, error) {
 	var buf bytes.Buffer
 	it, bk, err := p.readBook(c.Param("id"))
 	if err != nil {
@@ -51,45 +31,19 @@ func (p *Plugin) showBookH(l string, c *gin.Context) (gin.H, error) {
 	if len(bk.Ncx.Points) > 0 {
 		p.writePoints(
 			&buf,
-			fmt.Sprintf("/reading/htdocs/pages/%d", it.ID),
+			fmt.Sprintf("/reading/pages/%d", it.ID),
 			bk.Ncx.Points,
 		)
 	} else {
 		p.writeManifest(
 			&buf,
-			fmt.Sprintf("/reading/htdocs/pages/%d", it.ID),
+			fmt.Sprintf("/reading/pages/%d", it.ID),
 			bk.Opf.Manifest,
 		)
 	}
 	return gin.H{
 		"homeage": buf.String(),
 		"book":    it,
-		nut.TITLE: it.Title,
-	}, nil
-}
-
-func (p *Plugin) indexBooksH(l string, c *gin.Context) (gin.H, error) {
-	var total int64
-	if err := p.DB.Model(&Book{}).Count(&total).Error; err != nil {
-		return nil, err
-	}
-
-	pag := web.NewPagination(c, total)
-	var items []Book
-
-	if err := p.DB.
-		Select([]string{"id", "title", "author", "subject", "description"}).
-		Order("updated_at DESC").
-		Offset((pag.Page - 1) * pag.Size).
-		Limit(pag.Size).
-		Find(&items).Error; err != nil {
-		return nil, err
-	}
-	return gin.H{
-		"pagination": pag,
-		"books":      items,
-		"total":      total,
-		"title":      p.I18n.T(l, "reading.books.index.title"),
 	}, nil
 }
 

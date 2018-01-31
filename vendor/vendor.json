@@ -367,28 +367,10 @@
 			"revisionTime": "2017-11-29T19:10:14Z"
 		},
 		{
-			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
-			"path": "github.com/gorilla/context",
-			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
-			"revisionTime": "2016-08-17T18:46:32Z"
-		},
-		{
 			"checksumSHA1": "gKNNcQkvem0BdeK3ZbEDUSNRFr4=",
 			"path": "github.com/gorilla/feeds",
 			"revision": "4b936b5221c53c99fcd4b15ac0b8c38ff490ab89",
 			"revisionTime": "2017-11-08T04:59:58Z"
-		},
-		{
-			"checksumSHA1": "ucTBCc7dDRKLGPsYfAzu/Gq63qA=",
-			"path": "github.com/gorilla/securecookie",
-			"revision": "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983",
-			"revisionTime": "2017-02-24T19:38:04Z"
-		},
-		{
-			"checksumSHA1": "3J5zUreQU8XhMr1ThFXV85VwH+g=",
-			"path": "github.com/gorilla/sessions",
-			"revision": "fe21b6a095cd8a9d41cc7f412e13d35c130383f3",
-			"revisionTime": "2018-01-15T17:38:07Z"
 		},
 		{
 			"checksumSHA1": "HtpYAWHvd9mq+mHkpo7z8PGzMik=",
@@ -659,12 +641,6 @@
 			"path": "github.com/ugorji/go/codec",
 			"revision": "aada210893d98bcb6131e305325fc200c117d7cb",
 			"revisionTime": "2018-01-30T17:58:36Z"
-		},
-		{
-			"checksumSHA1": "/CkShsXSmW4032TjVej9ZwhjxOY=",
-			"path": "github.com/unrolled/render",
-			"revision": "65450fb6b2d3595beca39f969c411db8f8d5c806",
-			"revisionTime": "2017-11-02T16:21:32Z"
 		},
 		{
 			"checksumSHA1": "H1Ne82yYzWRQ2DKBsmRd0Hwcl04=",

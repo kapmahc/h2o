@@ -1,8 +1,6 @@
 package nut
 
 import (
-	"bytes"
-	h_template "html/template"
 	"net/http"
 	"path"
 	"text/template"
@@ -11,56 +9,6 @@ import (
 	"github.com/gorilla/feeds"
 	"github.com/kapmahc/h2o/web"
 )
-
-func (p *Plugin) getHome(c *gin.Context) {
-	lang := c.MustGet(web.LOCALE).(string)
-	// carousel off-canvas
-	theme := c.Query("theme")
-	var home map[string]string
-	if err := p.Settings.Get(p.DB, "site.home."+lang, &home); err == nil {
-		href := home["href"]
-		if href != "" {
-			c.Redirect(http.StatusFound, href)
-			return
-		}
-		if theme == "" {
-			theme = home["theme"]
-		}
-	}
-	if theme == "" {
-		theme = "off-canvas"
-	}
-
-	p.Layout.HTML("nut/home/"+theme, func(string, *gin.Context) (gin.H, error) {
-		return gin.H{}, nil
-	})(c)
-}
-
-func (p *Plugin) getDonate(l string, c *gin.Context) (gin.H, error) {
-	item := make(map[string]interface{})
-	if err := p.Settings.Get(p.DB, "site.donate", &item); err != nil {
-		return nil, err
-	}
-	rst := gin.H{
-		"body": item["body"],
-		"type": item["type"],
-		TITLE:  p.I18n.T(l, "nut.donate.title"),
-	}
-	if paypal, ok := item["paypal"]; ok && paypal.(string) != "" {
-		var buf bytes.Buffer
-		tpl, err := template.ParseFiles(path.Join("templates", "paypal.html"))
-		if err != nil {
-			return nil, err
-		}
-		if err := tpl.Execute(&buf, gin.H{"id": paypal}); err != nil {
-			return nil, err
-		}
-		rst["paypal"] = h_template.HTML(buf.Bytes())
-	}
-	return rst, nil
-}
-
-// ------------------
 
 func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
 	items, err := p.I18n.All(c.Param("lang"))

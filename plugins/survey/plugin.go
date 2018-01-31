@@ -9,20 +9,18 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/plugins/nut"
 	"github.com/kapmahc/h2o/web"
-	"github.com/unrolled/render"
 	"github.com/urfave/cli"
 )
 
 // Plugin plugin
 type Plugin struct {
-	I18n    *web.I18n      `inject:""`
-	Cache   *web.Cache     `inject:""`
-	Sitemap *web.Sitemap   `inject:""`
-	Jwt     *web.Jwt       `inject:""`
-	Router  *gin.Engine    `inject:""`
-	DB      *gorm.DB       `inject:""`
-	Render  *render.Render `inject:""`
-	Layout  *nut.Layout    `inject:""`
+	I18n    *web.I18n    `inject:""`
+	Cache   *web.Cache   `inject:""`
+	Sitemap *web.Sitemap `inject:""`
+	Jwt     *web.Jwt     `inject:""`
+	Router  *gin.Engine  `inject:""`
+	DB      *gorm.DB     `inject:""`
+	Layout  *nut.Layout  `inject:""`
 }
 
 // Init init beans
@@ -37,7 +35,7 @@ func (p *Plugin) Shell() []cli.Command {
 
 func (p *Plugin) sitemap() ([]stm.URL, error) {
 	items := []stm.URL{
-		{"loc": "/survey/htdocs/forms"},
+		{"loc": "/survey/forms"},
 	}
 
 	var forms []Form
@@ -46,7 +44,7 @@ func (p *Plugin) sitemap() ([]stm.URL, error) {
 	}
 	for _, it := range forms {
 		items = append(items, stm.URL{
-			"loc":     fmt.Sprintf("/survey/htdocs/forms/apply/%d", it.ID),
+			"loc":     fmt.Sprintf("/survey/forms/apply/%d", it.ID),
 			"lastmod": it.UpdatedAt,
 		})
 	}
@@ -57,13 +55,6 @@ func (p *Plugin) sitemap() ([]stm.URL, error) {
 // Mount register
 func (p *Plugin) Mount() error {
 	p.Sitemap.Register(p.sitemap)
-	// --------------
-	ht := p.Router.Group("/survey/htdocs")
-	ht.GET("/forms", p.Layout.HTML("survey/forms/index", p.getForms))
-	ht.GET("/forms/apply/:id", p.Layout.HTML("survey/forms/edit", p.getApplyForm))
-	ht.POST("/forms/apply/:id", p.Layout.JSON(p.postApplyForm))
-	ht.GET("/forms/edit/:token", p.Layout.HTML("survey/forms/edit", p.getEditForm))
-	ht.GET("/forms/cancel/:token", p.Layout.Redirect("/", p.getCancelForm))
 
 	rt := p.Router.Group("/survey")
 	rt.GET("/forms", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.indexForms))

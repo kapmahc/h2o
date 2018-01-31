@@ -8,19 +8,17 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/plugins/nut"
 	"github.com/kapmahc/h2o/web"
-	"github.com/unrolled/render"
 )
 
 // Plugin plugin
 type Plugin struct {
-	I18n    *web.I18n      `inject:""`
-	Cache   *web.Cache     `inject:""`
-	Sitemap *web.Sitemap   `inject:""`
-	Layout  *nut.Layout    `inject:""`
-	Jwt     *web.Jwt       `inject:""`
-	Router  *gin.Engine    `inject:""`
-	DB      *gorm.DB       `inject:""`
-	Render  *render.Render `inject:""`
+	I18n    *web.I18n    `inject:""`
+	Cache   *web.Cache   `inject:""`
+	Sitemap *web.Sitemap `inject:""`
+	Layout  *nut.Layout  `inject:""`
+	Jwt     *web.Jwt     `inject:""`
+	Router  *gin.Engine  `inject:""`
+	DB      *gorm.DB     `inject:""`
 }
 
 // Init init beans

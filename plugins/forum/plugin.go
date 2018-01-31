@@ -10,21 +10,19 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kapmahc/h2o/plugins/nut"
 	"github.com/kapmahc/h2o/web"
-	"github.com/unrolled/render"
 	"github.com/urfave/cli"
 )
 
 // Plugin plugin
 type Plugin struct {
-	I18n    *web.I18n      `inject:""`
-	Cache   *web.Cache     `inject:""`
-	Jwt     *web.Jwt       `inject:""`
-	Sitemap *web.Sitemap   `inject:""`
-	RSS     *web.RSS       `inject:""`
-	Layout  *nut.Layout    `inject:""`
-	Router  *gin.Engine    `inject:""`
-	DB      *gorm.DB       `inject:""`
-	Render  *render.Render `inject:""`
+	I18n    *web.I18n    `inject:""`
+	Cache   *web.Cache   `inject:""`
+	Jwt     *web.Jwt     `inject:""`
+	Sitemap *web.Sitemap `inject:""`
+	RSS     *web.RSS     `inject:""`
+	Layout  *nut.Layout  `inject:""`
+	Router  *gin.Engine  `inject:""`
+	DB      *gorm.DB     `inject:""`
 }
 
 // Init init beans
@@ -56,7 +54,7 @@ func (p *Plugin) rss(l string) ([]*feeds.Item, error) {
 		}
 		items = append(items, &feeds.Item{
 			Title:       it.Title,
-			Link:        &feeds.Link{Href: fmt.Sprintf("/forum/htdocs/articles/%d", it.ID)},
+			Link:        &feeds.Link{Href: fmt.Sprintf("/forum/articles/%d", it.ID)},
 			Description: it.Body,
 			Author:      &feeds.Author{Name: it.User.Name},
 			Created:     it.UpdatedAt,
@@ -67,9 +65,9 @@ func (p *Plugin) rss(l string) ([]*feeds.Item, error) {
 
 func (p *Plugin) sitemap() ([]stm.URL, error) {
 	items := []stm.URL{
-		{"loc": "/forum/htdocs/articles"},
-		{"loc": "/forum/htdocs/tags"},
-		{"loc": "/forum/htdocs/comments"},
+		{"loc": "/forum/articles"},
+		{"loc": "/forum/tags"},
+		{"loc": "/forum/comments"},
 	}
 
 	var articles []Article
@@ -78,7 +76,7 @@ func (p *Plugin) sitemap() ([]stm.URL, error) {
 	}
 	for _, it := range articles {
 		items = append(items, stm.URL{
-			"loc":     fmt.Sprintf("/forum/htdocs/articles/%d", it.ID),
+			"loc":     fmt.Sprintf("/forum/articles/%d", it.ID),
 			"lastmod": it.UpdatedAt,
 		})
 	}
@@ -89,7 +87,7 @@ func (p *Plugin) sitemap() ([]stm.URL, error) {
 	}
 	for _, it := range tags {
 		items = append(items, stm.URL{
-			"loc":     fmt.Sprintf("/forum/htdocs/tags/%d", it.ID),
+			"loc":     fmt.Sprintf("/forum/tags/%d", it.ID),
 			"lastmod": it.UpdatedAt,
 		})
 	}
@@ -101,12 +99,6 @@ func (p *Plugin) Mount() error {
 	p.RSS.Register(p.rss)
 	p.Sitemap.Register(p.sitemap)
 	// ----------
-	ht := p.Router.Group("/forum/htdocs")
-	ht.GET("/tags", p.Layout.HTML("forum/tags/index", p.indexTagsH))
-	ht.GET("/tags/:id", p.Layout.HTML("forum/tags/show", p.showTagH))
-	ht.GET("/articles", p.Layout.HTML("forum/articles/index", p.indexArticlesH))
-	ht.GET("/articles/:id", p.Layout.HTML("forum/articles/show", p.showArticleH))
-	ht.GET("/comments", p.Layout.HTML("forum/comments/index", p.indexCommentsH))
 
 	rt := p.Router.Group("/forum")
 

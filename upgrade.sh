@@ -2,9 +2,7 @@
 go get -u github.com/kardianos/govendor
 rm -r vendor
 govendor init
-govendor fetch github.com/unrolled/render
 govendor fetch github.com/rs/cors
-govendor fetch github.com/gorilla/sessions
 govendor fetch github.com/gin-gonic/gin
 govendor fetch github.com/jinzhu/gorm
 govendor fetch github.com/jinzhu/gorm/dialects/postgres
