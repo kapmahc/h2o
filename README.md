@@ -2,9 +2,9 @@
 
 A complete open source e-commerce solution.
 
-## For Development
+## Usage
 
-- install go by gvm
+- go
 
   ```bash
   GOPATH=$HOME/go
@@ -12,23 +12,29 @@ A complete open source e-commerce solution.
   export GOPATH PATH
   ```
 
-- nvm global package path
+- nvm
 
-```bash
-NPM_PACKAGES="${HOME}/.npm-packages"
-PATH="$NPM_PACKAGES/bin:$PATH"
-export NPM_PACKAGES PATH
-```
+  ```bash
+  mkdir ~/.npm-global
+  npm config set prefix '~/.npm-global'
+  export PATH=~/.npm-global/bin:$PATH
+  ```
 
-## Usage
+- build
 
 ```bash
 go get -u github.com/kardianos/govendor
 go get -d -u github.com/kapmahc/h2o
 cd $GOPATH/src/github.com/kapmahc/h2o
-govendor sync
-make
+make download # download packages
+make # build
 ```
+
+- change port and start without open browser
+
+  ```bash
+  PORT=3000 BROWSER=none npm run start
+  ```
 
 ## Atom plugins
 

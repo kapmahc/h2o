@@ -1,0 +1,49 @@
+diff --git a/.webpackrc b/.webpackrc
+index ab704dc..7863850 100755
+--- a/.webpackrc
++++ b/.webpackrc
+@@ -17,6 +17,6 @@
+     "template": "./src/index.ejs"
+   },
+   "publicPath": "/",
+-  "disableDynamicImport": true,
++  "disableDynamicImport": false,
+   "hash": true
+ }
+diff --git a/src/index.js b/src/index.js
+index ef86ed2..f8d44a3 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -2,9 +2,9 @@ import '@babel/polyfill';
+ import 'url-polyfill';
+ import dva from 'dva';
+ 
+-import createHistory from 'history/createHashHistory';
++// import createHistory from 'history/createHashHistory';
+ // user BrowserHistory
+-// import createHistory from 'history/createBrowserHistory';
++import createHistory from 'history/createBrowserHistory';
+ import createLoading from 'dva-loading';
+ import 'moment/locale/zh-cn';
+ import FastClick from 'fastclick';
+@@ -12,9 +12,7 @@ import './rollbar';
+ 
+ import './index.less';
+ // 1. Initialize
+-const app = dva({
+-  history: createHistory(),
+-});
++const app = dva({history: createHistory()});
+ 
+ // 2. Plugins
+ app.use(createLoading());
+@@ -28,7 +26,6 @@ app.router(require('./router').default);
+ // 5. Start
+ app.start('#root');
+ 
+-
+ FastClick.attach(document.body);
+ 
+-export default app._store;  // eslint-disable-line
++export default app._store; // eslint-disable-line
+\ No newline at end of file
