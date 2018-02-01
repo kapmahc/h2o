@@ -26,15 +26,8 @@ A complete open source e-commerce solution.
 go get -u github.com/kardianos/govendor
 go get -d -u github.com/kapmahc/h2o
 cd $GOPATH/src/github.com/kapmahc/h2o
-make download # download packages
-make # build
+make
 ```
-
-- change port and start without open browser
-
-  ```bash
-  PORT=3000 BROWSER=none npm run start
-  ```
 
 ## Atom plugins
 
@@ -45,6 +38,7 @@ enable autosave
 - atom-beautify(enable newline, beautify on save; need python-sqlparse)
 - language-babel
 - language-ini
+- editorconfig
 
 ## Notes
 
