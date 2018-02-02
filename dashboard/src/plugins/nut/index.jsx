@@ -6,6 +6,9 @@ const AdminFormFriendLink = import ('./admin/friend-links/Form')
 export default {
   routes: [
     {
+      path: "/",
+      component: import ('./Home')
+    }, {
       path: "/users/sign-in",
       component: import ('./users/SignIn')
     }, {
