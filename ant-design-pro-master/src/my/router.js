@@ -1,11 +1,13 @@
 import React from 'react';
 import {routerRedux, Route, Switch} from 'dva/router';
 import {LocaleProvider, Spin} from 'antd';
-import zhCN from 'antd/lib/locale-provider/zh_CN';
 import dynamic from 'dva/dynamic';
+import {addLocaleData, IntlProvider} from 'react-intl';
+
 import {getRouterData} from './common/router';
 import Authorized from './utils/Authorized';
 import styles from '../index.less';
+import {get as getLocale} from './locales';
 
 const {ConnectedRouter} = routerRedux;
 const {AuthorizedRoute} = Authorized;
@@ -15,15 +17,20 @@ dynamic.setDefaultLoadingComponent(() => {
 
 function RouterConfig({history, app}) {
   const routerData = getRouterData(app);
-  const UserLayout = routerData['/users'].component;
   const BasicLayout = routerData['/'].component;
-  return (<LocaleProvider locale={zhCN}>
-    <ConnectedRouter history={history}>
-      <Switch>
-        <Route path="/users" component={UserLayout}/>
-        <AuthorizedRoute path="/" render={props => <BasicLayout {...props}/>} authority={['admin', 'user']} redirectPath="/users/sign-in"/>
-      </Switch>
-    </ConnectedRouter>
+
+  const user = getLocale();
+  addLocaleData(user.data);
+
+  return (<LocaleProvider locale={user.antd}>
+    <IntlProvider locale={user.locale} messages={user.messages}>
+      <ConnectedRouter history={history}>
+        <Switch>
+          <Route path="/users/sign-in" component={routerData['/users/sign-in'].component}/>
+          <AuthorizedRoute path="/" render={props => <BasicLayout {...props}/>} redirectPath="/users/sign-in"/>
+        </Switch>
+      </ConnectedRouter>
+    </IntlProvider>
   </LocaleProvider>);
 }
 

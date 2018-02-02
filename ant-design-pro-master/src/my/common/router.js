@@ -162,6 +162,10 @@ export const getRouterData = (app) => {
     '/users/sign-in': {
       component: dynamicWrapper(app, ['login'], () => import ('../routes/users/SignIn'))
     },
+    '/users/sign-up': {
+      component: dynamicWrapper(app, [], () => import ('../routes/users/SignUp')),
+      authority: []
+    },
     // '/user/register': {
     //   component: dynamicWrapper(app, ['register'], () => import ('../../routes/User/Register'))
     // },

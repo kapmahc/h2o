@@ -5,5 +5,5 @@ export function getAuthority() {
 }
 
 export function setAuthority(authority) {
-  return localStorage.setItem(token, authority);
+  return localStorage.setItem(TOKEN, authority);
 }
