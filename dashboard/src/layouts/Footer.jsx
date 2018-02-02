@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Layout} from 'antd'
+import {Layout, message} from 'antd'
 import {connect} from 'react-redux'
 import {FormattedMessage} from 'react-intl'
 
 import {set as setLocale} from '../intl'
+import {signIn, refresh} from '../actions'
+import {get, token} from '../ajax'
 
 const {Footer} = Layout
 
@@ -12,6 +14,18 @@ class Widget extends Component {
   switchLanguage = (l) => {
     setLocale(l)
     window.location.reload()
+  }
+  componentDidMount() {
+    const {signIn, refresh, site, user} = this.props
+    if (!user.uid) {
+      var tkn = token()
+      if (tkn) {
+        signIn(tkn)
+      }
+    }
+    if (site.languages.length === 0) {
+      get('/layout').then((rst) => refresh(rst)).catch(message.error)
+    }
   }
   render() {
     const {site} = this.props
@@ -28,7 +42,10 @@ class Widget extends Component {
   }
 }
 Widget.propTypes = {
+  refresh: PropTypes.func.isRequired,
+  signIn: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
   site: PropTypes.object.isRequired
 }
 
-export default connect(state => ({site: state.siteInfo}))(Widget)
+export default connect(state => ({user: state.currentUser, site: state.siteInfo}), {signIn, refresh})(Widget)

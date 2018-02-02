@@ -30,8 +30,6 @@ const siteInfo = (state = {
 }, action) => {
   switch (action.type) {
     case SITE_REFRESH:
-      // set title
-      document.title = action.info.subhead + '|' + action.info.title
       // set favicon
       var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
       link.type = 'image/x-icon';

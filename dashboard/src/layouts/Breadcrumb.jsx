@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Breadcrumb, Icon} from 'antd'
 import {Link} from 'react-router-dom'
+import {FormattedMessage} from 'react-intl'
 
 class Widget extends Component {
   render() {
@@ -16,7 +17,7 @@ class Widget extends Component {
       {
         this.props.items.map((it) => (<Breadcrumb.Item key={it.href}>
           <Link to={it.href}>
-            {it.label}
+            <FormattedMessage {...it.label}/>
           </Link>
         </Breadcrumb.Item>))
       }

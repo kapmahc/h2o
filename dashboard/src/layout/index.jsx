@@ -1,31 +1,19 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Layout, message, BackTop} from 'antd'
+import {Layout, BackTop} from 'antd'
 import {injectIntl, intlShape} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Footer from './Footer'
+import Footer from '../layouts/Footer'
 import LeftNavPanel from './LeftNavPanel'
 import TopNavBar from './TopNavBar'
-import {signIn, signOut, refresh} from '../actions'
-import {get, token} from '../ajax'
+import {signOut} from '../actions'
 
 const {Header, Content, Sider} = Layout
 
 class Widget extends Component {
-  componentDidMount() {
-    const {signIn, refresh, info, user} = this.props
-    if (!user.uid) {
-      var tkn = token()
-      if (tkn) {
-        signIn(tkn)
-      }
-    }
-    if (info.languages.length === 0) {
-      get('/layout').then((rst) => refresh(rst)).catch(message.error)
-    }
-  }
+
   render() {
     const {children, breads, info} = this.props
 
@@ -63,8 +51,6 @@ class Widget extends Component {
 Widget.propTypes = {
   children: PropTypes.node.isRequired,
   push: PropTypes.func.isRequired,
-  refresh: PropTypes.func.isRequired,
-  signIn: PropTypes.func.isRequired,
   signOut: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
   info: PropTypes.object.isRequired,
@@ -74,4 +60,4 @@ Widget.propTypes = {
 
 const WidgetI = injectIntl(Widget)
 
-export default connect(state => ({user: state.currentUser, info: state.siteInfo}), {push, signIn, refresh, signOut})(WidgetI)
+export default connect(state => ({user: state.currentUser, info: state.siteInfo}), {push, signOut})(WidgetI)

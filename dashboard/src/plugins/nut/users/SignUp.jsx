@@ -5,9 +5,10 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/application'
 import {post} from '../../../ajax'
 import {Submit, formItemLayout} from '../../../components/form'
+import SharedLinks from './SharedLinks'
 
 const FormItem = Form.Item
 
@@ -37,11 +38,14 @@ class Widget extends Component {
   render() {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
+    const title = {
+      id: "nut.users.sign-up.title"
+    }
     return (<Layout breads={[{
           href: "/users/sign-up",
-          label: <FormattedMessage id={"nut.users.sign-up.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title}>
       <Row>
         <Col md={{
             span: 12,
@@ -104,6 +108,7 @@ class Widget extends Component {
             <Submit/>
           </Form>
         </Col>
+        <SharedLinks/>
       </Row>
     </Layout>);
   }
