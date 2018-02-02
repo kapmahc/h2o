@@ -12,7 +12,8 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Layout from '../../../../layout'
+import Layout from '../../../../layouts/dashboard'
+import {ADMIN} from '../../../../auth'
 import {post, get, backend} from '../../../../ajax'
 import {Submit, formItemLayout} from '../../../../components/form'
 
@@ -43,11 +44,14 @@ class Widget extends Component {
   render() {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
+    const title = {
+      id: "nut.admin.site.seo.title"
+    }
     return (<Layout breads={[{
           href: "/admin/site/seo",
-          label: <FormattedMessage id={"nut.admin.site.seo.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[ADMIN]}>
       <Row>
         <Col md={{
             span: 12,

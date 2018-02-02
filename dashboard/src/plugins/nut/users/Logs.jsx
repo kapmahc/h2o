@@ -7,7 +7,7 @@ import Moment from 'react-moment'
 
 import Layout from '../../../layouts/dashboard'
 import {get} from '../../../ajax'
-import {USER} from '../../../auth'
+import {USER, ADMIN} from '../../../auth'
 
 class Widget extends Component {
   state = {
@@ -26,7 +26,7 @@ class Widget extends Component {
           href: "/users/logs",
           label: title
         }
-      ]} roles={[USER]} title={title}>
+      ]} roles={[USER, ADMIN]} title={title}>
       <Row>
         <Col md={{
             span: 12,

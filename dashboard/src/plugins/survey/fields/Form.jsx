@@ -13,8 +13,9 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {post, get} from '../../../ajax'
+import {USER, ADMIN} from '../../../auth'
 import {Submit, orders, formItemLayout, tailFormItemLayout} from '../../../components/form'
 
 const FormItem = Form.Item
@@ -72,26 +73,38 @@ class Widget extends Component {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
     const {id, formId} = this.props.match.params
+    const title = id
+      ? {
+        id: "buttons.edit",
+        values: {
+          id: id
+        }
+      }
+      : {
+        id: "buttons.new"
+      }
     return (<Layout breads={[
         {
           href: '/survey/forms',
-          label: <FormattedMessage id='survey.forms.index.title'/>
+          label: {
+            id: 'survey.forms.index.title'
+          }
         }, {
           href: `/survey/fields/${formId}`,
-          label: <FormattedMessage id={"survey.fields.index.title"}/>
+          label: {
+            id: "survey.fields.index.title"
+          }
         },
         id
           ? {
             href: `/survey/fields/edit/${id}`,
-            label: (<FormattedMessage id={"buttons.edit"} values={{
-                id: id
-              }}/>)
+            label: title
           }
           : {
             href: `/survey/fields/new/${formId}`,
-            label: <FormattedMessage id={"buttons.new"}/>
+            label: title
           }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col md={{
             span: 8,

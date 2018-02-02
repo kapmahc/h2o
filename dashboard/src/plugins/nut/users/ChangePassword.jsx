@@ -3,8 +3,9 @@ import {Form, Row, Col, Input, message} from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {post} from '../../../ajax'
+import {USER, ADMIN} from '../../../auth'
 import {Submit, formItemLayout} from '../../../components/form'
 
 const FormItem = Form.Item
@@ -35,11 +36,14 @@ class Widget extends Component {
   render() {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
+    const title = {
+      id: "nut.users.change-password.title"
+    }
     return (<Layout breads={[{
           href: "/users/change-password",
-          label: <FormattedMessage id={"nut.users.change-password.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col md={{
             span: 12,

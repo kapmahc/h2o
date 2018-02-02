@@ -5,8 +5,9 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {post, get} from '../../../ajax'
+import {ADMIN} from '../../../auth'
 import {Submit, formItemLayout} from '../../../components/form'
 
 const FormItem = Form.Item
@@ -41,23 +42,33 @@ class Widget extends Component {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
     const {id} = this.props.match.params
+    const title = id
+      ? {
+        id: "buttons.edit",
+        values: {
+          id: id
+        }
+      }
+      : {
+        id: "buttons.new"
+      }
     return (<Layout breads={[
         {
           href: '/forum/tags',
-          label: <FormattedMessage id='forum.tags.index.title'/>
+          label: {
+            id: 'forum.tags.index.title'
+          }
         },
         id
           ? {
             href: `/forum/tags/edit/${id}`,
-            label: (<FormattedMessage id={"buttons.edit"} values={{
-                id: id
-              }}/>)
+            label: title
           }
           : {
             href: "/forum/tags/new",
-            label: <FormattedMessage id={"buttons.new"}/>
+            label: title
           }
-      ]}>
+      ]} title={title} roles={[ADMIN]}>
       <Row>
         <Col md={{
             span: 8,

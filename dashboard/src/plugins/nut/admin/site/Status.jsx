@@ -5,8 +5,9 @@ import PropTypes from 'prop-types'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import {docco} from 'react-syntax-highlighter/styles/hljs'
 
-import Layout from '../../../../layout'
+import Layout from '../../../../layouts/dashboard'
 import {get} from '../../../../ajax'
+import {ADMIN} from '../../../../auth'
 
 const Panel = Collapse.Panel
 
@@ -52,11 +53,14 @@ class Widget extends Component {
       routes
     } = this.state
 
+    const title = {
+      id: "nut.admin.site.status.title"
+    }
     return (<Layout breads={[{
           href: "/admin/site/status",
-          label: <FormattedMessage id={"nut.admin.site.status.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[ADMIN]}>
       <Row>
         <Col md={{
             span: 16,

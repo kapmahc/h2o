@@ -16,8 +16,9 @@ import {push} from 'react-router-redux'
 //   {this.state.tagOptions.map(it => (<TagSelect.Option key={it.id} value={it.id}>{it.name}</TagSelect.Option>))}
 // </TagSelect>
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {post, get} from '../../../ajax'
+import {USER, ADMIN} from '../../../auth'
 import {Submit, Quill, formItemLayout} from '../../../components/form'
 
 const FormItem = Form.Item
@@ -82,23 +83,33 @@ class Widget extends Component {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
     const {id} = this.props.match.params
+    const title = id
+      ? {
+        id: "buttons.edit",
+        values: {
+          id: id
+        }
+      }
+      : {
+        id: "buttons.new"
+      }
     return (<Layout breads={[
         {
           href: '/forum/articles',
-          label: <FormattedMessage id='forum.articles.index.title'/>
+          label: {
+            id: 'forum.articles.index.title'
+          }
         },
         id
           ? {
             href: `/forum/articles/edit/${id}`,
-            label: (<FormattedMessage id={"buttons.edit"} values={{
-                id: id
-              }}/>)
+            label: title
           }
           : {
             href: "/forum/articles/new",
-            label: <FormattedMessage id={"buttons.new"}/>
+            label: title
           }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col md={{
             span: 18

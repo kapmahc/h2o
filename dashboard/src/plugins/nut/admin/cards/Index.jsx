@@ -11,8 +11,9 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Layout from '../../../../layout'
+import Layout from '../../../../layouts/dashboard'
 import {get, _delete} from '../../../../ajax'
+import {ADMIN} from '../../../../auth'
 
 class Widget extends Component {
   state = {
@@ -33,11 +34,14 @@ class Widget extends Component {
   }
   render() {
     const {push} = this.props
+    const title = {
+      id: "nut.admin.cards.index.title"
+    }
     return (<Layout breads={[{
           href: "/admin/cards",
-          label: <FormattedMessage id={"nut.admin.cards.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[ADMIN]}>
       <Row>
         <Col>
           <Button onClick={(e) => push('/admin/cards/new')} type='primary' shape="circle" icon="plus"/>

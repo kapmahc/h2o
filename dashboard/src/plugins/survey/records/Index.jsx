@@ -11,8 +11,9 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {get, _delete} from '../../../ajax'
+import {USER, ADMIN} from '../../../auth'
 
 class Widget extends Component {
   state = {
@@ -34,15 +35,20 @@ class Widget extends Component {
   }
   render() {
     const {formId} = this.props.match.params
+    const title = {
+      id: "survey.records.index.title"
+    }
     return (<Layout breads={[
         {
           href: "/survey/forms",
-          label: <FormattedMessage id={"survey.forms.index.title"}/>
+          label: {
+            id: "survey.forms.index.title"
+          }
         }, {
           href: `/survey/records/${formId}`,
-          label: <FormattedMessage id={"survey.records.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col>
           <Table bordered={true} rowKey="id" dataSource={this.state.items} columns={[

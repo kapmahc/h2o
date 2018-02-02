@@ -14,9 +14,9 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {get, _delete, backend} from '../../../ajax'
-import {getToken} from '../../../auth'
+import {getToken, USER, ADMIN} from '../../../auth'
 
 class Widget extends Component {
   state = {
@@ -36,11 +36,14 @@ class Widget extends Component {
     }).catch(message.error)
   }
   render() {
+    const title = {
+      id: "nut.attachments.index.title"
+    }
     return (<Layout breads={[{
           href: "/attachments",
-          label: <FormattedMessage id={"nut.attachments.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col>
           <Upload multiple={true} withCredentials={true} name="file" action={backend("/attachments")} headers={{

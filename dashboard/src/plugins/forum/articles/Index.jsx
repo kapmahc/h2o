@@ -12,7 +12,8 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
+import {USER, ADMIN} from '../../../auth'
 import {get, _delete, backend} from '../../../ajax'
 
 class Widget extends Component {
@@ -34,11 +35,14 @@ class Widget extends Component {
   }
   render() {
     const {push} = this.props
+    const title = {
+      id: "forum.articles.index.title"
+    }
     return (<Layout breads={[{
           href: "/forum/articles",
-          label: <FormattedMessage id={"forum.articles.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col>
           <Button onClick={(e) => push('/forum/articles/new')} type='primary' shape="circle" icon="plus"/>

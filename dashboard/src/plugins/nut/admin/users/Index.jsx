@@ -3,8 +3,9 @@ import {Row, Col, Table, message} from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 
-import Layout from '../../../../layout'
+import Layout from '../../../../layouts/dashboard'
 import {get} from '../../../../ajax'
+import {ADMIN} from '../../../../auth'
 
 class Widget extends Component {
   state = {
@@ -16,11 +17,14 @@ class Widget extends Component {
     }).catch(message.error);
   }
   render() {
+    const title = {
+      id: "nut.admin.users.index.title"
+    }
     return (<Layout breads={[{
           href: "/admin/users",
-          label: <FormattedMessage id={"nut.admin.users.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[ADMIN]}>
       <Row>
         <Col md={{
             span: 18,

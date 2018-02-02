@@ -12,8 +12,9 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {get, _delete, backend} from '../../../ajax'
+import {USER, ADMIN} from '../../../auth'
 
 class Widget extends Component {
   state = {
@@ -33,11 +34,14 @@ class Widget extends Component {
     }).catch(message.error)
   }
   render() {
+    const title = {
+      id: "reading.books.index.title"
+    }
     return (<Layout breads={[{
           href: "/reading/books",
-          label: <FormattedMessage id={"reading.books.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col>
           <Table bordered={true} rowKey="id" dataSource={this.state.items} columns={[

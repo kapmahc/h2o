@@ -12,7 +12,8 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
+import {USER, ADMIN} from '../../../auth'
 import {get, _delete, backend} from '../../../ajax'
 import PlainText from '../../../components/PlainText'
 
@@ -35,11 +36,14 @@ class Widget extends Component {
   }
   render() {
     const {push} = this.props
+    const title = {
+      id: "forum.comments.index.title"
+    }
     return (<Layout breads={[{
           href: "/forum/comments",
-          label: <FormattedMessage id={"forum.comments.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col>
           <Table bordered={true} rowKey="id" dataSource={this.state.items} columns={[

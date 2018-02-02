@@ -15,7 +15,7 @@ const currentUser = (state = {}, action) => {
             ? ADMIN
             : USER)
           setToken(action.token)
-          return {uid: it.uid, roles: it.roles}
+          return {uid: it.uid, admin: it.admin} // FIXME
         }
       } catch (e) {
         console.error(e)

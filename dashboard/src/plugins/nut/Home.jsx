@@ -7,7 +7,7 @@ import {Card, Row, Col, Icon} from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 
 import dashboard from '../../dashboard'
-import Layout from '../../layout'
+import Layout from '../../layouts/dashboard'
 
 class Panel extends Component {
   render() {

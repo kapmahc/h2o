@@ -11,8 +11,9 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import Moment from 'react-moment'
 
-import Layout from '../../../../layout'
+import Layout from '../../../../layouts/dashboard'
 import {get, _delete} from '../../../../ajax'
+import {ADMIN} from '../../../../auth'
 
 class Widget extends Component {
   state = {
@@ -32,11 +33,14 @@ class Widget extends Component {
     }).catch(message.error)
   }
   render() {
+    const title = {
+      id: "nut.admin.leave-words.index.title"
+    }
     return (<Layout breads={[{
           href: "/admin/leave-words",
-          label: <FormattedMessage id={"nut.admin.leave-words.index.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title} roles={[ADMIN]}>
       <Row>
         <Col md={{
             span: 12,

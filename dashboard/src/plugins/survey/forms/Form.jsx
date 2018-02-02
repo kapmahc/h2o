@@ -13,8 +13,9 @@ import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
 import moment from 'moment'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {post, get} from '../../../ajax'
+import {USER, ADMIN} from '../../../auth'
 import {Submit, Quill, formItemLayout, DATE_FORMAT} from '../../../components/form'
 
 const FormItem = Form.Item
@@ -74,23 +75,33 @@ class Widget extends Component {
     const {formatMessage} = this.props.intl
     const {getFieldDecorator} = this.props.form
     const {id} = this.props.match.params
+    const title = id
+      ? {
+        id: "buttons.edit",
+        values: {
+          id: id
+        }
+      }
+      : {
+        id: "buttons.new"
+      }
     return (<Layout breads={[
         {
           href: '/survey/forms',
-          label: <FormattedMessage id='survey.forms.index.title'/>
+          label: {
+            id: 'survey.forms.index.title'
+          }
         },
         id
           ? {
             href: `/survey/forms/edit/${id}`,
-            label: (<FormattedMessage id={"buttons.edit"} values={{
-                id: id
-              }}/>)
+            label: title
           }
           : {
             href: "/survey/forms/new",
-            label: <FormattedMessage id={"buttons.new"}/>
+            label: title
           }
-      ]}>
+      ]} title={title} roles={[USER, ADMIN]}>
       <Row>
         <Col md={{
             span: 18
