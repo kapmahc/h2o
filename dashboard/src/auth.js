@@ -1,11 +1,16 @@
 import RenderAuthorized from 'ant-design-pro/lib/Authorized';
 
-const {Secured} = RenderAuthorized('user');
+export const USER = 'user'
+export const ADMIN = 'admin'
+
 const TOKEN = "token"
+
+export let Authorized = RenderAuthorized();
 
 export const getToken = () => {
   return localStorage.getItem(TOKEN)
 }
+
 export const setToken = (t) => {
   if (t) {
     localStorage.setItem(TOKEN, t)
@@ -14,4 +19,6 @@ export const setToken = (t) => {
   }
 }
 
-// export Secured;
+export const reloadAuthorized = (role) => {
+  Authorized = RenderAuthorized(role)
+}

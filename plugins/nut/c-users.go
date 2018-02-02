@@ -109,11 +109,16 @@ func (p *Plugin) postUsersSignIn(l string, c *gin.Context) (interface{}, error) 
 	if err != nil {
 		return nil, err
 	}
+	// roles, err := p.Dao.Authority(db, user.ID, DefaultResourceType, DefaultResourceID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	db.Commit()
 
 	cm := make(jws.Claims)
 	cm.Set(UID, user.UID)
 	cm.Set(RoleAdmin, p.Dao.Is(p.DB, user.ID, RoleAdmin))
+	// cm.Set("roles", roles)
 	tkn, err := p.Jwt.Sum(cm, time.Hour*24)
 	if err != nil {
 		return nil, err

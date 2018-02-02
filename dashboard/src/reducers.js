@@ -2,7 +2,7 @@ import jwtDecode from 'jwt-decode'
 import moment from 'moment'
 
 import {USERS_SIGN_IN, USERS_SIGN_OUT, SITE_REFRESH} from './actions'
-import {setToken} from './auth'
+import {setToken, reloadAuthorized, ADMIN, USER} from './auth'
 
 const currentUser = (state = {}, action) => {
   switch (action.type) {
@@ -10,15 +10,21 @@ const currentUser = (state = {}, action) => {
       try {
         var it = jwtDecode(action.token);
         if (moment().isBetween(moment.unix(it.nbf), moment.unix(it.exp))) {
+          reloadAuthorized(
+            it.admin
+            ? ADMIN
+            : USER)
           setToken(action.token)
-          return {admin: it.admin, uid: it.uid}
+          return {uid: it.uid, roles: it.roles}
         }
-        setToken()
       } catch (e) {
         console.error(e)
       }
+      reloadAuthorized()
+      setToken()
       return {}
     case USERS_SIGN_OUT:
+      reloadAuthorized()
       setToken()
       return {}
     default:

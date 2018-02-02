@@ -162,26 +162,26 @@ func (p *Dao) Deny(db *gorm.DB, user uint, role uint) error {
 	return err
 }
 
-// // Authority get roles
-// func (p *Dao) Authority(db *gorm.DB, user uint, rty string, rid uint) ([]string, error) {
-// 	var items []*Role
-//
-// 	if err := db.Where("resource_type = ? AND resource_id = ?", rty, rid).
-// 		Find(&items).Error; err != nil {
-// 		return nil, err
-// 	}
-// 	var roles []string
-// 	for _, r := range items {
-// 		var pm Policy
-// 		if err := db.Where("role_id = ? AND user_id = ?", r.ID, user).
-// 			First(&pm).Error; err == nil {
-// 			if pm.Enable() {
-// 				roles = append(roles, r.Name)
-// 			}
-// 		}
-// 	}
-// 	return roles, nil
-// }
+// Authority get roles
+func (p *Dao) Authority(db *gorm.DB, user uint, rty string, rid uint) ([]string, error) {
+	var items []*Role
+
+	if err := db.Where("resource_type = ? AND resource_id = ?", rty, rid).
+		Find(&items).Error; err != nil {
+		return nil, err
+	}
+	var roles []string
+	for _, r := range items {
+		var pm Policy
+		if err := db.Where("role_id = ? AND user_id = ?", r.ID, user).
+			First(&pm).Error; err == nil {
+			if pm.Enable() {
+				roles = append(roles, r.Name)
+			}
+		}
+	}
+	return roles, nil
+}
 
 //Allow allow permission
 func (p *Dao) Allow(db *gorm.DB, user uint, role uint, years, months, days int) error {

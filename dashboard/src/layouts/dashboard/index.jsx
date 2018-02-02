@@ -3,18 +3,20 @@ import PropTypes from 'prop-types'
 import {Layout, BackTop} from 'antd'
 import {injectIntl, intlShape} from 'react-intl'
 import {connect} from 'react-redux'
+import Exception from 'ant-design-pro/lib/Exception'
 import {push} from 'react-router-redux'
 
 import Footer from '../Footer'
 import Sidebar from './Sidebar'
 import Breadcrumb from '../Breadcrumb'
 import {signOut} from '../../actions'
+import {Authorized} from '../../auth'
 
 const {Header, Content, Sider} = Layout
 
 class Widget extends Component {
   render() {
-    const {children, breads, site, title} = this.props
+    const {children, breads, site, title, roles} = this.props
     const {formatMessage} = this.props.intl
     document.title = formatMessage(title) + '|' + site.subhead + '|' + site.title
     return (<Layout>
@@ -38,7 +40,9 @@ class Widget extends Component {
               background: '#fff',
               minHeight: 360
             }}>
-            {children}
+            <Authorized authority={roles} noMatch={<Exception type = "403" />}>
+              {children}
+            </Authorized>
           </div>
         </Content>
         <Footer/>
@@ -56,6 +60,7 @@ Widget.propTypes = {
   site: PropTypes.object.isRequired,
   title: PropTypes.object.isRequired,
   breads: PropTypes.array.isRequired,
+  roles: PropTypes.array.isRequired,
   intl: intlShape.isRequired
 }
 
