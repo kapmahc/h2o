@@ -6,7 +6,8 @@ import {FormattedMessage} from 'react-intl'
 
 import {set as setLocale} from '../intl'
 import {signIn, refresh} from '../actions'
-import {get, token} from '../ajax'
+import {get} from '../ajax'
+import {getToken} from '../auth'
 
 const {Footer} = Layout
 
@@ -18,7 +19,7 @@ class Widget extends Component {
   componentDidMount() {
     const {signIn, refresh, site, user} = this.props
     if (!user.uid) {
-      var tkn = token()
+      var tkn = getToken()
       if (tkn) {
         signIn(tkn)
       }

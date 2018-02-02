@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "/",
   "dependencies": {
-    "ant-design-pro": "^0.3.1",
+    "ant-design-pro": "^1.1.0",
     "antd": "^3.1.6",
     "history": "^4.7.2",
     "js-cookie": "^2.2.0",

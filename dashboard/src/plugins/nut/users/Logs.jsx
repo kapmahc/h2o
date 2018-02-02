@@ -5,7 +5,7 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import Moment from 'react-moment'
 
-import Layout from '../../../layout'
+import Layout from '../../../layouts/dashboard'
 import {get} from '../../../ajax'
 
 class Widget extends Component {
@@ -18,11 +18,14 @@ class Widget extends Component {
     }).catch(message.error);
   }
   render() {
+    const title = {
+      id: "nut.users.logs.title"
+    }
     return (<Layout breads={[{
           href: "/users/logs",
-          label: <FormattedMessage id={"nut.users.logs.title"}/>
+          label: title
         }
-      ]}>
+      ]} title={title}>
       <Row>
         <Col md={{
             span: 12,

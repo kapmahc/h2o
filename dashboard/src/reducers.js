@@ -1,7 +1,8 @@
 import jwtDecode from 'jwt-decode'
 import moment from 'moment'
 
-import {USERS_SIGN_IN, USERS_SIGN_OUT, SITE_REFRESH, TOKEN} from './actions'
+import {USERS_SIGN_IN, USERS_SIGN_OUT, SITE_REFRESH} from './actions'
+import {setToken} from './auth'
 
 const currentUser = (state = {}, action) => {
   switch (action.type) {
@@ -9,15 +10,16 @@ const currentUser = (state = {}, action) => {
       try {
         var it = jwtDecode(action.token);
         if (moment().isBetween(moment.unix(it.nbf), moment.unix(it.exp))) {
+          setToken(action.token)
           return {admin: it.admin, uid: it.uid}
         }
-        localStorage.removeItem(TOKEN);
+        setToken()
       } catch (e) {
         console.error(e)
       }
       return {}
     case USERS_SIGN_OUT:
-      localStorage.removeItem(TOKEN);
+      setToken()
       return {}
     default:
       return state
