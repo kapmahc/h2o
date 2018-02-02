@@ -97,6 +97,8 @@ func (p *Plugin) Mount() error {
 	ag.DELETE("/leave-words/:id", p.Layout.JSON(p.destroyAdminLeaveWord))
 	ag.GET("/users", p.Layout.JSON(p.indexAdminUsers))
 
+	// mock controller
+
 	p.Jobber.Register(SendEmailJob, p.doSendEmail)
 	return nil
 }

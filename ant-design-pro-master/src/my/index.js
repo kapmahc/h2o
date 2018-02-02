@@ -7,7 +7,7 @@ import createLoading from 'dva-loading';
 import 'moment/locale/zh-cn';
 import FastClick from 'fastclick';
 
-import './index.less';
+import '../index.less';
 // 1. Initialize
 const app = dva({history: createHistory()});
 

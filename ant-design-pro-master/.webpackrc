@@ -1,5 +1,5 @@
 {
-  "entry": "src/main.js",
+  "entry": "src/my/index.js",
   "extraBabelPlugins": [
     "transform-decorators-legacy",
     ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": true }]

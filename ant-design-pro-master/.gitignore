@@ -6,7 +6,6 @@
 .editorconfig
 .eslintrc
 .ga
-.roadhogrc.mock.js
 .stylelintrc
 .travis.yml
 CODE_OF_CONDUCT.md
