@@ -29,9 +29,15 @@ class Widget extends Component {
   }
   render() {
     const {site} = this.props
+
     return (<Footer style={{
         textAlign: 'center'
       }}>
+      {
+        site.footer.map((it, id) => (<a style={{
+            paddingRight: '8px'
+          }} key={id} target="_blank" href={it.href}>{it.label}</a>))
+      }
       &copy;{site.copyright}
       {
         site.languages.map((l, i) => (<a style={{

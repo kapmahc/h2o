@@ -1,6 +1,7 @@
 package nut
 
 import (
+	"fmt"
 	"net/http"
 	"path"
 	"text/template"
@@ -8,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
 	"github.com/kapmahc/h2o/web"
+	log "github.com/sirupsen/logrus"
 )
 
 func (p *Plugin) getLocales(_ string, c *gin.Context) (interface{}, error) {
@@ -45,6 +47,31 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 			"type":  user.ProviderType,
 			"admin": c.MustGet(IsAdmin).(bool),
 		}
+	}
+	// links
+	for _, loc := range []string{"header", "footer"} {
+		var links []gin.H
+
+		var items []Link
+		if err := p.DB.Select([]string{"id", "label", "href", "loc", "sort_order"}).
+			Where("lang = ? AND loc = ?", l, loc).
+			Order("sort_order ASC").
+			Find(&items).Error; err != nil {
+			log.Error(err)
+		}
+
+		for _, it := range items {
+			var children []Link
+			if err := p.DB.Select([]string{"id", "label", "href", "loc", "sort_order"}).
+				Where("lang = ? AND loc = ?", l, fmt.Sprintf("%s.%d", loc, it.SortOrder)).
+				Order("sort_order ASC").
+				Find(&children).Error; err != nil {
+				log.Error(err)
+			}
+			links = append(links, gin.H{"label": it.Label, "href": it.Href, "items": children})
+		}
+
+		site[loc] = links
 	}
 
 	return site, nil

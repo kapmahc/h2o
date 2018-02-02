@@ -26,7 +26,8 @@ const currentUser = (state = {}, action) => {
 
 const siteInfo = (state = {
   languages: [],
-  links: []
+  header: [],
+  footer: []
 }, action) => {
   switch (action.type) {
     case SITE_REFRESH:
