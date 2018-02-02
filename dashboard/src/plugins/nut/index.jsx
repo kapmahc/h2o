@@ -1,155 +1,107 @@
-import React from 'react'
-import {Route} from 'react-router'
-import Exception from 'ant-design-pro/lib/Exception'
+const AdminFormLocale = import ('./admin/locales/Form')
+const AdminFormLink = import ('./admin/links/Form')
+const AdminFormCard = import ('./admin/cards/Form')
+const AdminFormFriendLink = import ('./admin/friend-links/Form')
 
-import Home from './Home'
-
-import UsersSignIn from './users/SignIn'
-import UsersSignUp from './users/SignUp'
-import UsersEmailForm from './users/EmailForm'
-import UsersResetPassword from './users/ResetPassword'
-import UsersLogs from './users/Logs'
-import UsersProfile from './users/Profile'
-import UsersChangePassword from './users/ChangePassword'
-
-import NewLeaveWord from './leave-words/New'
-
-import AdminSiteStatus from './admin/site/Status'
-import AdminSiteInfo from './admin/site/Info'
-import AdminSiteAuthor from './admin/site/Author'
-import AdminSiteDonate from './admin/site/Donate'
-import AdminSiteSeo from './admin/site/Seo'
-import AdminSiteSmtp from './admin/site/Smtp'
-import AdminSiteHome from './admin/site/Home'
-import AdminIndexUsers from './admin/users/Index'
-import AdminIndexLeaveWords from './admin/leave-words/Index'
-import AdminIndexLocales from './admin/locales/Index'
-import AdminFormLocale from './admin/locales/Form'
-import AdminIndexLinks from './admin/links/Index'
-import AdminFormLink from './admin/links/Form'
-import AdminIndexCards from './admin/cards/Index'
-import AdminFormCard from './admin/cards/Form'
-import AdminIndexFriendLinks from './admin/friend-links/Index'
-import AdminFormFriendLink from './admin/friend-links/Form'
-
-import AttachmentsIndex from './attachments/Index'
-
-const UsersConfirm = () => (<UsersEmailForm action="confirm"/>)
-const UsersUnlock = () => (<UsersEmailForm action="unlock"/>)
-const UsersForgotPassword = () => (<UsersEmailForm action="forgot-password"/>)
-const NotFound = () => (<Exception type="404"/>)
-
-const routes = [
-  (< Route key = "nut.home" exact path = "/" component = {
-    Home
-  } />),
-
-  (< Route key = "nut.users.sign-in" path = "/users/sign-in" component = {
-    UsersSignIn
-  } />),
-  (< Route key = "nut.users.sign-up" path = "/users/sign-up" component = {
-    UsersSignUp
-  } />),
-  (< Route key = "nut.users.confirm" path = "/users/confirm" component = {
-    UsersConfirm
-  } />),
-  (< Route key = "nut.users.unlock" path = "/users/unlock" component = {
-    UsersUnlock
-  } />),
-  (< Route key = "nut.users.forgot-password" path = "/users/forgot-password" component = {
-    UsersForgotPassword
-  } />),
-  (< Route key = "nut.users.reset-password" path = "/users/reset-password/:token" component = {
-    UsersResetPassword
-  } />),
-  (< Route key = "nut.users.logs" path = "/users/logs" component = {
-    UsersLogs
-  } />),
-  (< Route key = "nut.users.profile" path = "/users/profile" component = {
-    UsersProfile
-  } />),
-  (< Route key = "nut.users.change-password" path = "/users/change-password" component = {
-    UsersChangePassword
-  } />),
-
-  (< Route key = "nut.leave-words.new" path = "/leave-words/new" component = {
-    NewLeaveWord
-  } />),
-
-  (< Route key = "nut.admin.site.status" path = "/admin/site/status" component = {
-    AdminSiteStatus
-  } />),
-  (< Route key = "nut.admin.site.info" path = "/admin/site/info" component = {
-    AdminSiteInfo
-  } />),
-  (< Route key = "nut.admin.site.author" path = "/admin/site/author" component = {
-    AdminSiteAuthor
-  } />),
-  (< Route key = "nut.admin.site.seo" path = "/admin/site/seo" component = {
-    AdminSiteSeo
-  } />),
-  (< Route key = "nut.admin.site.smtp" path = "/admin/site/smtp" component = {
-    AdminSiteSmtp
-  } />),
-  (< Route key = "nut.admin.site.donate" path = "/admin/site/donate" component = {
-    AdminSiteDonate
-  } />),
-  (< Route key = "nut.admin.site.home" path = "/admin/site/home" component = {
-    AdminSiteHome
-  } />),
-
-  (< Route key = "nut.admin.users.index" path = "/admin/users" component = {
-    AdminIndexUsers
-  } />),
-  (< Route key = "nut.admin.leave-words.index" path = "/admin/leave-words" component = {
-    AdminIndexLeaveWords
-  } />),
-
-  (< Route key = "nut.admin.locales.edit" path = "/admin/locales/edit/:id" component = {
-    AdminFormLocale
-  } />),
-  (< Route key = "nut.admin.locales.new" path = "/admin/locales/new" component = {
-    AdminFormLocale
-  } />),
-  (< Route key = "nut.admin.locales.index" path = "/admin/locales" component = {
-    AdminIndexLocales
-  } />),
-
-  (< Route key = "nut.admin.friend-links.edit" path = "/admin/friend-links/edit/:id" component = {
-    AdminFormFriendLink
-  } />),
-  (< Route key = "nut.admin.friend-links.new" path = "/admin/friend-links/new" component = {
-    AdminFormFriendLink
-  } />),
-  (< Route key = "nut.admin.friend-links.index" path = "/admin/friend-links" component = {
-    AdminIndexFriendLinks
-  } />),
-
-  (< Route key = "nut.admin.links.edit" path = "/admin/links/edit/:id" component = {
-    AdminFormLink
-  } />),
-  (< Route key = "nut.admin.links.new" path = "/admin/links/new" component = {
-    AdminFormLink
-  } />),
-  (< Route key = "nut.admin.links.index" path = "/admin/links" component = {
-    AdminIndexLinks
-  } />),
-
-  (< Route key = "nut.admin.cards.edit" path = "/admin/cards/edit/:id" component = {
-    AdminFormCard
-  } />),
-  (< Route key = "nut.admin.cards.new" path = "/admin/cards/new" component = {
-    AdminFormCard
-  } />),
-  (< Route key = "nut.admin.cards.index" path = "/admin/cards" component = {
-    AdminIndexCards
-  } />),
-
-  (< Route key = "nut.attachments.index" path = "/attachments" component = {
-    AttachmentsIndex
-  } />),
-
-  (<Route key="nut.no-match" component={NotFound}/>)
-]
-
-export default routes
+export default {
+  routes: [
+    {
+      path: "/users/sign-in",
+      component: import ('./users/SignIn')
+    }, {
+      path: "/users/sign-up",
+      component: import ('./users/SignUp')
+    }, {
+      path: "/users/confirm",
+      component: import ('./users/Confirm')
+    }, {
+      path: "/users/unlock",
+      component: import ('./users/Unlock')
+    }, {
+      path: "/users/forgot-password",
+      component: import ('./users/ForgotPassword')
+    }, {
+      path: "/users/reset-password/:token",
+      component: import ('./users/ResetPassword')
+    }, {
+      path: "/users/logs",
+      component: import ('./users/Logs')
+    }, {
+      path: "/users/profile",
+      component: import ('./users/Profile')
+    }, {
+      path: "/users/change-password",
+      component: import ('./users/ChangePassword')
+    }, {
+      path: "/leave-words/new",
+      component: import ('./leave-words/New')
+    }, {
+      path: "/admin/site/status",
+      component: import ('./admin/site/Status')
+    }, {
+      path: "/admin/site/info",
+      component: import ('./admin/site/Info')
+    }, {
+      path: "/admin/site/author",
+      component: import ('./admin/site/Author')
+    }, {
+      path: "/admin/site/seo",
+      component: import ('./admin/site/Seo')
+    }, {
+      path: "/admin/site/smtp",
+      component: import ('./admin/site/Smtp')
+    }, {
+      path: "/admin/site/donate",
+      component: import ('./admin/site/Donate')
+    }, {
+      path: "/admin/site/home",
+      component: import ('./admin/site/Home')
+    }, {
+      path: "/admin/users",
+      component: import ('./admin/users/Index')
+    }, {
+      path: "/admin/leave-words",
+      component: import ('./admin/leave-words/Index')
+    }, {
+      path: "/admin/locales/edit/:id",
+      component: AdminFormLocale
+    }, {
+      path: "/admin/locales/new",
+      component: AdminFormLocale
+    }, {
+      path: "/admin/locales",
+      component: import ('./admin/locales/Index')
+    }, {
+      path: "/admin/friend-links/edit/:id",
+      component: AdminFormFriendLink
+    }, {
+      path: "/admin/friend-links/new",
+      component: AdminFormFriendLink
+    }, {
+      path: "/admin/friend-links",
+      component: import ('./admin/friend-links/Index')
+    }, {
+      path: "/admin/links/edit/:id",
+      component: AdminFormLink
+    }, {
+      path: "/admin/links/new",
+      component: AdminFormLink
+    }, {
+      path: "/admin/links",
+      component: import ('./admin/links/Index')
+    }, {
+      path: "/admin/cards/edit/:id",
+      component: AdminFormCard
+    }, {
+      path: "/admin/cards/new",
+      component: AdminFormCard
+    }, {
+      path: "/admin/cards",
+      component: import ('./admin/cards/Index')
+    }, {
+      path: "/attachments",
+      component: import ('./attachments/Index')
+    }
+  ],
+  menus: []
+}
