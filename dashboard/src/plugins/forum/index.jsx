@@ -39,11 +39,17 @@ export default {
       path: "/forum/tags",
       component: import ('./tags/Index')
     }, {
+      path: "/forum/articles/show/:id",
+      component: import ('./articles/Show')
+    }, {
       path: "/forum/articles/edit/:id",
       component: FormArticle
     }, {
       path: "/forum/articles/new",
       component: FormArticle
+    }, {
+      path: "/forum/articles/latest",
+      component: import ('./articles/Latest')
     }, {
       path: "/forum/articles",
       component: import ('./articles/Index')

@@ -101,6 +101,7 @@ func (p *Plugin) Mount() error {
 	// ----------
 
 	rt := p.Router.Group("/forum")
+	rt.GET("/latest/articles", p.Layout.JSON(p.latestArticles))
 
 	rt.GET("/articles", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.indexArticles))
 	rt.POST("/articles", p.Layout.MustSignInMiddleware, p.Layout.JSON(p.createArticle))

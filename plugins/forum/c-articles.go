@@ -8,6 +8,16 @@ import (
 	"github.com/kapmahc/h2o/web"
 )
 
+func (p *Plugin) latestArticles(l string, c *gin.Context) (interface{}, error) {
+	var items []Article
+	if err := p.DB.Select([]string{"title", "id", "body"}).
+		Order("updated_at DESC").
+		Find(&items).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 func (p *Plugin) indexArticles(l string, c *gin.Context) (interface{}, error) {
 	var items []Article
 	db := p.DB
