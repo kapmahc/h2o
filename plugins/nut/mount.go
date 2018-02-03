@@ -33,6 +33,8 @@ func (p *Plugin) Mount() error {
 	p.Router.Use(i18m)
 	p.Router.Use(p.Layout.CurrentUserMiddleware)
 
+	p.Router.GET("/home", p.Layout.JSON(p.getHome))
+	p.Router.GET("/donate", p.Layout.JSON(p.getDonate))
 	p.Router.GET("/robots.txt", p.getRobotsTxt)
 	p.Router.GET("/sitemap.xml.gz", p.getSitemapGz)
 	p.Router.GET("/rss/:lang", p.getRssAtom)

@@ -35,10 +35,7 @@ const currentUser = (state = {}, action) => {
 const siteInfo = (state = {
   languages: [],
   header: [],
-  footer: [],
-  home: {
-    body: ''
-  }
+  footer: []
 }, action) => {
   switch (action.type) {
     case SITE_REFRESH:

@@ -156,7 +156,7 @@ func (p *Plugin) postAdminSiteSeo(l string, c *gin.Context) (interface{}, error)
 
 func (p *Plugin) getAdminSiteDonate(l string, c *gin.Context) (interface{}, error) {
 	item := make(map[string]interface{})
-	if err := p.Settings.Get(p.DB, "site.donate", &item); err != nil {
+	if err := p.Settings.Get(p.DB, "site.donate."+l, &item); err != nil {
 		item["paypal"] = ""
 		item["body"] = ""
 		item["type"] = web.TypeHTML
@@ -176,7 +176,7 @@ func (p *Plugin) postAdminSiteDonate(l string, c *gin.Context) (interface{}, err
 		return nil, err
 	}
 
-	if err := p.Settings.Set(p.DB, "site.donate", map[string]interface{}{
+	if err := p.Settings.Set(p.DB, "site.donate."+l, map[string]interface{}{
 		"body":   fm.Body,
 		"type":   fm.Type,
 		"paypal": fm.Paypal,

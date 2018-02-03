@@ -1,7 +1,9 @@
 package nut
 
 import (
+	"bytes"
 	"fmt"
+	h_t "html/template"
 	"net/http"
 	"path"
 	"text/template"
@@ -32,15 +34,7 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	p.Settings.Get(p.DB, "site.favicon", &favicon)
 	site["favicon"] = favicon
 
-	// home
-	var home map[string]string
-	if err := p.Settings.Get(p.DB, "site.home."+l, &home); err != nil {
-		home = map[string]string{}
-	}
-	site["home"] = home
-
 	// i18n
-
 	site[web.LOCALE] = l
 	site["languages"] = p.Languages[:]
 
@@ -82,6 +76,33 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	}
 
 	return site, nil
+}
+
+func (p *Plugin) getHome(l string, c *gin.Context) (interface{}, error) {
+	home := make(map[string]string)
+	if err := p.Settings.Get(p.DB, "site.home."+l, &home); err != nil {
+		return nil, err
+	}
+	return home, nil
+}
+
+func (p *Plugin) getDonate(l string, c *gin.Context) (interface{}, error) {
+	item := make(map[string]interface{})
+	if err := p.Settings.Get(p.DB, "site.donate."+l, &item); err != nil {
+		return nil, err
+	}
+	tpl, err := h_t.ParseFiles(path.Join("templates", "paypal.html"))
+	if err != nil {
+		return nil, err
+	}
+	var paypal bytes.Buffer
+	if err = tpl.Execute(&paypal, gin.H{"id": item["paypal"]}); err != nil {
+		return nil, err
+	}
+	return gin.H{
+		"body":   item["body"],
+		"paypal": h_t.HTML(paypal.Bytes()),
+	}, nil
 }
 
 // ------------

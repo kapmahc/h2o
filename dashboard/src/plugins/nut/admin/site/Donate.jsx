@@ -4,9 +4,10 @@ import {Form, Row, Col, Input, message} from 'antd'
 import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {push} from 'react-router-redux'
+import {Link} from 'react-router-dom'
 
 import Layout from '../../../../layouts/dashboard'
-import {post, get, backend} from '../../../../ajax'
+import {post, get} from '../../../../ajax'
 import {Submit, Quill, formItemLayout} from '../../../../components/form'
 import {ADMIN} from '../../../../auth'
 
@@ -64,7 +65,7 @@ class Widget extends Component {
             </FormItem>
             <Submit>
               &nbsp; &nbsp;
-              <a target="_blank" href={backend("/htdocs/donate")}><FormattedMessage id="buttons.view"/></a>
+              <Link to="/donate"><FormattedMessage id="buttons.view"/></Link>
             </Submit>
           </Form>
         </Col>
