@@ -14,13 +14,12 @@ build: backend frontend
 	cd $(dist) && tar cfJ ../$(dist).tar.xz *
 
 frontend:
-	cd ant-design-pro-master && npm run build
-	-cp -r ant-design-pro-master/dist $(dist)/assets
+	cd dashboard && npm run build
+	-cp -r dashboard/build $(dist)/assets
 
 backend:
 	go build -ldflags "-s -w -X ${pkg}.Version=${VERSION} -X '${pkg}.BuildTime=${BUILD_TIME}' -X '${pkg}.AuthorName=${AUTHOR_NAME}' -X ${pkg}.AuthorEmail=${AUTHOR_EMAIL} -X '${pkg}.Copyright=${COPYRIGHT}' -X '${pkg}.Usage=${USAGE}'" -o ${dist}/h2o main.go
 	-cp -r db locales templates README.md $(dist)/
 
 clean:
-	-rm -r $(dist) $(dist).tar.xz ant-design-pro-master/dist
-	
+	-rm -r $(dist) $(dist).tar.xz dashboard/build

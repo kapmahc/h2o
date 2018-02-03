@@ -23,9 +23,19 @@ A complete open source e-commerce solution.
 - build
 
 ```bash
+# down source
 go get -u github.com/kardianos/govendor
 go get -d -u github.com/kapmahc/h2o
 cd $GOPATH/src/github.com/kapmahc/h2o
+# install go dependicies
+govendor sync
+cd dashboard
+# install nodejs dependicies
+npm install
+# set REACT_APP_BACKEND
+cp .env .env.production.local
+vi .env.production.local
+cd -
 make
 ```
 
