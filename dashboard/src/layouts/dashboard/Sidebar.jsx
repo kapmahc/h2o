@@ -4,13 +4,16 @@ import {injectIntl, intlShape, FormattedMessage} from 'react-intl'
 import {connect} from 'react-redux'
 import {Menu, Icon, Modal, message} from 'antd'
 import {push} from 'react-router-redux'
+import {Link} from 'react-router-dom'
 
 import {signOut} from '../../actions'
 import {_delete} from '../../ajax'
+import {Authorized, USER, ADMIN} from '../../auth'
 
-import dashboard from '../../dashboard'
+import plugins from '../../plugins'
 
 const SubMenu = Menu.SubMenu
+const MenuItem = Menu.Item
 const confirm = Modal.confirm
 
 class Widget extends Component {
@@ -19,7 +22,7 @@ class Widget extends Component {
     const {formatMessage} = this.props.intl
 
     switch (key) {
-      case "/users/sign-out":
+      case "users.sign-out":
         confirm({
           title: formatMessage({id: "helpers.are-you-sure"}),
           onOk() {
@@ -32,25 +35,32 @@ class Widget extends Component {
         });
         break
       default:
-        push(key)
+        break
     }
   };
   render() {
-    const {user} = this.props
     return (<Menu theme="dark" mode="inline" onClick={this.handleMenu}>
       {
-        dashboard(user).map(
-          (item) => item.items
-          ? (<SubMenu key={item.key} title={(<span >
-              <Icon type={item.icon}/>
-              <FormattedMessage id={item.label}/>
-            </span>)}>
-            {item.items.map((l) => (<Menu.Item key={l.key}><FormattedMessage id={l.label}/></Menu.Item>))}
-          </SubMenu>)
-          : (<Menu.Item key={item.key}>
-            <Icon type={item.icon}/>
-            <FormattedMessage id={item.label}/>
-          </Menu.Item>))
+        plugins.menus.map((it) => Authorized.check(it.roles, (<SubMenu key={it.href} title={(<span >
+            <Icon type={it.icon}/>
+            <FormattedMessage id={it.label}/>
+          </span>)}>
+          {
+            it.items.map((l) => Authorized.check(l.roles || it.roles, (<MenuItem key={`${it.href}-${l.href}`}>
+              <Link to={l.href}>
+                <FormattedMessage id={l.label}/>
+              </Link>
+            </MenuItem>)))
+          }
+        </SubMenu>)))
+      }
+      {
+        Authorized.check([
+          ADMIN, USER
+        ], (<MenuItem key='users.sign-out'>
+          <Icon type='logout'/>
+          <FormattedMessage id='nut.users.sign-out.title'/>
+        </MenuItem>))
       }
     </Menu>)
   }

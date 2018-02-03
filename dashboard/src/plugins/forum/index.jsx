@@ -1,9 +1,33 @@
+import {USER, ADMIN} from '../../auth'
+
 const FormTag = import ('./tags/Form')
 const FormArticle = import ('./articles/Form')
 const FormComment = import ('./comments/Form')
 
 export default {
-  menus: [],
+  menus: [
+    {
+      icon: "tablet",
+      label: "forum.dashboard.title",
+      href: "forum",
+      roles: [
+        USER, ADMIN
+      ],
+      items: [
+        {
+          label: "forum.articles.index.title",
+          href: "/forum/articles"
+        }, {
+          label: "forum.comments.index.title",
+          href: "/forum/comments"
+        }, {
+          label: "forum.tags.index.title",
+          href: "/forum/tags",
+          roles: [ADMIN]
+        }
+      ]
+    }
+  ],
   routes: [
     {
       path: "/forum/tags/edit/:id",

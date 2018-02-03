@@ -1,8 +1,25 @@
+import {USER, ADMIN} from '../../auth'
+
 const FormForm = import ('./forms/Form')
 const FormField = import ('./fields/Form')
 
 export default {
-  menus: [],
+  menus: [
+    {
+      icon: "notification",
+      label: "survey.dashboard.title",
+      href: "survey",
+      roles: [
+        ADMIN, USER
+      ],
+      items: [
+        {
+          label: "survey.forms.index.title",
+          href: "/survey/forms"
+        }
+      ]
+    }
+  ],
   routes: [
     {
       path: "/survey/forms/edit/:id",

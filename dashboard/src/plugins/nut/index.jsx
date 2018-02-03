@@ -1,3 +1,5 @@
+import {USER, ADMIN} from '../../auth'
+
 const AdminFormLocale = import ('./admin/locales/Form')
 const AdminFormLink = import ('./admin/links/Form')
 const AdminFormCard = import ('./admin/cards/Form')
@@ -106,5 +108,76 @@ export default {
       component: import ('./attachments/Index')
     }
   ],
-  menus: []
+  menus: [
+    {
+      icon: "user",
+      label: "nut.self.title",
+      href: "personal",
+      roles: [
+        USER, ADMIN
+      ],
+      items: [
+        {
+          label: "nut.users.logs.title",
+          href: "/users/logs"
+        }, {
+          label: "nut.users.profile.title",
+          href: "/users/profile"
+        }, {
+          label: "nut.users.change-password.title",
+          href: "/users/change-password"
+        }, {
+          label: "nut.attachments.index.title",
+          href: "/attachments"
+        }
+      ]
+    }, {
+      icon: "setting",
+      label: "nut.settings.title",
+      href: "settings",
+      roles: [ADMIN],
+      items: [
+        {
+          label: "nut.admin.site.status.title",
+          href: "/admin/site/status"
+        }, {
+          label: "nut.admin.site.info.title",
+          href: "/admin/site/info"
+        }, {
+          label: "nut.admin.site.author.title",
+          href: "/admin/site/author"
+        }, {
+          label: "nut.admin.site.seo.title",
+          href: "/admin/site/seo"
+        }, {
+          label: "nut.admin.site.smtp.title",
+          href: "/admin/site/smtp"
+        }, {
+          label: "nut.admin.site.donate.title",
+          href: "/admin/site/donate"
+        }, {
+          label: "nut.admin.site.home.title",
+          href: "/admin/site/home"
+        }, {
+          label: "nut.admin.links.index.title",
+          href: "/admin/links"
+        }, {
+          label: "nut.admin.cards.index.title",
+          href: "/admin/cards"
+        }, {
+          label: "nut.admin.locales.index.title",
+          href: "/admin/locales"
+        }, {
+          label: "nut.admin.friend-links.index.title",
+          href: "/admin/friend-links"
+        }, {
+          label: "nut.admin.leave-words.index.title",
+          href: "/admin/leave-words"
+        }, {
+          label: "nut.admin.users.index.title",
+          href: "/admin/users"
+        }
+      ]
+    }
+  ]
 }
