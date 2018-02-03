@@ -3,16 +3,16 @@ import PropTypes from 'prop-types'
 import {Layout, Menu, Icon} from 'antd';
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
+import {FormattedMessage} from 'react-intl'
 
 const {Header} = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 class Widget extends Component {
-
   render() {
     const width = document.body.offsetWidth
-    const {site} = this.props
+    const {site, user} = this.props
     var children = null
     if (width > 1024) {
       children = [(<Menu.Item key="home">
@@ -53,6 +53,15 @@ class Widget extends Component {
           lineHeight: '64px'
         }}>
         {children}
+        <Menu.Item key="personal">
+          <Link to={user.uid
+              ? '/users/logs'
+              : '/users/sign-in'}>
+            <FormattedMessage id={user.uid
+                ? 'nut.dashboard.title'
+                : 'nut.users.sign-in.title'}/>
+          </Link>
+        </Menu.Item>
       </Menu>
     </Header>)
   }
