@@ -32,6 +32,13 @@ func (p *Plugin) getLayout(l string, c *gin.Context) (interface{}, error) {
 	p.Settings.Get(p.DB, "site.favicon", &favicon)
 	site["favicon"] = favicon
 
+	// home
+	var home map[string]string
+	if err := p.Settings.Get(p.DB, "site.home."+l, &home); err != nil {
+		home = map[string]string{}
+	}
+	site["home"] = home
+
 	// i18n
 
 	site[web.LOCALE] = l

@@ -13,7 +13,6 @@ import (
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/feeds"
 	"github.com/kapmahc/h2o/web"
 	"github.com/spf13/viper"
 	gomail "gopkg.in/gomail.v2"
@@ -24,29 +23,16 @@ func (p *Plugin) getAdminSiteHome(l string, c *gin.Context) (interface{}, error)
 	p.Settings.Get(p.DB, "site.favicon", &favicon)
 	var home map[string]string
 	p.Settings.Get(p.DB, "site.home."+l, &home)
-	var links []gin.H
-	if err := p.RSS.Walk(l, func(items ...*feeds.Item) error {
-		for _, it := range items {
-			links = append(links, gin.H{
-				"href":  it.Link.Href,
-				"title": it.Title,
-			})
-		}
-		return nil
-	}); err != nil {
-		return nil, err
-	}
 	return gin.H{
 		"favicon": favicon,
 		"home":    home,
-		"links":   links,
 	}, nil
 }
 
 type fmSiteHome struct {
 	Favicon string `json:"favicon" binding:"required"`
-	Theme   string `json:"theme"`
-	Href    string `json:"href"`
+	Body    string `json:"body" binding:"required"`
+	Type    string `json:"type" binding:"required"`
 }
 
 func (p *Plugin) postAdminSiteHome(l string, c *gin.Context) (interface{}, error) {
@@ -58,8 +44,8 @@ func (p *Plugin) postAdminSiteHome(l string, c *gin.Context) (interface{}, error
 	for k, v := range map[string]interface{}{
 		"site.favicon": fm.Favicon,
 		"site.home." + l: map[string]string{
-			"theme": fm.Theme,
-			"href":  fm.Href,
+			"body": fm.Body,
+			"type": fm.Type,
 		},
 	} {
 		if err := p.Settings.Set(db, k, v, false); err != nil {
