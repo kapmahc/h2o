@@ -1,6 +1,7 @@
 package nut
 
 import (
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -15,6 +16,7 @@ type Dao struct {
 
 // SignIn set sign-in info
 func (p *Dao) SignIn(db *gorm.DB, lang, ip, email, password string) (*User, error) {
+	email = strings.ToLower(email)
 	user, err := p.GetUserByEmail(db, email)
 	if err != nil {
 		return nil, err
@@ -66,7 +68,7 @@ func (p *Dao) GetUserByUID(db *gorm.DB, uid string) (*User, error) {
 // GetUserByEmail get user by email
 func (p *Dao) GetUserByEmail(db *gorm.DB, email string) (*User, error) {
 	var user User
-	if err := db.Where("provider_type = ? AND provider_id = ?", UserTypeEmail, email).
+	if err := db.Where("provider_type = ? AND provider_id = ?", UserTypeEmail, strings.ToLower(email)).
 		First(&user).Error; err != nil {
 		return nil, err
 	}
